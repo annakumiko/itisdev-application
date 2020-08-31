@@ -22,16 +22,15 @@ layoutsDir: path.join(__dirname, '/views/layouts'),
 partialsDir: path.join(__dirname, '/views/partials')
 }));
 
-/* SET VIEW ENGINE */
-app.set('view engine', 'hbs');
-
 app.get('/', function(req, res){
   res.render('home',{
     layout: 'main'
   });
 });
 
+app.set('view engine', 'hbs');
+
 app.use(express.static(__dirname));
-//app.use(express.static('public'));
+app.use(express.static('public'));
 
 /* MONGODB LATER */
