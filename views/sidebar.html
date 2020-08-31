@@ -1,0 +1,135 @@
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+  <style>
+      html {
+        scroll-behavior: smooth;
+      }
+            
+			body {
+				color: black;
+				background-color: white;
+				margin: 0;
+				padding: 0;
+				font-family: "Open Sans";
+			}
+
+      #nav-icon {
+				height: 50px;
+				width: 50px;
+				margin-left: auto;
+				margin-right: auto;
+			
+			}
+			
+			.navbarr {
+				width: 5rem;
+				height: 100vh;
+				position: fixed;
+				background-color: #23232e;
+				transition: width 200ms ease;
+
+			}
+			
+			.navbar-navv {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+			
+			.nav-item {
+				width: 100%;
+				transition: 600ms;
+			}
+			
+			.nav-item:hover {
+				filter: grayscale(0%) opacity(1);
+				background: #141418;
+				color: #ececec;
+			}
+			
+			.nav-link {
+				display: flex;
+				align-items: center;
+				height: 5rem;
+				color: #b6b6b6;
+				text-decoration: none;
+				filter: grayscale(100%) opacity(0.7);
+				transition: 600ms;
+				float: left;
+				padding-left: 10px;
+				padding-right: 10px;
+			}
+			
+			.nav-link:hover {
+				filter: grayscale(0%) opacity(1);
+				background: #141418;
+				color: #ececec;
+			}
+			
+			.link-text {
+				display: none;
+				margin-left: 1rem;
+				color: white;
+			}
+			
+			.navbarr:hover {
+				width: 16rem;
+			}
+			
+			.navbarr:hover .link-text {
+				display: block;
+			}
+  </style>
+</head>
+
+<body>
+  <nav class="navbarr">
+    <ul class="navbar-navv">
+      
+      <li class="logo">
+        <a href="." class="nav-link" onclick='location.reload(true); return false;'>
+          <span class ="link-text logo-text"> The VA Hub</span> 
+        </a>
+      </li>
+      
+      <li class="nav-item">
+        <a href="#titleDiv" class = "nav-link">
+          <img src = "home.png" id = "nav-icon"> </img>
+          <span class ="link-text">Classes</span>
+        </a>
+      </li>
+    
+                <li class="nav-item">
+        <a href="#educationDiv" class = "nav-link">
+          <img src = "book.png" id="nav-icon"> </img>
+          <span class ="link-text">Quizzes</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a href="#meDiv" class = "nav-link">
+          <img src = "user.png" id="nav-icon"> </img>
+          <span class ="link-text">Settings</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a href="edit.html" class = "nav-link">
+          <img src = "key.png" id="nav-icon"> </img>
+          <span class ="link-text">Login</span>
+        </a>
+      </li>
+      
+
+      
+    </ul>
+  </nav>
+</body>
+
+</html>
