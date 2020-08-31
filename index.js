@@ -13,7 +13,6 @@ app.listen(port, function(){
     console.log("Listening to http://localhost:" + port);
 });
 
-require('dotenv').config();
 
 /* CREATE HBS ENGINE */
 app.engine('hbs', exphbs({  
