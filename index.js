@@ -28,13 +28,7 @@ app.get('/', function(req, res){
   });
 });
 
-<<<<<<< HEAD
-app.set('view engine', 'hbs');
-
 // app.use(express.static(__dirname));
-=======
-app.use(express.static(__dirname));
->>>>>>> parent of 594c5c7... launched
 app.use(express.static('public'));
 
 /* MONGODB LATER */
