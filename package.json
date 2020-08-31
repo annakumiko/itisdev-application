@@ -1,0 +1,28 @@
+{
+  "name": "itisdev-application",
+  "version": "1.0.0",
+  "description": "1. Install dependencies on the project command line:\r     ``` npm install ```\r 2. Enter the following to run the server:\r     ``` node index.js ```\r 3. Navigate to the project through:\r     ``` http://localhost:9000/ ```",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/annakumiko/itisdev-application.git"
+  },
+  "author": "Kayla X Kimi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/annakumiko/itisdev-application/issues"
+  },
+  "homepage": "https://github.com/annakumiko/itisdev-application#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-handlebars": "^5.1.0",
+    "handlebars": "^4.7.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
