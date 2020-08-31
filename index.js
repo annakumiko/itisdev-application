@@ -30,7 +30,7 @@ app.get('/', function(req, res){
 
 app.set('view engine', 'hbs');
 
-app.use(express.static(__dirname));
+// app.use(express.static(__dirname));
 app.use(express.static('public'));
 
 /* MONGODB LATER */
