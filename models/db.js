@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const url = '';
+const url = 'mongodb+srv://${process.env.DB_UNAME}:${process.env.DB_PASS}@va-cluster.53tbr.mongodb.net/vadb?retryWrites=true&w=majority';
 const options = {
 	useUnifiedTopology: true,
 	useNewUrlParser: true
