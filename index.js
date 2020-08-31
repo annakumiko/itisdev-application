@@ -22,6 +22,9 @@ layoutsDir: path.join(__dirname, '/views/layouts'),
 partialsDir: path.join(__dirname, '/views/partials')
 }));
 
+/* SET VIEW ENGINE */
+app.set('view engine', 'hbs');
+
 app.get('/', function(req, res){
   res.render('home',{
     layout: 'main'
