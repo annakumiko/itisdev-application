@@ -6,3 +6,5 @@ const controller = require('../controller/indexController');
 
 
 /*call post functions*/
+
+module.exports = router;
