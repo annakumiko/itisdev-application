@@ -2,17 +2,27 @@
 const express = require('express');
 const hbs = require('handlebars');
 const exphbs = require('express-handlebars');
+//const cookieParser = require('cookie-parser'); //generates cookies to keep track of logged-in user
+//const session = require('express-session'); //keeps track of who's logged in
+const mongoose = require('mongoose');
 const path = require('path');
+
+require('dotenv').config();
 
 /* EXPRESS APPLICATION */
 const app = express();
-const port = 9000;
+const port = process.env.port||9000;
   
-/* PORT */
-app.listen(port, function(){
-    console.log("Listening to http://localhost:" + port);
-});
 
+/* INITIALIZING COOKIES & SESSION */
+/* app.use(cookieParser());
+
+app.use(session({
+	secret: 'sikret',
+	name: 'saeshun',
+	resave: true,
+	saveUninitialized: true
+})); */
 
 /* CREATE HBS ENGINE */
 app.engine('hbs', exphbs({  
@@ -30,7 +40,13 @@ app.get('/', function(req, res){
 
 app.set('view engine', 'hbs');
 
+const router = require('./router/vahubRouter');
+app.use('/', router);
+
 app.use(express.static(__dirname));
 app.use(express.static('public'));
 
-/* MONGODB LATER */
+/* PORT */
+app.listen(port, function(){
+    console.log("Listening to http://localhost:" + port);
+});
