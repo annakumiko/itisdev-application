@@ -7,4 +7,4 @@ var modulesSchema = new mongoose.Schema({
 	moduleType: String
 }, {collection: "modules"});
 
-modules.export = mongoose.model("modules", modulesSchema);
+module.export = mongoose.model("modules", modulesSchema);

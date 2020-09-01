@@ -5,4 +5,4 @@ var coursesSchema = new mongoose.Schema({
 	classID: String
 }, {collection: "courses"});
 
-modules.export = mongoose.model("courses", coursesSchema);
+module.export = mongoose.model("courses", coursesSchema);

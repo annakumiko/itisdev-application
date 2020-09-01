@@ -5,4 +5,4 @@ var classlistsSchema = new mongoose.Schema({
 	classID: String
 }, {collection: "classlists"});
 
-modules.export = mongoose.model("classlists", classlistsSchema);
+module.export = mongoose.model("classlists", classlistsSchema);

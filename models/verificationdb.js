@@ -5,4 +5,4 @@ var verificationsSchema = new mongoose.Schema({
 	userID: String
 }, {collection: "verifications"});
 
-modules.export = mongoose.model("verifications", verificationsSchema);
+module.export = mongoose.model("verifications", verificationsSchema);

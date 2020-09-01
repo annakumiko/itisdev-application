@@ -11,4 +11,4 @@ var usersSchema = new mongoose.Schema({
 	deactivated: Boolean
 }, {collection: "users"});
 
-modules.export = mongoose.model("users", usersSchema);
+module.export = mongoose.model("users", usersSchema);

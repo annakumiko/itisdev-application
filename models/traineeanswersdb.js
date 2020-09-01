@@ -6,4 +6,4 @@ var traineeanswersSchema = new mongoose.Schema({
 	tAnswer: String
 }, {collection: "traineeanswers"});
 
-modules.export = mongoose.model("traineeanswers", traineeanswersSchema);
+module.export = mongoose.model("traineeanswers", traineeanswersSchema);

@@ -8,4 +8,4 @@ var skillassesmentsSchema = new mongoose.Schema({
 	skillScore: Number
 }, {collection: "skillassesments"});
 
-modules.export = mongoose.model("skillassesments", skillassesmentsSchema);
+module.export = mongoose.model("skillassesments", skillassesmentsSchema);
