@@ -19,7 +19,8 @@ const verificationModel = require('../models/verificationdb');
 
 // main functions for getting and posting data
 const rendFunctions = {
-	/* getLogin: function(req, res, next) {
+	/*
+	getLogin: function(req, res, next) {
 		var {email, password} = req.body;
 
 		if (req.session.user){ 
@@ -28,7 +29,36 @@ const rendFunctions = {
 			res.render('login', { 
 			});
 		}
- 	} */
+ 	},
+
+ 	postLogin: async function(req, res, next) {
+		let { email, password } = req.body;
+		
+		var student = await studentModel.findOne({email: email});
+		
+		// searches for user in db
+		try {
+			if (!student) // 2. No users match with email-pass input
+				res.send({status: 401});
+			else { // log-in success
+				bcrypt.compare(password, student.password, function(err, match) {
+					if (match){
+						req.session.user = student;
+						res.send({status: 200});						
+					} else
+						res.send({status: 401});
+				});
+			}		
+		} catch(e) { // 1. Server error
+			res.send({status: 500});
+		}
+	},
+
+ 	postLogout: function(req, res, next) {
+		req.session.destroy();
+		res.redirect("/");
+	}
+	*/
 }
 
 // module.exports = rendFunctions;

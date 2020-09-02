@@ -3,8 +3,10 @@ const router = express();
 const controller = require('../controller/indexController');
 
 /*call get functions*/
-
+// router.get('/login', controller.getLogin);
 
 /*call post functions*/
+// router.post('/login', controller.postLogout);
+// router.post('/login', controller.postLogin);
 
 module.exports = router;
