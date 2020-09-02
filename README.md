@@ -1,4 +1,4 @@
-## The VA Hub Application
+# The VA Hub Application
 
 ## Project Setup
 1. Install dependencies on the project command line:
