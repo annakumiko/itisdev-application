@@ -45,15 +45,53 @@ app.get('/login', function(req, res){
   });
 });
 
+app.get('/verification', function(req, res){
+  res.render('verification',{
+  });
+});
+
 /* TESTING */
 /* admin stuff */
+app.get('/definecourse', function(req, res){
+  res.render('define-course',{
+  });
+});
+
+app.get('/manageclients', function(req, res){
+  res.render('manage-clients',{
+  });
+});
 
 /* trainee stuff */
-app.get('/profile', function(req, res){
+app.get('/addtrainees', function(req, res){
+  res.render('add-trainees',{
+  });
+});
+
+app.get('/trainer-profile', function(req, res){
   res.render('trainer-profile',{
   });
 });
 
+app.get('/createclass', function(req, res){
+  res.render('create-class',{
+  });
+});
+
+app.get('/createquiz', function(req, res){
+  res.render('create-quiz',{
+  });
+});
+
+app.get('/quizlist', function(req, res){
+  res.render('quizlist',{
+  });
+});
+
+app.get('/scoresheet', function(req, res){
+  res.render('scoresheet',{
+  });
+});
 
 /* trainer stuff */
 app.get('/clients', function(req, res){
@@ -61,8 +99,18 @@ app.get('/clients', function(req, res){
   });
 });
 
+app.get('/trainee-profile', function(req, res){
+  res.render('trainee-profile',{
+  });
+});
+
 app.get('/contact', function(req, res){
   res.render('contact-client',{
+  });
+});
+
+app.get('/grades', function(req, res){
+  res.render('view-grades',{
   });
 });
 
