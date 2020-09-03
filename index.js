@@ -2,8 +2,8 @@
 const express = require('express');
 const hbs = require('handlebars');
 const exphbs = require('express-handlebars');
-// const cookieParser = require('cookie-parser'); //generates cookies to keep track of logged-in user
-// const session = require('express-session'); //keeps track of who's logged in
+const cookieParser = require('cookie-parser'); //generates cookies to keep track of logged-in user
+const session = require('express-session'); //keeps track of who's logged in
 const mongoose = require('mongoose');
 const path = require('path');
 
@@ -15,7 +15,6 @@ const port = process.env.port||9000;
   
 
 /* INITIALIZING COOKIES & SESSION */
-/*
 app.use(cookieParser());
 
 app.use(session({
@@ -24,7 +23,6 @@ app.use(session({
 	resave: true,
 	saveUninitialized: true
 }));
-*/
 
 /* CREATE HBS ENGINE */
 app.engine('hbs', exphbs({  
@@ -40,6 +38,7 @@ app.get('/', function(req, res){
   });
 });
 
+/* TESTING */
 app.get('/login', function(req, res){
   res.render('login',{
   });
@@ -50,7 +49,7 @@ app.get('/verification', function(req, res){
   });
 });
 
-/* TESTING */
+
 /* admin stuff */
 app.get('/definecourse', function(req, res){
   res.render('define-course',{
@@ -116,6 +115,7 @@ app.get('/grades', function(req, res){
 
 app.set('view engine', 'hbs');
 
+/* ROUTER */
 const router = require('./router/vahubRouter');
 app.use('/', router);
 

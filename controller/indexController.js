@@ -19,7 +19,7 @@ const verificationModel = require('../models/verificationdb');
 
 // main functions for getting and posting data
 const rendFunctions = {
-	/*
+
 	getLogin: function(req, res, next) {
 		var {email, password} = req.body;
 
@@ -34,16 +34,16 @@ const rendFunctions = {
  	postLogin: async function(req, res, next) {
 		let { email, password } = req.body;
 		
-		var student = await studentModel.findOne({email: email});
+		var trainee = await traineesModel.findOne({email: email});
 		
 		// searches for user in db
 		try {
-			if (!student) // 2. No users match with email-pass input
+			if (!trainee) // 2. No users match with email-pass input
 				res.send({status: 401});
 			else { // log-in success
-				bcrypt.compare(password, student.password, function(err, match) {
+				bcrypt.compare(password, trainee.password, function(err, match) {
 					if (match){
-						req.session.user = student;
+						req.session.user = trainee;
 						res.send({status: 200});						
 					} else
 						res.send({status: 401});
@@ -58,7 +58,7 @@ const rendFunctions = {
 		req.session.destroy();
 		res.redirect("/");
 	}
-	*/
+
 }
 
 // module.exports = rendFunctions;
