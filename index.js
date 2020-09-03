@@ -64,7 +64,7 @@ app.get('/definecourse', function(req, res){
 });
 
 app.get('/manageclients', function(req, res){
-  res.render('manage-clients',{
+  res.render('manage-clientlist',{
   });
 });
 
@@ -112,6 +112,7 @@ app.get('/clients', function(req, res){
 
 app.get('/trainee-profile', function(req, res){
   res.render('trainee-profile',{
+  // usersSchema: usersSchema
   });
 });
 
@@ -144,3 +145,16 @@ app.use(express.static('public'));
 app.listen(port, function(){
     console.log("Listening to http://localhost:" + port);
 });
+
+// DUMMY //
+
+// var usersSchema = {
+// 	userID: 123,
+// 	userType: trainee,
+// 	firstName: bro,
+// 	lastName: orbskie,
+// 	email: l@yield.com,
+// 	password: loool,
+// 	uStatus: Active,
+// 	deactivated: true
+// };
