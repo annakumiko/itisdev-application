@@ -39,6 +39,13 @@ app.get('/', function(req, res){
 });
 
 /* TESTING */
+
+app.get('/home', function(req, res){
+  res.render('home',{
+    layout: 'main'
+  });
+});
+
 app.get('/login', function(req, res){
   res.render('login',{
   });
@@ -87,6 +94,11 @@ app.get('/quizlist', function(req, res){
   });
 });
 
+app.get('/updatequiz', function(req, res){
+  res.render('update-quiz',{
+  });
+});
+
 app.get('/scoresheet', function(req, res){
   res.render('scoresheet',{
   });
@@ -102,6 +114,12 @@ app.get('/trainee-profile', function(req, res){
   res.render('trainee-profile',{
   });
 });
+
+app.get('/createclass', function(req, res){
+  res.render('create-class',{
+  });
+});
+
 
 app.get('/contact', function(req, res){
   res.render('contact-client',{

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+{{>sidebar}}
+
+<div style="padding: 20px;padding-left: 100px;">
+    <div><label style="font-size: 24px;color: #006739;"><strong>Update quiz</strong></label>
+        <hr>
+    </div>
+    <div style="background-color: #f9f8f0;">
+        <form style="background-color: #f9f8f0;padding: 5px;">
+            <div class="form-row" style="margin: 5px;">
+                <div class="col" style="max-width: 15%;margin: 5px;"><label class="col-form-label"><strong>Class</strong></label></div>
+                <div class="col">
+                    <div class="dropdown" style="padding-bottom: 16px;width: 180px;"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="background-color: rgb(255,255,255);color: rgb(0,0,0);text-align: left;width: 180px;">Class</button>
+                        <div class="dropdown-menu"
+                            role="menu" style="width: 180px;"><a class="dropdown-item" role="presentation" href="#">Real Estate Training</a><a class="dropdown-item" role="presentation" href="#">Marketing Training</a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row form-group" style="padding: 5px;margin: 5px;">
+                <div class="col-sm-4 label-column" style="max-width: 15%;font-size: 14px;"><label class="col-form-label flex-nowrap" for="name-input-field"><strong>Date</strong><br></label></div>
+                <div class="col" style="margin: 5px;">
+                    <div class="dropdown d-inline-flex" style="padding-bottom: 16px;width: 100px;padding-left: 3px;"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="background-color: rgb(255,255,255);color: rgb(0,0,0);text-align: left;width: 100px;">Month</button>
+                        <div class="dropdown-menu"
+                            role="menu" style="width: 180px;"><a class="dropdown-item" role="presentation" href="#">Real Estate Training</a><a class="dropdown-item" role="presentation" href="#">Marketing Training</a></div>
+                    </div>
+                    <div class="dropdown d-inline-flex" style="padding-bottom: 16px;width: 100px;padding-left: 3px;"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="background-color: rgb(255,255,255);color: rgb(0,0,0);text-align: left;width: 100px;">Day</button>
+                        <div class="dropdown-menu"
+                            role="menu" style="width: 180px;"><a class="dropdown-item" role="presentation" href="#">Real Estate Training</a><a class="dropdown-item" role="presentation" href="#">Marketing Training</a></div>
+                    </div>
+                    <div class="dropdown d-inline-flex" style="padding-bottom: 16px;width: 100px;padding-left: 3px;"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="background-color: rgb(255,255,255);color: rgb(0,0,0);text-align: left;width: 100px;">Year</button>
+                        <div class="dropdown-menu"
+                            role="menu" style="width: 180px;"><a class="dropdown-item" role="presentation" href="#">Real Estate Training</a><a class="dropdown-item" role="presentation" href="#">Marketing Training</a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin: 5px;">
+                <div class="col" style="max-width: 15%;margin: 5px;"><label class="col-form-label"><strong>Start Time</strong></label></div>
+                <div class="col">
+                    <div class="dropdown" style="padding-bottom: 16px;width: 180px;"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="background-color: rgb(255,255,255);color: rgb(0,0,0);text-align: left;width: 100px;">Time</button>
+                        <div class="dropdown-menu"
+                            role="menu" style="width: 180px;"><a class="dropdown-item" role="presentation" href="#">Real Estate Training</a><a class="dropdown-item" role="presentation" href="#">Marketing Training</a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin: 5px;">
+                <div class="col" style="max-width: 15%;margin: 5px;"><label class="col-form-label"><strong>End Time</strong></label></div>
+                <div class="col">
+                    <div class="dropdown" style="padding-bottom: 16px;width: 180px;"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="background-color: rgb(255,255,255);color: rgb(0,0,0);text-align: left;width: 100px;">Time</button>
+                        <div class="dropdown-menu"
+                            role="menu" style="width: 180px;"><a class="dropdown-item" role="presentation" href="#">Real Estate Training</a><a class="dropdown-item" role="presentation" href="#">Marketing Training</a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin: 5px;">
+                <div class="col" style="max-width: 15%;margin: 5px;"><label class="col-form-label"><strong>Number of Takes</strong></label></div>
+                <div class="col"><input class="form-control" type="text" name="numtakes" placeholder="ex. 1" style="max-width: 10%;"></div>
+            </div>
+            <div class="form-row" style="margin: 5px;">
+                <div class="col" style="max-width: 15%;margin: 5px;"><label class="col-form-label"><strong>Questions</strong></label></div>
+                <div class="col">
+                    <div class="form-row">
+                        <div class="col"><label>Question</label><input class="form-control" type="text"><label>Answer</label><input class="form-control" type="text"></div>
+                        <div class="col" style="max-width: 10%;"><button class="btn btn-primary" type="button" style="background-color: #3e914d;margin: 30px;"><strong>+</strong></button></div>
+                    </div>
+                    <hr>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" id="formCheck-2"><label class="form-check-label" for="formCheck-1">Randomize quiz items for each trainee</label></div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" type="submit" style="background-color: #006739;margin: 0px 10px;">Update</button>
+
+            <a href="/quizlist"><button class="btn btn-primary" type="submit" style="background-color: #da6b59;margin: 10px 0px;">Cancel</button></a></form>
+    </div>
+</div>

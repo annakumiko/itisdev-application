@@ -44,7 +44,7 @@ const rendFunctions = {
 				bcrypt.compare(password, trainee.password, function(err, match) {
 					if (match){
 						req.session.user = trainee;
-						res.send({status: 200});						
+						res.send({status: 200});				
 					} else
 						res.send({status: 401});
 				});
