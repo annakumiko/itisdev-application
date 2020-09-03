@@ -44,6 +44,28 @@ app.get('/login', function(req, res){
   res.render('login',{
   });
 });
+
+/* TESTING */
+/* admin stuff */
+
+/* trainee stuff */
+app.get('/profile', function(req, res){
+  res.render('trainer-profile',{
+  });
+});
+
+
+/* trainer stuff */
+app.get('/clients', function(req, res){
+  res.render('clientlist',{
+  });
+});
+
+app.get('/contact', function(req, res){
+  res.render('contact-client',{
+  });
+});
+
 app.set('view engine', 'hbs');
 
 const router = require('./router/vahubRouter');
