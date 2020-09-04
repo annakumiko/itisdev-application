@@ -5,9 +5,9 @@ var usersSchema = new mongoose.Schema({
 	userType: String,
 	firstName: String,
 	lastName: String,
-	email: String,
+	userEmail: String,
 	password: String,
-	uStatus: String,
+	// uStatus: String,
 	deactivated: Boolean
 }, {collection: "users"});
 

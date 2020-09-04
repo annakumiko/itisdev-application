@@ -4,6 +4,7 @@ var classesSchema = new mongoose.Schema({
 	classID: String, /* under deliberatION */
 	courseID: String,
 	trainerID: String,
+	section : String,
 	startDate: Date,
 	endDate: Date,
 	startTime: Date,
