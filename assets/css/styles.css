@@ -16,3 +16,8 @@ body {
 	height: 100%;
 }
 
+.error {
+	color: red;
+	padding-top: 10px;
+}
+

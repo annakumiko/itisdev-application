@@ -32,14 +32,16 @@ layoutsDir: path.join(__dirname, '/views/layouts'),
 partialsDir: path.join(__dirname, '/views/partials')
 }));
 
-app.get('/', function(req, res){
-  res.render('home',{
+
+app.get('/login', function(req, res){
+  res.render('login',{
     layout: 'main'
   });
 });
 
-/* TESTING */
 
+/* TESTING */
+/*
 app.get('/home', function(req, res){
   res.render('home',{
     layout: 'main'
@@ -58,6 +60,7 @@ app.get('/verification', function(req, res){
 
 
 /* admin stuff */
+/*
 app.get('/definecourse', function(req, res){
   res.render('define-course',{
   });
@@ -67,8 +70,9 @@ app.get('/manageclients', function(req, res){
   res.render('manage-clientlist',{
   });
 });
-
+*/
 /* trainee stuff */
+/*
 app.get('/addtrainees', function(req, res){
   res.render('add-trainees',{
   });
@@ -103,8 +107,9 @@ app.get('/scoresheet', function(req, res){
   res.render('scoresheet',{
   });
 });
-
+*/
 /* trainer stuff */
+/*
 app.get('/clients', function(req, res){
   res.render('clientlist',{
   });
@@ -131,7 +136,7 @@ app.get('/grades', function(req, res){
   res.render('view-grades',{
   });
 });
-
+*/
 app.set('view engine', 'hbs');
 
 /* ROUTER */
@@ -145,16 +150,3 @@ app.use(express.static('public'));
 app.listen(port, function(){
     console.log("Listening to http://localhost:" + port);
 });
-
-// DUMMY //
-
-// var usersSchema = {
-// 	userID: 123,
-// 	userType: trainee,
-// 	firstName: bro,
-// 	lastName: orbskie,
-// 	email: l@yield.com,
-// 	password: loool,
-// 	uStatus: Active,
-// 	deactivated: true
-// };
