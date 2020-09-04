@@ -10,4 +10,4 @@ var quizzesSchema = new mongoose.Schema({
 	numItems: Number
 }, {collection: "quizzes"});
 
-module.export = mongoose.model("quizzes", quizzesSchema);
+module.exports = mongoose.model("quizzes", quizzesSchema);

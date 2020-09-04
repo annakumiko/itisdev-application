@@ -5,4 +5,4 @@ var skilltypesSchema = new mongoose.Schema({
 	skillName: String
 }, {collection: "skilltypes"});
 
-module.export = mongoose.model("skilltypes", skilltypesSchema);
+module.exports = mongoose.model("skilltypes", skilltypesSchema);

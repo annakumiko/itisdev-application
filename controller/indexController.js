@@ -1,6 +1,6 @@
 /* DBs */
 const classesModel = require('../models/classesdb');
-const classlitsModel = require('../models/classlistsdb');
+const classlistsModel = require('../models/classlistsdb');
 const clientlistsModel = require('../models/clientlistsdb');
 const clientsModel = require('../models/clientsdb');
 const coursesModel = require('../models/coursesdb');
@@ -16,13 +16,12 @@ const traineesModel = require('../models/traineesdb');
 const trainersModel = require('../models/trainersdb');
 const usersModel = require('../models/usersdb');
 const verificationModel = require('../models/verificationdb');
+const db = require('../models/db');
 
 // main functions for getting and posting data
 const rendFunctions = {
 
 	getLogin: function(req, res, next) {
-		var {email, password} = req.body;
-
 		if (req.session.user){ 
 			res.redirect('/'); 
 		} else {
@@ -31,25 +30,31 @@ const rendFunctions = {
 		}
  	},
 
+ 	getHome: function(req, res, next) {
+		res.render('home', {
+
+		});
+ 	},
+
  	postLogin: async function(req, res, next) {
 		let { email, password } = req.body;
 		
-		var trainee = await traineesModel.findOne({email: email});
+		var user = await db.findOne(usersModel, {email: email});
 		
-		// searches for user in db
+		// SEARCH USER IN DB
 		try {
-			if (!trainee) // 2. No users match with email-pass input
+			if (!user) // USER NOT IN DB
 				res.send({status: 401});
-			else { // log-in success
-				bcrypt.compare(password, trainee.password, function(err, match) {
+			else { // SUCCESS
+				bcrypt.compare(password, user.password, function(err, match) {
 					if (match){
-						req.session.user = trainee;
+						req.session.user = user;
 						res.send({status: 200});				
 					} else
 						res.send({status: 401});
 				});
 			}		
-		} catch(e) { // 1. Server error
+		} catch(e) { 
 			res.send({status: 500});
 		}
 	},
@@ -61,4 +66,4 @@ const rendFunctions = {
 
 }
 
-// module.exports = rendFunctions;
+module.exports = rendFunctions;

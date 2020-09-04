@@ -4,4 +4,4 @@ var trainersSchema = new mongoose.Schema({
 	trainerID: String
 }, {collection: "trainers"});
 
-module.export = mongoose.model("trainers", trainersSchema);
+module.exports = mongoose.model("trainers", trainersSchema);

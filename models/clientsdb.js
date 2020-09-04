@@ -7,4 +7,4 @@ var clientsSchema = new mongoose.Schema({
 	isActive: Boolean
 }, {collection: "clients"});
 
-module.export = mongoose.model("clients", clientsSchema);
+module.exports = mongoose.model("clients", clientsSchema);
