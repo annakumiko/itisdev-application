@@ -15,7 +15,7 @@ const app = express();
 const port = process.env.port||9000;
   
 
-/* INITIALIZING COOKIES & SESSION */
+/* INITIALIZING COOKIES & SESSION, BODYPARSER */
 app.use(cookieParser());
 
 app.use(session({
@@ -25,6 +25,9 @@ app.use(session({
 	saveUninitialized: true
 }));
 
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+
 /* CREATE HBS ENGINE */
 app.engine('hbs', exphbs({  
   extname: 'hbs',
@@ -32,9 +35,6 @@ app.engine('hbs', exphbs({
 layoutsDir: path.join(__dirname, '/views/layouts'),
 partialsDir: path.join(__dirname, '/views/partials')
 }));
-
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
 
 app.set('view engine', 'hbs');
 

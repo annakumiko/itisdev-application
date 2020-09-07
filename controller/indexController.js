@@ -22,6 +22,7 @@ const db = require('../models/db');
 const rendFunctions = {
 
 	getLogin: function(req, res, next) {
+		console.log("get login");
 		if (req.session.user){ 
 			res.redirect('/'); 
 		} else {
@@ -31,16 +32,23 @@ const rendFunctions = {
  	},
 
  	getHome: function(req, res, next) {
-		res.render('home', {
+		if (req.session.user) {
 
-		});
+			console.log("get home");
+			
+			res.render('home', { 
+				loggedIn: true
+			});
+		}
  	},
 
  	postLogin: async function(req, res, next) {
 		let { email, password } = req.body;
-		
+		console.log("BADUM user");
+
 		var user = await db.findOne(usersModel, {email: email});
-		
+
+		console.log("MATCH user");
 		// SEARCH USER IN DB
 		try {
 			if (!user) // USER NOT IN DB
@@ -48,6 +56,7 @@ const rendFunctions = {
 			else { // SUCCESS
 				bcrypt.compare(password, user.password, function(err, match) {
 					if (match){
+						console.log("hello user");
 						req.session.user = user;
 						res.send({status: 200});				
 					} else
@@ -57,11 +66,12 @@ const rendFunctions = {
 		} catch(e) { 
 			res.send({status: 500});
 		}
+		console.log("frick user");
 	},
 
  	postLogout: function(req, res, next) {
 		req.session.destroy();
-		res.redirect("/");
+		res.redirect("/login");
 	}
 
 }

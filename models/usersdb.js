@@ -7,7 +7,6 @@ var usersSchema = new mongoose.Schema({
 	lastName: String,
 	email: String,
 	password: String,
-	uStatus: String,
 	deactivated: Boolean
 }, {collection: "users"});
 
