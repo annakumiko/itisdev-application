@@ -1,3 +1,6 @@
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 /* DBs */
 const classesModel = require('../models/classesdb');
 const classlistsModel = require('../models/classlistsdb');
@@ -44,11 +47,9 @@ const rendFunctions = {
 
  	postLogin: async function(req, res, next) {
 		let { email, password } = req.body;
-		console.log("BADUM user");
 
 		var user = await db.findOne(usersModel, {email: email});
 
-		console.log("MATCH user");
 		// SEARCH USER IN DB
 		try {
 			if (!user) // USER NOT IN DB
@@ -56,7 +57,6 @@ const rendFunctions = {
 			else { // SUCCESS
 				bcrypt.compare(password, user.password, function(err, match) {
 					if (match){
-						console.log("hello user");
 						req.session.user = user;
 						res.send({status: 200});
 					} else
@@ -64,16 +64,30 @@ const rendFunctions = {
 				});
 			}		
 		} catch(e) {
-			res.send({status: 500});
+			console.log(e);
 		}
-		console.log("frick user");
 	},
 
  	postLogout: function(req, res, next) {
 		req.session.destroy();
 		res.redirect("/login");
-	}
+	},
 
+	postRegister: async function(req, res, next) {
+		console.log(req.body);
+		try {
+
+			let hash = await bcrypt.hash(req.body.password, saltRounds);
+			console.log(hash);
+			let insert = await db.insertOne(usersModel,
+				{userType: req.body.userType, firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, password: hash, deactivated: false});
+			console.log(insert);
+		} catch(e) {
+			console.log(e);
+		}
+
+		res.status(200).send('aaaaaaaaaaaaaaaaaa');
+	}
 }
 
 module.exports = rendFunctions;
