@@ -21,11 +21,11 @@ const usersModel = require('../models/usersdb');
 const verificationModel = require('../models/verificationdb');
 const db = require('../models/db');
 
+
 // main functions for getting and posting data
 const rendFunctions = {
 
 	getLogin: function(req, res, next) {
-		console.log("get login");
 		if (req.session.user){
 			res.redirect('/');
 		} else {
@@ -36,13 +36,42 @@ const rendFunctions = {
 
  	getHome: function(req, res, next) {
 		if (req.session.user) {
-
-			console.log("get home");
-
 			res.render('home', {
 				loggedIn: true
 			});
+		} else {
+			res.render('home', {
+				loggedIn: false
+			});
 		}
+ 	},
+
+ 	// search among users -> check usertype
+ 	getProfile: function(req, res, next) {
+ 		if (req.session.user) {
+ 			// SEARCH LOGGED IN USER
+ 			if (req.session.user.userType === "Trainer") {
+ 				res.render('trainer-profile', {
+	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
+	 				uType: req.session.userType
+	 			});
+	 		}
+ 			else {
+ 				res.render('trainee-profile', {
+	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
+	 				uType: req.session.userType
+	 			});
+ 			}
+ 		}	
+ 		else res.redirect('/');
+ 	},
+
+ 	getCreateClass: function(req, res, next) {
+ 		if (req.session.user) {
+ 			res.render('/create-class', {
+ 				//boom
+ 			});
+ 		}
  	},
 
  	postLogin: async function(req, res, next) {
@@ -68,15 +97,16 @@ const rendFunctions = {
 		}
 	},
 
- 	postLogout: function(req, res, next) {
+	// LOG OUT not working ????????????????????
+ 	postLogout: function(req, res) {
 		req.session.destroy();
 		res.redirect("/login");
 	},
 
+	// invisible register :p
 	postRegister: async function(req, res, next) {
-		console.log(req.body);
+	//	console.log(req.body);
 		try {
-
 			let hash = await bcrypt.hash(req.body.password, saltRounds);
 			console.log(hash);
 			let insert = await db.insertOne(usersModel,
@@ -85,8 +115,6 @@ const rendFunctions = {
 		} catch(e) {
 			console.log(e);
 		}
-
-		res.status(200).send('aaaaaaaaaaaaaaaaaa');
 	}
 }
 
