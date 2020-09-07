@@ -2,10 +2,10 @@ $(document).ready(function() {
 // LOG-IN VALIDATION
 	$('button#login-btn').click(function() {
 		var email = validator.trim($('#email').val());
-		var pass = validator.trim($('#password').val());
+		var password = validator.trim($('#password').val());
 		
 		var emailEmpty = validator.isEmpty(email);
-		var passEmpty = validator.isEmpty(pass);
+		var passEmpty = validator.isEmpty(password);
 		var emailFormat = validator.isEmail(email);
 		
 		// resets input form when log-in button is clicked
@@ -26,7 +26,7 @@ $(document).ready(function() {
 		// successful client-side validation: no empty fields and valid email
 		if (!emailEmpty && emailFormat && !passEmpty){
 			// passes data to the server
-			$.post('/login', {email: email, password: pass}, function(res) {
+			$.post('/login', {email: email, password: password}, function(res) {
 				switch (res.status){
 					case 200: {
 						window.location.href = '/';
@@ -40,8 +40,8 @@ $(document).ready(function() {
 						$('p#pwError').text('Server Error.');
 						break;
 					}
-				}	
-			});				
+				}
+			});
 		}
 	});
 });

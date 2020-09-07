@@ -13,7 +13,10 @@ require('dotenv').config();
 /* EXPRESS APPLICATION */
 const app = express();
 const port = process.env.port||9000;
-  
+ 
+/* CONNECT DB */ 
+const db = require('./models/db');
+db.connect();
 
 /* INITIALIZING COOKIES & SESSION, BODYPARSER */
 app.use(cookieParser());

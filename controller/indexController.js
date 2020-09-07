@@ -23,10 +23,10 @@ const rendFunctions = {
 
 	getLogin: function(req, res, next) {
 		console.log("get login");
-		if (req.session.user){ 
-			res.redirect('/'); 
+		if (req.session.user){
+			res.redirect('/');
 		} else {
-			res.render('login', { 
+			res.render('login', {
 			});
 		}
  	},
@@ -35,8 +35,8 @@ const rendFunctions = {
 		if (req.session.user) {
 
 			console.log("get home");
-			
-			res.render('home', { 
+
+			res.render('home', {
 				loggedIn: true
 			});
 		}
@@ -58,12 +58,12 @@ const rendFunctions = {
 					if (match){
 						console.log("hello user");
 						req.session.user = user;
-						res.send({status: 200});				
+						res.send({status: 200});
 					} else
 						res.send({status: 401});
 				});
 			}		
-		} catch(e) { 
+		} catch(e) {
 			res.send({status: 500});
 		}
 		console.log("frick user");
