@@ -151,7 +151,16 @@ const rendFunctions = {
 		} catch(e) {
 			console.log(e);
 		}
-	}
+	},
+
+	getClientsList: function(req, res, next) {
+		if (req.session.user){
+			res.redirect('/');
+		} else {
+			res.render('clientlist', {
+			});
+		}
+	 },
 }
 
 module.exports = rendFunctions;
