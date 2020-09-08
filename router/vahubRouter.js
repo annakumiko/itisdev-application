@@ -10,6 +10,8 @@ router.get('/trainee-profile', controller.getProfile);
 router.get('/create-class', controller.getCreateClass);
 
 router.get('/verify', controller.getVerifyAccount);
+//router.get('/clients', controller.getClientsList);
+//router.get('/contact-clients', controller.getContactClient);
 
 /*POST functions*/
 router.post('/logout', controller.postLogout);
@@ -17,5 +19,7 @@ router.post('/login', controller.postLogin);
 router.post('/register', controller.postRegister);
 
 router.post('/verify', controller.postVerifyAccount);
+//router.get('/manage-clients', controller.postManageClients);
+//router.get('/contact-clients', controller.getContactClient);
 
 module.exports = router;
