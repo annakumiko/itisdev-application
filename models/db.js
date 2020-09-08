@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const url = 'mongodb+srv://${process.env.DB_UNAME}:${process.env.DB_PASS}@va-cluster.53tbr.mongodb.net/vadb?retryWrites=true&w=majority';
+const url = 'mongodb://KIMKAY:K4C6TZFlm8zhBOSi@va-cluster-shard-00-00.53tbr.mongodb.net:27017,va-cluster-shard-00-01.53tbr.mongodb.net:27017,va-cluster-shard-00-02.53tbr.mongodb.net:27017/thevahub?authSource=admin&replicaSet=atlas-wfdg1t-shard-0&w=majority&readPreference=primary&appname=MongoDB%20Compass&retryWrites=true&ssl=true';
 const options = {
 	useUnifiedTopology: true,
 	useNewUrlParser: true

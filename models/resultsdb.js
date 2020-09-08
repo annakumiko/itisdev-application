@@ -6,4 +6,4 @@ var resultsSchema = new mongoose.Schema({
 	quizScore: Number
 }, {collection: "results"});
 
-module.export = mongoose.model("results", resultsSchema);
+module.exports = mongoose.model("results", resultsSchema);

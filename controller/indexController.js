@@ -1,6 +1,9 @@
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 /* DBs */
 const classesModel = require('../models/classesdb');
-const classlitsModel = require('../models/classlistsdb');
+const classlistsModel = require('../models/classlistsdb');
 const clientlistsModel = require('../models/clientlistsdb');
 const clientsModel = require('../models/clientsdb');
 const coursesModel = require('../models/coursesdb');
@@ -16,49 +19,103 @@ const traineesModel = require('../models/traineesdb');
 const trainersModel = require('../models/trainersdb');
 const usersModel = require('../models/usersdb');
 const verificationModel = require('../models/verificationdb');
+const db = require('../models/db');
+
 
 // main functions for getting and posting data
 const rendFunctions = {
 
 	getLogin: function(req, res, next) {
-		var {email, password} = req.body;
-
-		if (req.session.user){ 
-			res.redirect('/'); 
+		if (req.session.user){
+			res.redirect('/');
 		} else {
-			res.render('login', { 
+			res.render('login', {
 			});
 		}
  	},
 
+ 	getHome: function(req, res, next) {
+		if (req.session.user) {
+			res.render('home', {
+				loggedIn: true
+			});
+		} else {
+			res.render('home', {
+				loggedIn: false
+			});
+		}
+ 	},
+
+ 	// search among users -> check usertype
+ 	getProfile: function(req, res, next) {
+ 		if (req.session.user) {
+ 			// SEARCH LOGGED IN USER
+ 			if (req.session.user.userType === "Trainer") {
+ 				res.render('trainer-profile', {
+	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
+	 				uType: req.session.userType
+	 			});
+	 		}
+ 			else {
+ 				res.render('trainee-profile', {
+	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
+	 				uType: req.session.userType
+	 			});
+ 			}
+ 		}	
+ 		else res.redirect('/');
+ 	},
+
+ 	getCreateClass: function(req, res, next) {
+ 		if (req.session.user) {
+ 			res.render('/create-class', {
+ 				//boom
+ 			});
+ 		}
+ 	},
+
  	postLogin: async function(req, res, next) {
 		let { email, password } = req.body;
-		
-		var trainee = await traineesModel.findOne({email: email});
-		
-		// searches for user in db
+
+		var user = await db.findOne(usersModel, {email: email});
+
+		// SEARCH USER IN DB
 		try {
-			if (!trainee) // 2. No users match with email-pass input
+			if (!user) // USER NOT IN DB
 				res.send({status: 401});
-			else { // log-in success
-				bcrypt.compare(password, trainee.password, function(err, match) {
+			else { // SUCCESS
+				bcrypt.compare(password, user.password, function(err, match) {
 					if (match){
-						req.session.user = trainee;
-						res.send({status: 200});				
+						req.session.user = user;
+						res.send({status: 200});
 					} else
 						res.send({status: 401});
 				});
 			}		
-		} catch(e) { // 1. Server error
-			res.send({status: 500});
+		} catch(e) {
+			console.log(e);
 		}
 	},
 
- 	postLogout: function(req, res, next) {
+	// LOG OUT not working ????????????????????
+ 	postLogout: function(req, res) {
 		req.session.destroy();
-		res.redirect("/");
-	}
+		res.redirect("/login");
+	},
 
+	// invisible register :p
+	postRegister: async function(req, res, next) {
+	//	console.log(req.body);
+		try {
+			let hash = await bcrypt.hash(req.body.password, saltRounds);
+			console.log(hash);
+			let insert = await db.insertOne(usersModel,
+				{userType: req.body.userType, firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, password: hash, deactivated: false});
+			console.log(insert);
+		} catch(e) {
+			console.log(e);
+		}
+	}
 }
 
-// module.exports = rendFunctions;
+module.exports = rendFunctions;

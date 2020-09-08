@@ -11,4 +11,4 @@ var classesSchema = new mongoose.Schema({
 	endTime: Date
 }, {collection: "classes"});
 
-module.export = mongoose.model("classes", classesSchema);
+module.exports = mongoose.model("classes", classesSchema);

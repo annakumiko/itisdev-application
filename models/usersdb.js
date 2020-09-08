@@ -7,8 +7,7 @@ var usersSchema = new mongoose.Schema({
 	lastName: String,
 	userEmail: String,
 	password: String,
-	// uStatus: String,
 	deactivated: Boolean
 }, {collection: "users"});
 
-module.export = mongoose.model("users", usersSchema);
+module.exports = mongoose.model("users", usersSchema);

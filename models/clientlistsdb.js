@@ -5,4 +5,4 @@ var clientlistsSchema = new mongoose.Schema({
 	clientID: String
 }, {collection: "clientlists"});
 
-module.export = mongoose.model("clientlists", clientlistsSchema);
+module.exports = mongoose.model("clientlists", clientlistsSchema);
