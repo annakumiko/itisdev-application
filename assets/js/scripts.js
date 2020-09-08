@@ -44,4 +44,27 @@ $(document).ready(function() {
 			});
 		}
 	});
+
+	// VERIFICATION
+	$('button#verifyBTN').click(function() {
+		var email = validator.trim($('#email').val());
+		var code = validator.trim($('#code').val());
+				
+		if((validator.isEmpty(email)) && (validator.isEmpty(code))){
+			console.log("pls don't be empty !!") // ERASE WHEN DONE
+		}
+
+		else{
+			$.post('/verify', {email: email, verifyCode: code}, function(res) {
+				switch (res.status){
+					case 200: {
+						window.location.href = '/'; // UMUWI KA BACK HOME
+						break;
+					} 
+					// PUT MORE ERRORS HERE
+				}	
+			});				
+		}
+		
+	});
 });

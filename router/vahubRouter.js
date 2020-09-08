@@ -9,9 +9,13 @@ router.get('/trainer-profile', controller.getProfile);
 router.get('/trainee-profile', controller.getProfile);
 router.get('/create-class', controller.getCreateClass);
 
+router.get('/verify', controller.getVerifyAccount);
+
 /*POST functions*/
 router.post('/logout', controller.postLogout);
 router.post('/login', controller.postLogin);
 router.post('/register', controller.postRegister);
+
+router.post('/verify', controller.postVerifyAccount);
 
 module.exports = router;

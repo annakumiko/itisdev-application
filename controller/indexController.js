@@ -32,7 +32,43 @@ const rendFunctions = {
 			res.render('login', {
 			});
 		}
- 	},
+	 },
+	 
+	getVerifyAccount: function(req, res, next) {
+		if (req.session.user){
+			res.redirect('/');
+		} else {
+			res.render('verification', {
+			});
+		}
+	 },
+	 
+	postVerifyAccount: async function(req, res, next) {
+		let { email, code } = req.body;
+		var user = await db.findOne(verificationModel, {email : email});
+
+		try {
+			if (!user) {
+				res.send({status: 401}); 
+				console.log("bruh where u") // NO SUCH USER FOUND !!!
+			}
+
+			else { 
+				bcrypt.compare(code, user.verifyCode, function(err, match) {
+					if (match){
+						req.session.user = user;
+						res.send({status: 200}); // IT GUD
+					}
+					
+					else{
+						res.send({status: 401}); //OHNO
+					}
+				});
+			}		
+		} catch(e) {
+			console.log(e);
+		}
+	},
 
  	getHome: function(req, res, next) {
 		if (req.session.user) {
