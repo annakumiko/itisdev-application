@@ -48,17 +48,17 @@ $(document).ready(function() {
 	// VERIFICATION
 	$('button#verifyBTN').click(function() {
 		var email = validator.trim($('#email').val());
-		var code = validator.trim($('#code').val());
+		var verifyCode = validator.trim($('#code').val());
 				
-		if((validator.isEmpty(email)) && (validator.isEmpty(code))){
-			console.log("pls don't be empty !!") // ERASE WHEN DONE
+		if((validator.isEmpty(email)) || (validator.isEmpty(verifyCode))){
+			console.log("pls don't be empty !!") 
 		}
 
 		else{
-			$.post('/verify', {email: email, verifyCode: code}, function(res) {
+			$.post('/verication', {email: email, verifyCode: verifyCode}, function(res) {
 				switch (res.status){
 					case 200: {
-						window.location.href = '/'; // UMUWI KA BACK HOME
+						window.location.href = '/login';
 						break;
 					} 
 					// PUT MORE ERRORS HERE

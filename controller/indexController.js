@@ -42,35 +42,31 @@ const rendFunctions = {
 			});
 		}
 	 },
-	 
+
 	postVerifyAccount: async function(req, res, next) {
-		let { email, code } = req.body;
-		var user = await db.findOne(verificationModel, {email : email});
+		let { email, verifyCode } = req.body;
+		var vcode = await db.findOne(verificationModel, {verifyCode: verifyCode});
 
 		try {
-			if (!user) {
-				res.send({status: 401}); 
-				console.log("bruh where u") // NO SUCH USER FOUND !!!
+			if (!vcode) {  
+				res.send({status: 401});
+				console.log("bruh u liar") // NO SUCH CODE FOUND !!!
 			}
 
-			else { 
-				bcrypt.compare(code, user.verifyCode, function(err, match) {
+			else {
+				bcrypt.compare(email, vcode.email, function(err, match) {
 					if (match){
-						req.session.user = user;
-						res.send({status: 200}); // IT GUD
-					}
-					
-					else{
-						res.send({status: 401}); //OHNO
-					}
+						res.send({status: 200});
+					} else
+						res.send({status: 401});
 				});
 			}		
 		} catch(e) {
 			console.log(e);
 		}
-	},
-
- 	getHome: function(req, res, next) {
+	}, 
+	
+	getHome: function(req, res, next) {
 		if (req.session.user) {
 			res.render('home', {
 				loggedIn: true

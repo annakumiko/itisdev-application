@@ -9,7 +9,7 @@ router.get('/trainer-profile', controller.getProfile);
 router.get('/trainee-profile', controller.getProfile);
 router.get('/create-class', controller.getCreateClass);
 
-router.get('/verify', controller.getVerifyAccount);
+router.get('/verification', controller.getVerifyAccount);
 router.get('/clients', controller.getClientsList);
 //router.get('/contact-clients', controller.getContactClient);
 
@@ -18,7 +18,7 @@ router.post('/logout', controller.postLogout);
 router.post('/login', controller.postLogin);
 router.post('/register', controller.postRegister);
 
-router.post('/verify', controller.postVerifyAccount);
+router.post('/verification', controller.postVerifyAccount);
 //router.get('/manage-clients', controller.postManageClients);
 //router.get('/contact-clients', controller.getContactClient);
 
