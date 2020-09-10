@@ -41,12 +41,14 @@ const rendFunctions = {
 
 	postVerification: async function(req, res, next) {
 		let { email, verifyCode } = req.body;
+	
 		var verification = await db.findOne(verificationModel, {verifyCode: verifyCode});
 		// var user = await db.findOne(verificationModel, {email: email});
 
 		try {
-			if (!user) res.send({status: 401}) //walang user
-
+			if (!user) {
+				res.send({status: 401}) //walang user
+			}
 			else {
 				bcrypt.compare(email, verification.email, function(err, match) {
 					if (match) res.send({status: 200});
