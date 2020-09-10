@@ -48,14 +48,13 @@ $(document).ready(function() {
 	// VERIFICATION
 	$('button#verifyBTN').click(function() {
 		var email = validator.trim($('#email').val());
-		var verifyCode = validator.trim($('#code').val());
+		var verifyCode = validator.trim($('#verifyCode').val());
 				
 		if((validator.isEmpty(email)) || (validator.isEmpty(verifyCode))){
 			console.log("pls don't be empty !!") 
 		}
-
 		else{
-			$.post('/verication', {email: email, verifyCode: verifyCode}, function(res) {
+			$.post('/verification', {email: email, verifyCode: verifyCode}, function(res) {
 				switch (res.status){
 					case 200: {
 						window.location.href = '/login';

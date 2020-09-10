@@ -52,10 +52,11 @@ const rendFunctions = {
 				res.send({status: 401});
 				console.log("bruh u liar") // NO SUCH CODE FOUND !!!
 			}
-
 			else {
 				bcrypt.compare(email, vcode.email, function(err, match) {
-					if (match){
+					if (match) {
+						// console.log("hello");
+						req.session.user = user;
 						res.send({status: 200});
 					} else
 						res.send({status: 401});
@@ -99,10 +100,39 @@ const rendFunctions = {
  		if (req.session.user) {
  			// SEARCH LOGGED IN USER
  			if (req.session.user.userType === "Trainer") {
- 				res.render('trainer-profile', {
-	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
-	 				uType: req.session.user.userType
-	 			});
+ 				/*
+ 					LOGIC T___T
+ 					-- find userID from classlists -
+ 					-- "get" all its classes (classID) - 
+ 					-- get the class details of the classes
+ 					-- boom
+ 				*/
+ 				classlistsModel.find({}).then(function() {
+ 	 					classlistsModel.countDocuments({}, function( err, count){ // counts num of classes
+					    console.log( "Number of classes:", count );
+					    var classcount = count;
+					    var classIDs = ["boop"];
+
+					    for(i = 0; i < classcount; i++) { // puts all classIDs that is handled by logged in trainer into an array
+					    	if(classlistsModel.trainerID === req.session.user.userID) {
+					    		//classIDs[i].push(classlistsModel.classID);
+					    		{$push: {classIDs: "hey"}};
+					    		//{$push: {classIDs: classlistsModel.classID}};
+					    		console.log(classIDs); // print laman ng array
+					    	}
+					    }
+
+					    // matches id
+					    var cList = JSON.parse(JSON.stringify(classIDs));
+					    let details = cList.map((item, i) => Object.assign({}, item, cList[i].classID));
+
+					    res.render('trainer-profile', {
+			 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
+			 				uType: req.session.user.userType,
+			 				classDet: details
+			 			});
+					});
+ 				});
 	 		}
  			else {
  				res.render('trainee-profile', {
@@ -145,13 +175,12 @@ const rendFunctions = {
 		}
 	},
 
-	// LOG OUT not working ????????????????????
  	postLogout: function(req, res) {
 		req.session.destroy();
 		res.redirect("/login");
 	},
 
-	// invisible register :p
+	// for encrypting
 	postRegister: async function(req, res, next) {
 	//	console.log(req.body);
 		try {
