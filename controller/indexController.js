@@ -34,26 +34,23 @@ const rendFunctions = {
 		}
 	 },
 	 
-	getVerifyAccount: function(req, res, next) {
-		if (req.session.user){
-			res.redirect('/');
-		} else {
-			res.render('verification', {
+	getVerification: function(req, res, next) {
+		res.render('verification', {
 			});
-		}
 	 },
 
-	postVerifyAccount: async function(req, res, next) {
+	postVerification: async function(req, res, next) {
 		let { email, verifyCode } = req.body;
-		var vcode = await db.findOne(verificationModel, {verifyCode: verifyCode});
-		var user = await db.findOne(verificationModel, {email: email});
+		var verification = await db.findOne(verificationModel, {verifyCode: verifyCode});
+		// var user = await db.findOne(verificationModel, {email: email});
 
 		try {
-			if (!user || !vcode) res.send({status: 401}) //walang user
+			if (!user) res.send({status: 401}) //walang user
 
 			else {
-				bcrypt.compare(verifyCode, user.verifyCode, function(err, match) {
+				bcrypt.compare(email, verification.email, function(err, match) {
 					if (match) res.send({status: 200});
+					else res.send({status: 500});
 					});
 				}
 		} catch(e) {

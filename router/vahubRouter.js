@@ -18,7 +18,7 @@ router.get('/create-class', controller.getCreateClass);
 // router.get('/quizlist', controller.getQuizList);
 
 //trainee
-router.get('/verification', controller.getVerifyAccount);
+router.get('/verification', controller.getVerification);
 //router.get('/trainer-dashboard', controller.getDashboard);
 router.get('/clientslist', controller.getClientsList);
 //router.get('/contact-clients', controller.getContactClient);
@@ -36,7 +36,7 @@ router.post('/register', controller.postRegister);
 // router.post('/quizlist', controller.postQuizList);
 
 //trainee
-router.post('/verification', controller.postVerifyAccount);
+router.post('/verification', controller.postVerification);
 //router.post('/trainer-dashboard', controller.postDashboard);
 //router.post('/contact-clientslist', controller.postContactClient);
 

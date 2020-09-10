@@ -48,35 +48,27 @@ $(document).ready(function() {
 	// VERIFICATION
 	$('button#verifyBTN').click(function() {
 		var email = validator.trim($('#email').val());
-		var code = validator.trim($('#code').val());
+		var verifyCode = validator.trim($('#code').val());
 		
 		var emailEmpty = validator.isEmpty(email);
-		var codeEmpty = validator.isEmpty(code);
+		var codeEmpty = validator.isEmpty(verifyCode);
 		var emailFormat = validator.isEmail(email);
 		
 		// resets input form when log-in button is clicked
 		$('p#emailError').text('');
 		$('p#codeError').text('');
 		
-		if (emailEmpty){
-			$('p#emailError').text('Please enter your email.');
-		}
-		else if (!emailFormat){
-			$('p#emailError').text('Invalid email format.');
-		}
+		if (emailEmpty) $('p#emailError').text('Please enter your email.');
 		
-		if (codeEmpty){
-			$('p#codeError').text('Please enter verification code.');
-		}
-		
-		// successful client-side validation: no empty fields and valid email
-		if (!emailEmpty && emailFormat && !codeEmpty){
-			// passes data to the server
-			$.post('/verification', {verifyCode: code}, function(res) {
+		else if (!emailFormat) $('p#emailError').text('Invalid email format.');
+				
+		if (codeEmpty) $('p#codeError').text('Please enter verification code.');
+				
+		if ((!emailEmpty && emailFormat) && !codeEmpty){
+			$.post('/login', {verifyCode: verifyCode}, function(res) {
 				switch (res.status){
 					case 200: {
-						// window.location.href = '/login';
-						$('p#codeError').text('yes');
+						window.location.href = '/login';
 						break;
 					}
 					case 401: {
