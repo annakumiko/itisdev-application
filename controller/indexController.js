@@ -111,9 +111,9 @@ const rendFunctions = {
  	 					classlistsModel.countDocuments({}, function( err, count){ // counts num of classes
 					    console.log( "Number of classes:", count );
 					    var classcount = count;
-					    var classIDs = ["boop"];
+					    var classIDs = [];
 
-					    for(i = 0; i < classcount; i++) { // puts all classIDs that is handled by logged in trainer into an array
+					    for(i = 0; i < classcount-1; i++) { // puts all classIDs that is handled by logged in trainer into an array
 					    	if(classlistsModel.trainerID === req.session.user.userID) {
 					    		//classIDs[i].push(classlistsModel.classID);
 					    		{$push: {classIDs: "hey"}};
@@ -124,12 +124,12 @@ const rendFunctions = {
 
 					    // matches id
 					    var cList = JSON.parse(JSON.stringify(classIDs));
-					    let details = cList.map((item, i) => Object.assign({}, item, cList[i].classID));
+					    // let details = cList.map((item, i) => Object.assign({}, item, cList[i].classID));
 
 					    res.render('trainer-profile', {
 			 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
 			 				uType: req.session.user.userType,
-			 				classDet: details
+			 				// classDet: details
 			 			});
 					});
  				});
