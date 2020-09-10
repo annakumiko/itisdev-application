@@ -48,23 +48,47 @@ $(document).ready(function() {
 	// VERIFICATION
 	$('button#verifyBTN').click(function() {
 		var email = validator.trim($('#email').val());
-		var verifyCode = validator.trim($('#code').val());
-				
-		if((validator.isEmpty(email)) || (validator.isEmpty(verifyCode))){
-			console.log("pls don't be empty !!") 
+		var code = validator.trim($('#code').val());
+		
+		var emailEmpty = validator.isEmpty(email);
+		var codeEmpty = validator.isEmpty(code);
+		var emailFormat = validator.isEmail(email);
+		
+		// resets input form when log-in button is clicked
+		$('p#emailError').text('');
+		$('p#codeError').text('');
+		
+		if (emailEmpty){
+			$('p#emailError').text('Please enter your email.');
 		}
-
-		else{
-			$.post('/verication', {email: email, verifyCode: verifyCode}, function(res) {
-				switch (res.status){
-					case 200: {
-						window.location.href = '/login';
-						break;
-					} 
-					// PUT MORE ERRORS HERE
-				}	
-			});				
+		else if (!emailFormat){
+			$('p#emailError').text('Invalid email format.');
 		}
 		
+		if (codeEmpty){
+			$('p#codeError').text('Please enter verification code.');
+		}
+		
+		// successful client-side validation: no empty fields and valid email
+		if (!emailEmpty && emailFormat && !codeEmpty){
+			// passes data to the server
+			$.post('/verification', {verifyCode: code}, function(res) {
+				switch (res.status){
+					case 200: {
+						// window.location.href = '/login';
+						$('p#codeError').text('yes');
+						break;
+					}
+					case 401: {
+						$('p#codeError').text('Incorrect Email and/or code.');
+						break;								
+					}
+					case 500: {
+						$('p#codeError').text('Server Error.');
+						break;
+					}
+				}
+			});
+		}
 	});
 });
