@@ -116,8 +116,10 @@ const rendFunctions = {
 					    for(i = 0; i < classcount-1; i++) { // puts all classIDs that is handled by logged in trainer into an array
 					    	if(classlistsModel.trainerID === req.session.user.userID) {
 					    		//classIDs[i].push(classlistsModel.classID);
-					    		{$push: {classIDs: "hey"}};
-					    		//{$push: {classIDs: classlistsModel.classID}};
+					    		// {$push: {classIDs: "hey"}};
+									//{$push: {classIDs: classlistsModel.classID}};
+									var classdump = classlistsModel.classID;
+									classIDs.push(classdump);
 					    		console.log(classIDs); // print laman ng array
 					    	}
 					    }
