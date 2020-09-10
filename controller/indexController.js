@@ -88,7 +88,7 @@ const rendFunctions = {
 				});
 			}
 		} else {
-			res.render('home', {
+			res.render('login', {
 				loggedIn: false
 			});
 		}
@@ -101,13 +101,13 @@ const rendFunctions = {
  			if (req.session.user.userType === "Trainer") {
  				res.render('trainer-profile', {
 	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
-	 				uType: req.session.userType
+	 				uType: req.session.user.userType
 	 			});
 	 		}
  			else {
  				res.render('trainee-profile', {
 	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
-	 				uType: req.session.userType
+	 				uType: req.session.user.userType
 	 			});
  			}
  		}	
