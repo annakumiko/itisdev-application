@@ -15,7 +15,7 @@ router.get('/create-class', controller.getCreateClass);
 
 //trainer
 //router.get('/trainer-dashboard', controller.getDashboard);
-router.get('/quizlist', controller.getQuizList);
+// router.get('/quizlist', controller.getQuizList);
 
 //trainee
 router.get('/verification', controller.getVerifyAccount);

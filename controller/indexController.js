@@ -68,9 +68,25 @@ const rendFunctions = {
 	
 	getHome: function(req, res, next) {
 		if (req.session.user) {
-			res.render('home', {
-				loggedIn: true
-			});
+			if (req.session.user.userType == "Trainer"){
+				res.render('home', {
+					loggedIn: true,
+					trainer: true,
+				});
+			}
+			else if (req.session.user.userType == "Trainee"){
+				res.render('home', {
+					loggedIn: true,
+					trainee: true,
+				});
+			}
+			else {
+				res.render('home', {
+					loggedIn: true,
+					trainee: false,
+					trainer: false,
+				});
+			}
 		} else {
 			res.render('home', {
 				loggedIn: false

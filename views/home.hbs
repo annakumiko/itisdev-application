@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 
-{{#if loggedIn}}
-    {{> sidebar}}
+{{#if trainer}}
+  {{>sidebar-trainer}}
+{{else if trainee}}
+  {{>sidebar-trainee}}
+{{else}}
+    {{>sidebar-admin}}
 {{/if}}
+
     <div class="register-photo" style="background: url(assets/img/homebg.jpg) top / cover no-repeat;min-width: 1200px;min-height:850px;"></div>
 
 

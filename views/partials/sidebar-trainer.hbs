@@ -11,13 +11,6 @@
 			</li>
 			<br><br> <br> <br><br>
 			<li class="nav-item">
-				<a href="/trainer-dashboard" class = "nav-link">
-					<img src = "assets\img\class.png" id="nav-icon"> </img> 
-					<span class ="link-text">Dashboard</span> {{!-- not sure how --}}
-				</a>
-			</li>
-			<br>
-			<li class="nav-item">
 				<a href="/trainer-profile" class = "nav-link">
 					<img src = "assets\img\profile.png" id = "nav-icon"> </img>
 					<span class ="link-text" >Profile</span>
@@ -25,9 +18,9 @@
 			</li>
 			<br>
 			<li class="nav-item">
-				<a href="/create-class" class = "nav-link">
-					<img src = "assets\img\quiz.png" id="nav-icon"> </img>
-					<span class ="link-text">Create Class</span>
+				<a href="/dashboard" class = "nav-link">
+					<img src = "assets\img\class.png" id="nav-icon"> </img> 
+					<span class ="link-text">Dashboard</span> {{!-- not sure how --}}
 				</a>
 			</li>
 			<br>
@@ -37,14 +30,20 @@
 					<span class ="link-text">Quizzes</span> {{!-- dito rin create quiz --}}
 				</a>
 			</li>
-			{{!-- <br>
+			<br>
 			<li class="nav-item">
 				<a href="/scoresheet" class = "nav-link">
 					<img src = "assets\img\quiz.png" id="nav-icon"> </img>
-					<span class ="link-text">Scoresheet</span> 
+					<span class ="link-text">Update Scoresheet</span> 
 				</a>
-			</li> --}}
+			</li>
 			<br>
+			<li class="nav-item">
+				<a href="/reports" class = "nav-link">
+					<img src = "assets\img\quiz.png" id="nav-icon"> </img>
+					<span class ="link-text">Reports</span>
+				</a>
+			</li>
 			<li class="nav-item" id="lg">
 				<form method="POST" action="/logout">
                       <input type="hidden" name="name" value="value" /> 
