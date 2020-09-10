@@ -1,8 +1,16 @@
 #nav-icon {
   height: 30px;
   width: 30px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: 5px;
+  /* margin-right: auto; */
+}
+
+#nav-icon2 {
+  height: 40px;
+  width: 40px;
+  margin-top: 25px;
+  /* margin-left: 5px; */
+  /* margin-right: auto; */
 }
 
 .navbarr {
@@ -48,8 +56,8 @@
 
 .link-text {
   display: none;
-  margin-left: 55px;
-  margin-top: -28px;
+  margin-left: 20px;
+  /* margin-top: -28px; */
   color: white;
   font-size: 20px;
 }
@@ -58,18 +66,27 @@
   width: 225px;
 }
 
+/* .navbarr:hover #nav-icon2 {
+  display: none;
+} */
+
 .navbarr:hover .link-text {
   display: block;
 }
 
 .logo-text {
   display: none;
-  margin-top:15px;
-  text-align: center;
+  margin-top: 25px;
+  margin-left: 10px;
   color: white;
   font-size: 25px;
 }
 
 .navbarr:hover .logo-text {
   display: block;
+}
+
+#lg {
+  position: absolute;
+  bottom: 25px;
 }
