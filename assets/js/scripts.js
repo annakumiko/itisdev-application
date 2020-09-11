@@ -54,7 +54,6 @@ $(document).ready(function() {
 		var codeEmpty = validator.isEmpty(verifyCode);
 		var emailFormat = validator.isEmail(email);
 		
-		// resets input form when log-in button is clicked
 		$('p#emailError').text('');
 		$('p#codeError').text('');
 		
@@ -65,7 +64,7 @@ $(document).ready(function() {
 		if (codeEmpty) $('p#codeError').text('Please enter verification code.');
 				
 		if ((!emailEmpty && emailFormat) && !codeEmpty){
-			$.post('/login', {verifyCode: verifyCode}, function(res) {
+			$.post('/verification', {email: email, verifyCode: verifyCode}, function(res) {
 				switch (res.status){
 					case 200: {
 						window.location.href = '/login';

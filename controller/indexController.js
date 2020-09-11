@@ -35,26 +35,25 @@ const rendFunctions = {
 	 },
 	 
 	getVerification: function(req, res, next) {
+		// if user not verified..
 		res.render('verification', {
 			});
-	 },
+	},
 
-	postVerification: async function(req, res, next) {
+	postVerification: async function(req, res, next) { // nde pumamasok d2 wat
 		let { email, verifyCode } = req.body;
-	
-		var verification = await db.findOne(verificationModel, {verifyCode: verifyCode});
-		// var user = await db.findOne(verificationModel, {email: email});
+		var vCode = await db.findOne(verificationModel, {verifyCode: verifyCode});
 
 		try {
-			if (!user) {
-				res.send({status: 401}) //walang user
+			if (!vCode) { 
+				res.send({status: 401}) 
 			}
 			else {
-				bcrypt.compare(email, verification.email, function(err, match) {
-					if (match) res.send({status: 200});
-					else res.send({status: 500});
-					});
-				}
+				if (email === vCode.email) 
+					res.send({status: 200});
+				else 
+					res.send({status: 500});
+			}
 		} catch(e) {
 			console.log(e);
 		}
@@ -148,6 +147,7 @@ const rendFunctions = {
 	// invisible register :p
 	postRegister: async function(req, res, next) {
 	//	console.log(req.body);
+		// users
 		try {
 			let hash = await bcrypt.hash(req.body.password, saltRounds);
 			console.log(hash);
@@ -157,6 +157,7 @@ const rendFunctions = {
 		} catch(e) {
 			console.log(e);
 		}
+		// verification test...
 	},
 
 	getClientsList: function(req, res, next) {
