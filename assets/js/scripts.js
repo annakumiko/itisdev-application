@@ -54,16 +54,41 @@ $(document).ready(function() {
 			console.log("pls don't be empty !!") 
 		}
 		else{
+
+		var verifyCode = validator.trim($('#code').val());
+		
+		var emailEmpty = validator.isEmpty(email);
+		var codeEmpty = validator.isEmpty(verifyCode);
+		var emailFormat = validator.isEmail(email);
+		
+		$('p#emailError').text('');
+		$('p#codeError').text('');
+		
+		if (emailEmpty) $('p#emailError').text('Please enter your email.');
+		
+		else if (!emailFormat) $('p#emailError').text('Invalid email format.');
+				
+		if (codeEmpty) $('p#codeError').text('Please enter verification code.');
+				
+		if ((!emailEmpty && emailFormat) && !codeEmpty){
+
 			$.post('/verification', {email: email, verifyCode: verifyCode}, function(res) {
 				switch (res.status){
 					case 200: {
 						window.location.href = '/login';
 						break;
-					} 
-					// PUT MORE ERRORS HERE
-				}	
-			});				
+					}
+					case 401: {
+						$('p#codeError').text('Incorrect Email and/or code.');
+						break;								
+					}
+					case 500: {
+						$('p#codeError').text('Server Error.');
+						break;
+					}
+				}
+			});
 		}
-		
+		}
 	});
 });

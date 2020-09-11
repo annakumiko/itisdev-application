@@ -34,23 +34,19 @@ const rendFunctions = {
 		}
 	 },
 	 
-	getVerifyAccount: function(req, res, next) {
-		if (req.session.user){
-			res.redirect('/');
-		} else {
-			res.render('verification', {
+	getVerification: function(req, res, next) {
+		// if user not verified..
+		res.render('verification', {
 			});
-		}
-	 },
+	},
 
-	postVerifyAccount: async function(req, res, next) {
+	postVerification: async function(req, res, next) { // nde pumamasok d2 wat
 		let { email, verifyCode } = req.body;
-		var vcode = await db.findOne(verificationModel, {verifyCode: verifyCode});
+		var vCode = await db.findOne(verificationModel, {verifyCode: verifyCode});
 
 		try {
-			if (!vcode) {  
-				res.send({status: 401});
-				console.log("bruh u liar") // NO SUCH CODE FOUND !!!
+			if (!vCode) { 
+				res.send({status: 401}) 
 			}
 			else {
 				bcrypt.compare(email, vcode.email, function(err, match) {
@@ -62,6 +58,11 @@ const rendFunctions = {
 						res.send({status: 401});
 				});
 			}		
+				if (email === vCode.email) 
+					res.send({status: 200});
+				else 
+					res.send({status: 500});
+			}
 		} catch(e) {
 			console.log(e);
 		}
@@ -185,6 +186,7 @@ const rendFunctions = {
 	// for encrypting
 	postRegister: async function(req, res, next) {
 	//	console.log(req.body);
+		// users
 		try {
 			let hash = await bcrypt.hash(req.body.password, saltRounds);
 			console.log(hash);
@@ -194,6 +196,7 @@ const rendFunctions = {
 		} catch(e) {
 			console.log(e);
 		}
+		// verification test...
 	},
 
 	getClientsList: function(req, res, next) {
@@ -203,7 +206,7 @@ const rendFunctions = {
 			res.render('clientlist', {
 			});
 		}
-	 },
-}
+	 }
+};
 
 module.exports = rendFunctions;
