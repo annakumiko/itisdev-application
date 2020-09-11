@@ -62,7 +62,6 @@ const rendFunctions = {
 					res.send({status: 200});
 				else 
 					res.send({status: 500});
-			}
 		} catch(e) {
 			console.log(e);
 		}
@@ -144,15 +143,28 @@ const rendFunctions = {
 	 			});
  			}
  		}	
- 		else res.redirect('/');
+ 		else res.redirect('login');
+ 	},
+
+ 	getDashboard: function(req, res, next) {
+ 		if (req.session.user) {
+ 			res.render('dashboard', {
+ 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
+	 			uType: req.session.user.userType
+
+	 			// class details 
+ 			});
+ 		}
+ 		else res.redirect('login');
  	},
 
  	getCreateClass: function(req, res, next) {
  		if (req.session.user) {
- 			res.render('/create-class', {
+ 			res.render('create-class', {
  				//boom
  			});
  		}
+ 		else res.redirect('login');
  	},
 
  	postLogin: async function(req, res, next) {
@@ -180,7 +192,7 @@ const rendFunctions = {
 
  	postLogout: function(req, res) {
 		req.session.destroy();
-		res.redirect("/login");
+		res.redirect("login");
 	},
 
 	// for encrypting
