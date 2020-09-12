@@ -15,8 +15,6 @@ const skillassessmentsModel = require('../models/skillassessmentsdb');
 const skilltypesModel = require('../models/skilltypesdb');
 const traineeanswersModel = require('../models/traineeanswersdb');
 const traineelistsModel = require('../models/traineelistsdb');
-const traineesModel = require('../models/traineesdb');
-const trainersModel = require('../models/trainersdb');
 const usersModel = require('../models/usersdb');
 const verificationModel = require('../models/verificationdb');
 const db = require('../models/db');
@@ -107,34 +105,29 @@ const rendFunctions = {
  					-- get the class details of the classes
  					-- boom
  				*/
- 				classlistsModel.find({}).then(function() {
- 	 					classlistsModel.countDocuments({}, function( err, count){ // counts num of classes
-					    console.log( "Number of classes:", count );
-					    var classcount = count;
-					    var classIDs = [];
+ 				var userID = req.session.user.userID;
+ 				var idArray = ["hi"]; 
+ 				var idsTemp = function(userID, next) {
+ 					classlistsModel.find({userID: classlistsModel.trainerID}, function (err, classlistsModel) {
+ 						if (err) {
+ 							console.log("errrrrr");
+ 						} else {
+ 							var idDump = classlistsModel.classID;
+ 							//idArray.push(idDump); // wala syang pinush
+ 							//idArray.push("hi");
+ 							{$push: {idArray: "hey"}};
+ 							console.log("push");
+ 							next(classlistsModel);
+ 						}
+ 					});
+ 				}; 
 
-					    for(i = 0; i < classcount-1; i++) { // puts all classIDs that is handled by logged in trainer into an array
-					    	if(classlistsModel.trainerID === req.session.user.userID) {
-					    		//classIDs[i].push(classlistsModel.classID);
-					    		// {$push: {classIDs: "hey"}};
-									//{$push: {classIDs: classlistsModel.classID}};
-									var classdump = classlistsModel.classID;
-									classIDs.push(classdump);
-					    		console.log(classIDs); // print laman ng array
-					    	}
-					    }
-
-					    // matches id
-					    var cList = JSON.parse(JSON.stringify(classIDs));
-					    // let details = cList.map((item, i) => Object.assign({}, item, cList[i].classID));
-
-					    res.render('trainer-profile', {
-			 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
-			 				uType: req.session.user.userType,
-			 				// classDet: details
-			 			});
-					});
- 				});
+ 				
+ 				idsTemp(userID, function(classlistsModel) {
+ 					
+ 				})
+				
+ 				console.log(idArray);
 	 		}
  			else {
  				res.render('trainee-profile', {
