@@ -105,27 +105,41 @@ const rendFunctions = {
  					-- get the class details of the classes
  					-- boom
  				*/
- 				var userID = req.session.user.userID;
- 				var idArray = ["hi"]; 
- 				var idsTemp = function(userID, next) {
- 					classlistsModel.find({userID: classlistsModel.trainerID}, function (err, classlistsModel) {
- 						if (err) {
- 							console.log("errrrrr");
- 						} else {
- 							var idDump = classlistsModel.classID;
- 							//idArray.push(idDump); // wala syang pinush
- 							//idArray.push("hi");
- 							{$push: {idArray: "hey"}};
- 							console.log("push");
- 							next(classlistsModel);
- 						}
- 					});
- 				}; 
+				var userID = req.session.user._id;
+				var idArray = []; 
+				
+ 				// var idsTemp = function(userID, next) { 
+ 				// 	classlistsModel.find({userID: trainerID}, function (err, classlistsModel) {
+ 	 			// 		if (err) {
+ 				// 			console.log("errrrrr");
+ 				// 		} else {
+ 				// 			var idDump = classID;
+ 				// 			//idArray.push(idDump); // wala syang pinush
+ 				// 			//idArray.push("hi");
+ 				// 			{$push: {idArray: idDump }};
+ 				// 			console.log("pushed " + idDump);
+ 				// 			next(classlistsModel);
+ 				// 		}
+ 				// 	});
+ 				// };
+				
+				// ERROR: UnhandledPromiseRejectionWarning
+				// classlistsModel.findOne({trainerID: userID})
+				// 	.populate("idArray")
+				// 	.then(function(user){
+				// 		console.log(JSON.parse(JSON.stringify(user.idArray)))
+				// 	})
+				 
+				// if(idTempt) {
+				// 	{$push: {idArray: idTempt}};
+		 		// 	console.log("pushed " + idTempt);
+		 		// 	next(classlistsModel);
+				// }
 
- 				
- 				idsTemp(userID, function(classlistsModel) {
+				// commenting out since 'di pa called
+ 				// idsTemp(userID, function(classlistsModel) {
  					
- 				})
+ 				// })
 				
  				console.log(idArray);
 	 		}
