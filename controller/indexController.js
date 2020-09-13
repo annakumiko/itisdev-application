@@ -106,22 +106,23 @@ const rendFunctions = {
  					-- boom
  				*/
 				var userID = req.session.user._id;
-				var idArray = []; 
+				// console.log(userID);
+				const idArray = []; 
 				
- 				// var idsTemp = function(userID, next) { 
- 				// 	classlistsModel.find({userID: trainerID}, function (err, classlistsModel) {
- 	 			// 		if (err) {
- 				// 			console.log("errrrrr");
- 				// 		} else {
- 				// 			var idDump = classID;
- 				// 			//idArray.push(idDump); // wala syang pinush
- 				// 			//idArray.push("hi");
- 				// 			{$push: {idArray: idDump }};
- 				// 			console.log("pushed " + idDump);
- 				// 			next(classlistsModel);
- 				// 		}
- 				// 	});
- 				// };
+ 				var idsTemp = function(userID, next) { 
+ 					classlistsModel.find({trainerID: userID}, function (err, classlistsModel) {
+ 	 					if (err) {
+ 							console.log("errrrrr");
+ 						} else {
+ 							var idDump = classID;
+ 							idArray.push(idDump); // wala syang pinush
+ 							//idArray.push("hi");
+ 							// {$push: {idArray: idDump }};
+ 							console.log("pushed " + idDump);
+ 							next(classlistsModel);
+ 						}
+ 					});
+ 				};
 				
 				// ERROR: UnhandledPromiseRejectionWarning
 				// classlistsModel.findOne({trainerID: userID})
@@ -136,7 +137,6 @@ const rendFunctions = {
 		 		// 	next(classlistsModel);
 				// }
 
-				// commenting out since 'di pa called
  				// idsTemp(userID, function(classlistsModel) {
  					
  				// })
