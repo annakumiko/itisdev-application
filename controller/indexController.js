@@ -94,9 +94,10 @@ const rendFunctions = {
  	},
 
  	// search among users -> check usertype
- 	getProfile: function(req, res, next) {
+ 	getProfile: async function(req, res, next) {
  		if (req.session.user) {
- 			// SEARCH LOGGED IN USER
+			 // SEARCH LOGGED IN USER
+			 var idArray = [];
  			if (req.session.user.userType === "Trainer") {
  				/*
  					LOGIC T___T
@@ -106,22 +107,43 @@ const rendFunctions = {
  					-- boom
  				*/
 				var userID = req.session.user._id;
-				var idArray = new Array(); 
 				
-				classlistsModel.find({ trainerID: userID }, function(err, data){
-					
-							for(i = 0; i < data.length; i++){
-								idArray.push(data[i].classID);
-								console.log(data[i].classID);
-							}
-						}
-					);
+				// classlistsModel.find({ trainerID: userID }, function(err, data){
+				// 			// console.log(data);
+				// 			// for(i = 0; i < data.length; i++){
+				// 			// 	var apple = data[i].classID;
+
+				// 			// 	idArray.push(apple);
+				// 			// 	// console.log("pushed " + apple);
+				// 			// 	// console.log(idArray);
+				// 			// }
+				// 			data.forEach(e => idArray.push(e.classID));
+				// 			console.log(idArray);
+				// 		}
+				// 	);
 
  				// idsTemp(userID, function(classlistsModel) {
  					
  				// })
 				
- 				console.log(idArray);
+				// var classDump = await classlistsModel.find({ trainerID: userID });
+				// classDump.forEach(e => idArray.push(e.classID));
+
+				 // console.log(idArray);
+				 
+				 var classDump = await classlistsModel.aggregate([
+					 {$match: {trainerID: userID}},
+					 {$lookup: {
+						 from: "classes",
+						 localField: "classID",
+						 foreignField: "classID",
+						 as: "classList" // SLICE
+					 }},
+					 {$unwind: "$classList"},
+					 // lookup if needed + unwind => courseID
+				 ]);
+
+				 console.log(classDump);
 	 		}
  			else {
  				res.render('trainee-profile', {
