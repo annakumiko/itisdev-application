@@ -105,24 +105,43 @@ const rendFunctions = {
  					-- get the class details of the classes
  					-- boom
  				*/
-				var userID = req.session.user._id;
-				// console.log(userID);
+				var trainerID = req.session.user._id;
 				const idArray = []; 
+
+				// classlistsModel.find({}, { projection: { classID: 0 } }).toArray(function(err, result) {
+					// if (err) throw err;
+					// console.log(result);
+					// db.close();
+				// });
 				
- 				var idsTemp = function(userID, next) { 
- 					classlistsModel.find({trainerID: userID}, function (err, classlistsModel) {
- 	 					if (err) {
- 							console.log("errrrrr");
- 						} else {
- 							var idDump = classID;
- 							idArray.push(idDump); // wala syang pinush
- 							//idArray.push("hi");
- 							// {$push: {idArray: idDump }};
- 							console.log("pushed " + idDump);
- 							next(classlistsModel);
- 						}
- 					});
- 				};
+				// classlistsModel.find({trainerID: trainerID}, function (err, classlistsModel) {
+					var tempClass = classlistsModel.classID;
+					idArray.push(tempClass);
+					console.log("pushed " + tempClass);
+				// });
+				
+				// classlistsModel.find({trainerID: userID})
+				// 	.populate({path: 'idArray'}) 
+				// 	.then(function(user){
+
+				// 	let classes = JSON.stringify(user).idArray;
+
+				// });		
+
+				// var idsTemp = function(userID, next) { 
+ 				// 	classlistsModel.find({trainerID: trainerID}, function (err, classlistsModel) {
+ 	 			// 		if (err) {
+ 				// 			console.log("errrrrr");
+ 				// 		} else {
+ 				// 			var idDump = trainerID;
+ 				// 			idArray.push(idDump); // wala syang pinush
+ 				// 			//idArray.push("hi");
+ 				// 			// {$push: {idArray: idDump }};
+ 				// 			console.log("pushed " + idDump);
+ 				// 			next(classlistsModel);
+ 				// 		}
+ 				// 	});
+				//  };
 				
 				// ERROR: UnhandledPromiseRejectionWarning
 				// classlistsModel.findOne({trainerID: userID})
