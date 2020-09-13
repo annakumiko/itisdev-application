@@ -105,56 +105,17 @@ const rendFunctions = {
  					-- get the class details of the classes
  					-- boom
  				*/
-				var trainerID = req.session.user._id;
-				const idArray = []; 
-
-				// classlistsModel.find({}, { projection: { classID: 0 } }).toArray(function(err, result) {
-					// if (err) throw err;
-					// console.log(result);
-					// db.close();
-				// });
+				var userID = req.session.user._id;
+				var idArray = new Array(); 
 				
-				// classlistsModel.find({trainerID: trainerID}, function (err, classlistsModel) {
-					var tempClass = classlistsModel.classID;
-					idArray.push(tempClass);
-					console.log("pushed " + tempClass);
-				// });
-				
-				// classlistsModel.find({trainerID: userID})
-				// 	.populate({path: 'idArray'}) 
-				// 	.then(function(user){
-
-				// 	let classes = JSON.stringify(user).idArray;
-
-				// });		
-
-				// var idsTemp = function(userID, next) { 
- 				// 	classlistsModel.find({trainerID: trainerID}, function (err, classlistsModel) {
- 	 			// 		if (err) {
- 				// 			console.log("errrrrr");
- 				// 		} else {
- 				// 			var idDump = trainerID;
- 				// 			idArray.push(idDump); // wala syang pinush
- 				// 			//idArray.push("hi");
- 				// 			// {$push: {idArray: idDump }};
- 				// 			console.log("pushed " + idDump);
- 				// 			next(classlistsModel);
- 				// 		}
- 				// 	});
-				//  };
-				
-				// ERROR: UnhandledPromiseRejectionWarning
-				// classlistsModel.findOne({trainerID: userID})
-				// 	.populate("idArray")
-				// 	.then(function(user){
-				// 		console.log(JSON.parse(JSON.stringify(user.idArray)))
-				// 	})
-				 
-				// if(idTempt) {
-				// 	{$push: {idArray: idTempt}};
-		 		// 	console.log("pushed " + idTempt);
-		 		// 	next(classlistsModel);
-				// }
+				classlistsModel.find({ trainerID: userID }, function(err, data){
+					
+							for(i = 0; i < data.length; i++){
+								idArray.push(data[i].classID);
+								console.log(data[i].classID);
+							}
+						}
+					);
 
  				// idsTemp(userID, function(classlistsModel) {
  					
