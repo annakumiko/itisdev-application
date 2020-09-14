@@ -134,15 +134,23 @@ const rendFunctions = {
 				 var classVar = await classlistsModel.aggregate([
 					 {$match: {trainerID: userID}},
 					 {$lookup: {
-						 from: "classes",
-						 localField: "classID",
-						 foreignField: "classID",
-						 as: "classList" // SLICE
+							from: "classes",
+							localField: "classID",
+							foreignField: "classID",
+							as: "classList" // SLICE
 					 }},
 					 {$unwind: "$classList"},
+					 {$lookup: {
+							from: "courses",
+							localField: "classList.courseID",
+							foreignField: "courseID",
+							as: "course"
+						}},
+						{$unwind: "$course"},
 				]);
 
 				console.log(classVar);
+				// console.log(courseVar);
 
 				 res.render('trainer-profile', {
 					fullName: req.session.user.lastName + ", " + req.session.user.firstName,
