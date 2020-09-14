@@ -120,7 +120,7 @@ const rendFunctions = {
 				// 			data.forEach(e => idArray.push(e.classID));
 				// 			console.log(idArray);
 				// 		}
-				// 	);
+				// 	);t
 
  				// idsTemp(userID, function(classlistsModel) {
  					
@@ -144,11 +144,24 @@ const rendFunctions = {
 				 ]);
 
 				 console.log(classDump);
+				 console.log(classDump[0].classID);
+				 console.log(classDump[0].classList.courseID);
+
+				 res.render('trainer-profile', {
+					fullName: req.session.user.lastName + ", " + req.session.user.firstName,
+					uType: req.session.user.userType,
+
+				});
 	 		}
  			else {
  				res.render('trainee-profile', {
 	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
-	 				uType: req.session.user.userType
+					uType: req.session.user.userType,
+
+					n: classDump[0].classID,
+					courseName: classDump[0].courseID,
+					startDate: classDump[0].startDate,
+					endDate: classDump[0].endDate,
 	 			});
  			}
  		}	
