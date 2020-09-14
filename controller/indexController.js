@@ -126,12 +126,12 @@ const rendFunctions = {
  					
  				// })
 				
-				// var classDump = await classlistsModel.find({ trainerID: userID });
-				// classDump.forEach(e => idArray.push(e.classID));
+				// var classVar = await classlistsModel.find({ trainerID: userID });
+				// classVar.forEach(e => idArray.push(e.classID));
 
 				 // console.log(idArray);
 				 
-				 var classDump = await classlistsModel.aggregate([
+				 var classVar = await classlistsModel.aggregate([
 					 {$match: {trainerID: userID}},
 					 {$lookup: {
 						 from: "classes",
@@ -140,28 +140,25 @@ const rendFunctions = {
 						 as: "classList" // SLICE
 					 }},
 					 {$unwind: "$classList"},
-					 // lookup if needed + unwind => courseID
-				 ]);
+				]);
 
-				 console.log(classDump);
-				 console.log(classDump[0].classID);
-				 console.log(classDump[0].classList.courseID);
+				console.log(classVar);
 
 				 res.render('trainer-profile', {
 					fullName: req.session.user.lastName + ", " + req.session.user.firstName,
 					uType: req.session.user.userType,
+
+					classes: classVar,
+					// courseName: classVar.classList.courseID,
+					// startDate: classVar.classList.startDate,
+					// endDate: classVar.classList.endDate,
 
 				});
 	 		}
  			else {
  				res.render('trainee-profile', {
 	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
-					uType: req.session.user.userType,
-
-					n: classDump[0].classID,
-					courseName: classDump[0].courseID,
-					startDate: classDump[0].startDate,
-					endDate: classDump[0].endDate,
+					uType: req.session.user.userType
 	 			});
  			}
  		}	

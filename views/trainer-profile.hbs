@@ -29,12 +29,14 @@
                 </tr>
             </thead>
             <tbody>
+                 {{#each classes}}
                 <tr>
                     <td> {{classID}} </td>
-                    <td> {{courseName}} </td>
-                    <td> {{startDate}} </td>
-                    <td> {{endDate}} </td>
+                    <td> {{classList.courseID}} </td>
+                    <td> {{classList.startDate}} </td>
+                    <td> {{classList.endDate}} </td>
                 </tr>
+                {{/each}}
             </tbody>
         </table>
     </div>
