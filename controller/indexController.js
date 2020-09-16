@@ -20,8 +20,8 @@ const verificationModel = require('../models/verificationdb');
 const db = require('../models/db');
 
 // format date
-function getDate(d) {
-	var newDate = new Date(d);
+function getDate(date) {
+	var newDate = new Date(date);
 
 	var mm = newDate.getMonth() + 1;
 	switch(mm) {
@@ -46,8 +46,25 @@ function getDate(d) {
 }
 
 // format time
-function getTime(t) {
-	return t;
+function getTime(time) {
+	return time;
+}
+
+// pass course here
+function generateSection(section, numClass){
+
+	var newSec = section;
+
+	if(section === "Real Estate") {
+		// R + numclass + 1
+		// check if existing section... how
+	}
+	else {
+		// M + numclass + 1
+		// check if existing
+	}
+
+	return newSec;
 }
 
 // main functions for getting and posting data
@@ -198,7 +215,7 @@ const rendFunctions = {
 						}},
 						{$unwind: "$course"}
 				]);
-
+ 				console.log(classVar);
  				// clients
  				var clientsVar = await clientlistsModel.aggregate([
  					{$match: {traineeID: userID}},
@@ -210,7 +227,7 @@ const rendFunctions = {
 					 }},
 					 {$unwind: "$clientList"}
  				]);
-
+ 				console.log(clientsVar);
  				res.render('trainee-profile', {
 	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
 					uType: req.session.user.userType,
