@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<title>The VA Hub - Dashboard</title>
+
+{{>sidebar-trainer}}
+
+
+<div style="background-color: #ffffff;height: 650px;">
+        <div style="height: 70px;background-color: rgba(224,224,224,0);border-bottom-width: 2px;border-bottom-color: #e0e0e0;padding: 20px;padding-left: 100px;"><label style="font-size: 24px;color: #006739;"><strong>Dashboard</strong></label>
+            <hr style="filter: contrast(129%);">
+        </div>
+        <div style="padding: 20px;padding-left: 100px;"><label class="d-flex" style="font-size: 25px;padding-top: 10px;"><strong> {{fullName}}</strong></label><label class="d-flex" style="font-size: 18px;">{{uType}}</label></div>
+        <div style="padding: 20px;padding-left: 100px;">
+            <hr style="filter: contrast(129%);">
+
+            <a href="/create-class"><button class="btn btn-primary d-flex" type="submit" style="background-color: #006739;margin: 0px 0px;">Create Class</button></a>
+
+            <label style="font-size: 24px;color: #006739;"><strong>Classes</strong><br></label>
+            <div class="table-responsive" style="background-color: #f9f8f0;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="color: rgb(255,255,255);background-color: #006739;width: 15%;">Section</th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);width: 25%;">Course</th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);width: 15%;">Start Date</th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);width: 15%;">End Date</th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);width: 15%;"></th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);width: 15%;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each classes}}
+                        <tr>
+                            <td> {{classID}} </td>
+                            <td> {{course.courseName}} </td>
+                            <td> {{classList.startDate}} </td>
+                            <td> {{classList.endDate}} </td>
+                            <td><a href="/add-trainees"><button class="btn btn-primary" type="button" style="background-color: #006739;margin: 0px 10px;">Add Trainees</button></a></td>
+                            <td><button class="btn btn-primary" id="delClass" type="button" style="background-color: #006739;margin: 0px 10px;">Delete Class</button></td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>

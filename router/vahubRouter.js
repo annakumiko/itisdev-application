@@ -9,17 +9,16 @@ router.get('/trainer-profile', controller.getProfile);
 router.get('/trainee-profile', controller.getProfile);
 router.get('/create-class', controller.getCreateClass);
 
-//admin
+// ADMIN
 //router.get('/define-course', controller.getDefineCourse);
 //router.get('/manage-clientslist', controller.getManageClients);
 
-//trainer
-//router.get('/trainer-dashboard', controller.getDashboard);
+// TRAINER
+router.get('/dashboard', controller.getDashboard);
 // router.get('/quizlist', controller.getQuizList);
 
-//trainee
+// TRAINEE
 router.get('/verification', controller.getVerification);
-//router.get('/trainer-dashboard', controller.getDashboard);
 router.get('/clientslist', controller.getClientsList);
 //router.get('/contact-clients', controller.getContactClient);
 
@@ -28,16 +27,16 @@ router.post('/logout', controller.postLogout);
 router.post('/login', controller.postLogin);
 router.post('/register', controller.postRegister);
 
-//admin
+// ADMIN
 //router.post('/define-course', controller.postDefineCourse);
 //router.post('/manage-clientslist', controller.postManageClients);
 
-//trainer
+// TRAINER
 // router.post('/quizlist', controller.postQuizList);
-
-//trainee
-router.post('/verification', controller.postVerification);
 //router.post('/trainer-dashboard', controller.postDashboard);
+
+// TRAINEE
+router.post('/verification', controller.postVerification);
 //router.post('/contact-clientslist', controller.postContactClient);
 
 

@@ -48,6 +48,13 @@ $(document).ready(function() {
 	// VERIFICATION
 	$('button#verifyBTN').click(function() {
 		var email = validator.trim($('#email').val());
+		var verifyCode = validator.trim($('#verifyCode').val());
+				
+		if((validator.isEmpty(email)) || (validator.isEmpty(verifyCode))){
+			console.log("pls don't be empty !!") 
+		}
+		else{
+
 		var verifyCode = validator.trim($('#code').val());
 		
 		var emailEmpty = validator.isEmpty(email);
@@ -64,6 +71,7 @@ $(document).ready(function() {
 		if (codeEmpty) $('p#codeError').text('Please enter verification code.');
 				
 		if ((!emailEmpty && emailFormat) && !codeEmpty){
+
 			$.post('/verification', {email: email, verifyCode: verifyCode}, function(res) {
 				switch (res.status){
 					case 200: {
@@ -80,6 +88,7 @@ $(document).ready(function() {
 					}
 				}
 			});
+		}
 		}
 	});
 });

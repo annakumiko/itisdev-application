@@ -15,12 +15,57 @@ const skillassessmentsModel = require('../models/skillassessmentsdb');
 const skilltypesModel = require('../models/skilltypesdb');
 const traineeanswersModel = require('../models/traineeanswersdb');
 const traineelistsModel = require('../models/traineelistsdb');
-const traineesModel = require('../models/traineesdb');
-const trainersModel = require('../models/trainersdb');
 const usersModel = require('../models/usersdb');
 const verificationModel = require('../models/verificationdb');
 const db = require('../models/db');
 
+// format date
+function getDate(date) {
+	var newDate = new Date(date);
+
+	var mm = newDate.getMonth() + 1;
+	switch(mm) {
+		case 1: mm = "January"; break;
+		case 2: mm = "February"; break;
+		case 3: mm = "March"; break;
+		case 4: mm = "April"; break;
+		case 5: mm = "May"; break;
+		case 6: mm = "June"; break;
+		case 7: mm = "July"; break;
+		case 8: mm = "August"; break;
+		case 9: mm = "September"; break;
+		case 10: mm = "October"; break;
+		case 11: mm = "November"; break;
+		case 12: mm = "December"; break;
+	}
+
+	var dd = newDate.getDate();
+	var yy = newDate.getFullYear();
+
+	return mm + " " + dd + ", " + yy;
+}
+
+// format time
+function getTime(time) {
+	return time;
+}
+
+// pass course here
+function generateSection(section, numClass){
+
+	var newSec = section;
+
+	if(section === "Real Estate") {
+		// R + numclass + 1
+		// check if existing section... how
+	}
+	else {
+		// M + numclass + 1
+		// check if existing
+	}
+
+	return newSec;
+}
 
 // main functions for getting and posting data
 const rendFunctions = {
@@ -49,11 +94,19 @@ const rendFunctions = {
 				res.send({status: 401}) 
 			}
 			else {
+				bcrypt.compare(email, vcode.email, function(err, match) {
+					if (match) {
+						// console.log("hello");
+						req.session.user = user;
+						res.send({status: 200});
+					} else
+						res.send({status: 401});
+				});
+			}		
 				if (email === vCode.email) 
 					res.send({status: 200});
 				else 
 					res.send({status: 500});
-			}
 		} catch(e) {
 			console.log(e);
 		}
@@ -88,31 +141,166 @@ const rendFunctions = {
  	},
 
  	// search among users -> check usertype
- 	getProfile: function(req, res, next) {
+ 	getProfile: async function(req, res, next) {
  		if (req.session.user) {
- 			// SEARCH LOGGED IN USER
+			 // SEARCH LOGGED IN USER
+			 // var idArray = [];
  			if (req.session.user.userType === "Trainer") {
- 				res.render('trainer-profile', {
-	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
-	 				uType: req.session.user.userType
-	 			});
+ 				
+				var userID = req.session.user._id;
+				 
+				 var classVar = await classlistsModel.aggregate([
+					 {$match: {trainerID: userID}},
+					 {$lookup: {
+							from: "classes",
+							localField: "classID",
+							foreignField: "classID",
+							as: "classList" // SLICE
+					 }},
+					 {$unwind: "$classList"},
+					 {$lookup: {
+							from: "courses",
+							localField: "classList.courseID",
+							foreignField: "courseID",
+							as: "course"
+						}},
+						{$unwind: "$course"}
+				]);
+
+				var sArray = [];
+				var eArray = [];
+
+				for(let i = 0; i < classVar.length; i++) {
+					sDate = getDate(classVar[i].classList.startDate);
+					eDate = getDate(classVar[i].classList.endDate);
+
+					sArray.push(sDate);
+					eArray.push(eDate);
+
+					classVar[i].classList.startDate = sDate;
+					classVar[i].classList.endDate = eDate;
+				}
+
+				// console.log(sArray);
+				// console.log(classVar)
+				 res.render('trainer-profile', {
+					fullName: req.session.user.lastName + ", " + req.session.user.firstName,
+					uType: req.session.user.userType,
+
+					classes: classVar
+					// courseName: classVar.classList.courseID,
+					// startDate: classVar.classList.startDate,
+					// endDate: classVar.classList.endDate,
+
+				});
 	 		}
- 			else {
+ 			else if (req.session.user.userType === "Trainee"){
+ 				var userID = req.session.user._id;
+
+ 				// class details - for trainees
+ 				var classVar = await traineelistsModel.aggregate([
+					 {$match: {traineeID: userID}},
+					 {$lookup: {
+							from: "classes",
+							localField: "classID",
+							foreignField: "classID",
+							as: "classList" // SLICE
+					 }},
+					 {$unwind: "$classList"},
+					 {$lookup: {
+							from: "courses",
+							localField: "classList.courseID",
+							foreignField: "courseID",
+							as: "course"
+						}},
+						{$unwind: "$course"}
+				]);
+				 console.log(classVar);
+				 
+ 				// clients
+ 				var clientsVar = await clientlistsModel.aggregate([
+ 					{$match: {traineeID: userID}},
+					 {$lookup: {
+							from: "clients",
+							localField: "clientID",
+							foreignField: "clientID",
+							as: "clientList" // SLICE
+					 }},
+					 {$unwind: "$clientList"}
+ 				]);
+ 				console.log(clientsVar);
+
  				res.render('trainee-profile', {
 	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
-	 				uType: req.session.user.userType
+					uType: req.session.user.userType,
+
+					// classes: classVar,             // then sa hbs classList.section ???
+					section: classVar[0].classList.section,
+					course: classVar[0].course.courseName,
+					clients: clientsVar
 	 			});
  			}
+ 			else {
+ 				res.redirect('/');
+ 			}
  		}	
- 		else res.redirect('/');
+ 		else res.redirect('login');
+ 	},
+
+ 	getDashboard: async function(req, res, next) {
+ 		if (req.session.user) {
+ 			var userID = req.session.user._id;
+
+ 			var classVar = await classlistsModel.aggregate([
+					 {$match: {trainerID: userID}},
+					 {$lookup: {
+							from: "classes",
+							localField: "classID",
+							foreignField: "classID",
+							as: "classList" // SLICE
+					 }},
+					 {$unwind: "$classList"},
+					 {$lookup: {
+							from: "courses",
+							localField: "classList.courseID",
+							foreignField: "courseID",
+							as: "course"
+						}},
+						{$unwind: "$course"}
+				]);
+
+ 			var sArray = [];
+			var eArray = [];
+
+			for(let i = 0; i < classVar.length; i++) {
+				sDate = getDate(classVar[i].classList.startDate);
+				eDate = getDate(classVar[i].classList.endDate);
+
+				sArray.push(sDate);
+				eArray.push(eDate);
+
+				classVar[i].classList.startDate = sDate;
+				classVar[i].classList.endDate = eDate;
+			}
+
+
+ 			res.render('dashboard', {
+ 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
+	 			uType: req.session.user.userType,
+	 			classes: classVar
+	 			// class details 
+ 			});
+ 		}
+ 		else res.redirect('login');
  	},
 
  	getCreateClass: function(req, res, next) {
  		if (req.session.user) {
- 			res.render('/create-class', {
+ 			res.render('create-class', {
  				//boom
  			});
  		}
+ 		else res.redirect('login');
  	},
 
  	postLogin: async function(req, res, next) {
@@ -138,13 +326,12 @@ const rendFunctions = {
 		}
 	},
 
-	// LOG OUT not working ????????????????????
  	postLogout: function(req, res) {
 		req.session.destroy();
-		res.redirect("/login");
+		res.redirect("login");
 	},
 
-	// invisible register :p
+	// for encrypting
 	postRegister: async function(req, res, next) {
 	//	console.log(req.body);
 		// users
@@ -167,7 +354,7 @@ const rendFunctions = {
 			res.render('clientlist', {
 			});
 		}
-	 },
-}
+	 }
+};
 
 module.exports = rendFunctions;

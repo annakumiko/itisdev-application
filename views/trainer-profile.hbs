@@ -1,6 +1,9 @@
 <!DOCTYPE html>
+<title>The VA Hub - Profile</title>
 
 {{>sidebar-trainer}}
+
+
 
 <div style="background-color: #ffffff;height: 650px;">
 <div style="height: 70px;background-color: rgba(224,224,224,0);border-bottom-width: 2px;border-bottom-color: #e0e0e0;padding: 20px;padding-left: 100px;"><label style="font-size: 24px;color: #006739;"><strong>User Profile</strong></label>
@@ -19,22 +22,21 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th style="color: rgb(255,255,255);background-color: #006739;">Class ID</th>
+                    <th style="color: rgb(255,255,255);background-color: #006739;">Section</th>
                     <th style="background-color: #006739;color: rgb(255,255,255);">Course</th>
-                    <th style="background-color: #006739;color: rgb(255,255,255);">Number of Students</th>
+                    <th style="background-color: #006739;color: rgb(255,255,255);">Start Date</th>
+                    <th style="background-color: #006739;color: rgb(255,255,255);">End Date</th>
                 </tr>
             </thead>
             <tbody>
+                 {{#each classes}}
                 <tr>
-                    <td>Cell 1</td>
-                    <td>Cell 2</td>
-                    <td>Cell 2</td>
+                    <td> {{classList.section}} </td>
+                    <td> {{course.courseName}} </td>
+                    <td> {{classList.startDate}} </td>
+                    <td> {{classList.endDate}} </td>
                 </tr>
-                <tr>
-                    <td>Cell 3</td>
-                    <td>Cell 3</td>
-                    <td>Cell 4</td>
-                </tr>
+                {{/each}}
             </tbody>
         </table>
     </div>

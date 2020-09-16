@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 var classesSchema = new mongoose.Schema({
-	classID: String, /* under deliberatION */
+	classID: String, 
 	courseID: String,
-	trainerID: String,
+	trainerID: String, // discuss trainerID's future
 	section : String,
 	startDate: Date,
 	endDate: Date,
