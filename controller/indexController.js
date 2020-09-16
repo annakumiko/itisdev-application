@@ -231,7 +231,9 @@ const rendFunctions = {
  				res.render('trainee-profile', {
 	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
 					uType: req.session.user.userType,
-					classes: classVar,
+
+					classID: classVar[0].classID,
+					courseName: classVar[0].course.courseName,
 					clients: clientsVar
 	 			});
  			}
