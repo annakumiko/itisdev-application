@@ -215,7 +215,7 @@ const rendFunctions = {
 						}},
 						{$unwind: "$course"}
 				]);
- 				console.log(classVar);
+ 				console.log(classVar[0].section);
  				// clients
  				var clientsVar = await clientlistsModel.aggregate([
  					{$match: {traineeID: userID}},
@@ -228,12 +228,14 @@ const rendFunctions = {
 					 {$unwind: "$clientList"}
  				]);
  				console.log(clientsVar);
+
  				res.render('trainee-profile', {
 	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
 					uType: req.session.user.userType,
 
-					classID: classVar[0].classID,
-					courseName: classVar[0].course.courseName,
+					// classes: classVar,             // then sa hbs classList.section ???
+					section: classVar[0].section,
+					course: classVar[0].course.courseName,
 					clients: clientsVar
 	 			});
  			}
