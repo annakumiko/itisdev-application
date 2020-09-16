@@ -10,12 +10,12 @@
     <div style="padding: 20px;padding-left: 100px;">
         <hr style="filter: contrast(129%);"><label style="font-size: 24px;color: #006739;"><strong>Class and Course Details</strong><br></label>
         <div class="table-responsive" style="background-color: #f9f8f0; padding: 10px;">
-            <label><strong>Class Section</strong></label>
-            <p> s16 </p>
+            <label><strong>Class ID</strong></label>
+            <p> {{classID}} </p>
             <label><strong>Course</strong></label>
-            <p> hello </p>
+            <p> {{course.courseName}} </p>
             <label><strong>Course Modules</strong></label>
-            <p> boop bap </p>
+            <p> insert Modules </p>
         </div>
     </div>
     <div style="padding: 20px;padding-left: 100px;">
@@ -26,20 +26,17 @@
                     <tr>
                         <th style="background-color: #006739;color: rgb(255,255,255);">Name</th>
                         <th style="background-color: #006739;color: rgb(255,255,255);">Company</th>
-                        <th style="background-color: #006739;color: rgb(255,255,255);">Job</th>
+                        <th style="background-color: #006739;color: rgb(255,255,255);">E-mail</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {{#each clients}}
                     <tr>
-                        <td>Cell 1</td>
-                        <td>Cell 2</td>
-                        <td>Cell 2</td>
+                        <td> {{clientList.clientName}}  </td>
+                        <td> {{clientList.companyName}} </td>
+                        <td> {{clientList.email}} </td>
                     </tr>
-                    <tr>
-                        <td>Cell 3</td>
-                        <td>Cell 3</td>
-                        <td>Cell 4</td>
-                    </tr>
+                    {{/each}}
                 </tbody>
             </table>
         </div>

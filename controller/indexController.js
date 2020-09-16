@@ -19,6 +19,36 @@ const usersModel = require('../models/usersdb');
 const verificationModel = require('../models/verificationdb');
 const db = require('../models/db');
 
+// format date
+function getDate(d) {
+	var newDate = new Date(d);
+
+	var mm = newDate.getMonth() + 1;
+	switch(mm) {
+		case 1: mm = "January"; break;
+		case 2: mm = "February"; break;
+		case 3: mm = "March"; break;
+		case 4: mm = "April"; break;
+		case 5: mm = "May"; break;
+		case 6: mm = "June"; break;
+		case 7: mm = "July"; break;
+		case 8: mm = "August"; break;
+		case 9: mm = "September"; break;
+		case 10: mm = "October"; break;
+		case 11: mm = "November"; break;
+		case 12: mm = "December"; break;
+	}
+
+	var dd = newDate.getDate();
+	var yy = newDate.getFullYear();
+
+	return mm + " " + dd + ", " + yy;
+}
+
+// format time
+function getTime(t) {
+	return t;
+}
 
 // main functions for getting and posting data
 const rendFunctions = {
@@ -97,39 +127,10 @@ const rendFunctions = {
  	getProfile: async function(req, res, next) {
  		if (req.session.user) {
 			 // SEARCH LOGGED IN USER
-			 var idArray = [];
+			 // var idArray = [];
  			if (req.session.user.userType === "Trainer") {
- 				/*
- 					LOGIC T___T
- 					-- find userID from classlists -
- 					-- "get" all its classes (classID) - 
- 					-- get the class details of the classes
- 					-- boom
- 				*/
+ 				
 				var userID = req.session.user._id;
-				
-				// classlistsModel.find({ trainerID: userID }, function(err, data){
-				// 			// console.log(data);
-				// 			// for(i = 0; i < data.length; i++){
-				// 			// 	var apple = data[i].classID;
-
-				// 			// 	idArray.push(apple);
-				// 			// 	// console.log("pushed " + apple);
-				// 			// 	// console.log(idArray);
-				// 			// }
-				// 			data.forEach(e => idArray.push(e.classID));
-				// 			console.log(idArray);
-				// 		}
-				// 	);t
-
- 				// idsTemp(userID, function(classlistsModel) {
- 					
- 				// })
-				
-				// var classVar = await classlistsModel.find({ trainerID: userID });
-				// classVar.forEach(e => idArray.push(e.classID));
-
-				 // console.log(idArray);
 				 
 				 var classVar = await classlistsModel.aggregate([
 					 {$match: {trainerID: userID}},
@@ -146,39 +147,125 @@ const rendFunctions = {
 							foreignField: "courseID",
 							as: "course"
 						}},
-						{$unwind: "$course"},
+						{$unwind: "$course"}
 				]);
 
-				console.log(classVar);
-				// console.log(courseVar);
+				var sArray = [];
+				var eArray = [];
 
+				for(let i = 0; i < classVar.length; i++) {
+					sDate = getDate(classVar[i].classList.startDate);
+					eDate = getDate(classVar[i].classList.endDate);
+
+					sArray.push(sDate);
+					eArray.push(eDate);
+
+					classVar[i].classList.startDate = sDate;
+					classVar[i].classList.endDate = eDate;
+				}
+
+				// console.log(sArray);
+				// console.log(classVar)
 				 res.render('trainer-profile', {
 					fullName: req.session.user.lastName + ", " + req.session.user.firstName,
 					uType: req.session.user.userType,
 
-					classes: classVar,
+					classes: classVar
 					// courseName: classVar.classList.courseID,
 					// startDate: classVar.classList.startDate,
 					// endDate: classVar.classList.endDate,
 
 				});
 	 		}
- 			else {
+ 			else if (req.session.user.userType === "Trainee"){
+ 				var userID = req.session.user._id;
+
+ 				// class details - for trainees
+ 				var classVar = await traineelistsModel.aggregate([
+					 {$match: {traineeID: userID}},
+					 {$lookup: {
+							from: "classes",
+							localField: "classID",
+							foreignField: "classID",
+							as: "classList" // SLICE
+					 }},
+					 {$unwind: "$classList"},
+					 {$lookup: {
+							from: "courses",
+							localField: "classList.courseID",
+							foreignField: "courseID",
+							as: "course"
+						}},
+						{$unwind: "$course"}
+				]);
+
+ 				// clients
+ 				var clientsVar = await clientlistsModel.aggregate([
+ 					{$match: {traineeID: userID}},
+					 {$lookup: {
+							from: "clients",
+							localField: "clientID",
+							foreignField: "clientID",
+							as: "clientList" // SLICE
+					 }},
+					 {$unwind: "$clientList"}
+ 				]);
+
  				res.render('trainee-profile', {
 	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
-					uType: req.session.user.userType
+					uType: req.session.user.userType,
+					classes: classVar,
+					clients: clientsVar
 	 			});
+ 			}
+ 			else {
+ 				res.redirect('/');
  			}
  		}	
  		else res.redirect('login');
  	},
 
- 	getDashboard: function(req, res, next) {
+ 	getDashboard: async function(req, res, next) {
  		if (req.session.user) {
+ 			var userID = req.session.user._id;
+
+ 			var classVar = await classlistsModel.aggregate([
+					 {$match: {trainerID: userID}},
+					 {$lookup: {
+							from: "classes",
+							localField: "classID",
+							foreignField: "classID",
+							as: "classList" // SLICE
+					 }},
+					 {$unwind: "$classList"},
+					 {$lookup: {
+							from: "courses",
+							localField: "classList.courseID",
+							foreignField: "courseID",
+							as: "course"
+						}},
+						{$unwind: "$course"}
+				]);
+
+ 			var sArray = [];
+			var eArray = [];
+
+			for(let i = 0; i < classVar.length; i++) {
+				sDate = getDate(classVar[i].classList.startDate);
+				eDate = getDate(classVar[i].classList.endDate);
+
+				sArray.push(sDate);
+				eArray.push(eDate);
+
+				classVar[i].classList.startDate = sDate;
+				classVar[i].classList.endDate = eDate;
+			}
+
+
  			res.render('dashboard', {
  				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
-	 			uType: req.session.user.userType
-
+	 			uType: req.session.user.userType,
+	 			classes: classVar
 	 			// class details 
  			});
  		}
