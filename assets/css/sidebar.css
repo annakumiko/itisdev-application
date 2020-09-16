@@ -8,7 +8,7 @@
 #nav-icon2 {
   height: 40px;
   width: 40px;
-  margin-top: 25px;
+  margin-top: 40px;
   /* margin-left: 5px; */
   /* margin-right: auto; */
 }
@@ -18,7 +18,7 @@
   height: 100vh;
   position: fixed;
   background-color: #006739;
-  transition: 300ms ease;
+  transition: 50ms ease;
 
 }
 
@@ -34,11 +34,21 @@
 
 .nav-item {
   width: 100%;
-  transition: 600ms;
+  transition: 50ms;
+}
+
+.nav-item2 {
+  width: 100%;
+  transition: 50ms;
 }
 
 .nav-item:hover {
   background: #464f50;
+  /* opacity: 0.7; */
+}
+
+.nav-item2:hover {
+  background: transparent;
   /* opacity: 0.7; */
 }
 
@@ -48,7 +58,7 @@
   height: 50px;
   color: #b6b6b6;
   /* filter: grayscale(100%) opacity(0.7); */
-  transition: 600ms;
+  transition: 50ms ease;
   float: left;
   padding-left: 10px;
   padding-right: 10px;
@@ -76,7 +86,7 @@
 
 .logo-text {
   display: none;
-  margin-top: 25px;
+  margin-top: 40px;
   margin-left: 10px;
   color: white;
   font-size: 25px;
