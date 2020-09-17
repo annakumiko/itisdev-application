@@ -12,7 +12,7 @@
         <div style="padding: 20px;padding-left: 100px;">
             <hr style="filter: contrast(129%);">
 
-            <a href="/create-class"><button class="btn btn-primary d-flex" type="submit" style="background-color: #006739;margin: 0px 0px;">Create Class</button></a>
+            <a href="/create-class"><button class="btn btn-primary d-flex" type="submit" style="background-color: #006739;margin-bottom: 30px; ">Create Class</button></a>
 
             <label style="font-size: 24px;color: #006739;"><strong>Classes</strong><br></label>
             <div class="table-responsive" style="background-color: #f9f8f0;">
@@ -23,14 +23,14 @@
                             <th style="background-color: #006739;color: rgb(255,255,255);width: 25%;">Course</th>
                             <th style="background-color: #006739;color: rgb(255,255,255);width: 15%;">Start Date</th>
                             <th style="background-color: #006739;color: rgb(255,255,255);width: 15%;">End Date</th>
-                            <th style="background-color: #006739;color: rgb(255,255,255);width: 15%;"></th>
-                            <th style="background-color: #006739;color: rgb(255,255,255);width: 15%;"></th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);width: 12%;"></th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);width: 12%;"></th>
                         </tr>
                     </thead>
                     <tbody>
                         {{#each classes}}
                         <tr>
-                            <td> {{classID}} </td>
+                            <td> {{classList.section}} </td>
                             <td> {{course.courseName}} </td>
                             <td> {{classList.startDate}} </td>
                             <td> {{classList.endDate}} </td>

@@ -3,93 +3,69 @@
 {{>sidebar-trainer}}
 
 <div>
-    <div style="padding: 20px;padding-left: 100px;"><label style="font-size: 24px;color: #006739;"><strong>Create a class</strong></label>
-        <hr>
-    </div>
-
-    <div style="padding: 20px;padding-left: 100px;max-width: 100%;">
-        <div style="height: 100%;">
-            <form class="float-left" method="post" style="max-width: 60%;padding: 10px;background-color: #f9f8f0;height: 100%;">
-                <div class="form-row form-group" style="padding: 5px;">
-                    
-                    <div class="col-sm-4 label-column" style="max-width: 20%;font-size: 14px;"><label class="col-form-label flex-nowrap" for="name-input-field"><strong>Course</strong><br></label></div>
-
-                    <div class="col" style="padding: 0px;">
-                        <div class="dropdown" style="padding-bottom: 16px;width: 180px;padding-left: 5px;"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="background-color: rgb(255,255,255);color: rgb(0,0,0);text-align: left;width: 180px;">Course</button>
-                            <div class="dropdown-menu"
-                                role="menu" style="width: 180px;"><a class="dropdown-item" role="presentation" href="#">Real Estate Training</a><a class="dropdown-item" role="presentation" href="#">Marketing Training</a></div>
-                    </div>
-                </div>
+        <div style="padding: 20px;padding-left: 100px;"><label style="font-size: 24px;color: #006739;"><strong>Create a class</strong></label>
+            <hr>
         </div>
-                <div class="form-row form-group" style="padding: 5px;">
+        <div style="width: 100%;height: 100%;padding-left: 100px;padding-right: 20px;padding-top: 10px;padding-bottom: 10px;min-height: 100%;">
+            <div class="float-left" style="width: 90%;height: 100%;background: url(assets/img/conference.jpg) right / contain no-repeat, #f6f6f6;padding: 20px;margin: 5px;">
+                <div class="d-flex" style="margin: 20px 10px;"><label class="float-left" style="padding-right: 30px;min-width: 120px;">
+
+                    <strong>Course</strong></label>
                     
-                    <div class="col-sm-4 label-column" style="max-width: 20%;font-size: 14px;"><label class="col-form-label flex-nowrap" for="name-input-field"><strong>Start Date</strong><br></label></div>
+                    <div class="dropdown"><button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="false" type="button" style="width: 150px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">Select Course&nbsp;</button>
+                        <div class="dropdown-menu">
+                            {{#each courseList}}
+                            <a class="dropdown-item" href="#"> {{courseList.courseName}}</a>
+                            {{/each}}
+                        </div>
+                    </div>
+                </div>
+            <div class="d-flex" style="margin: 20px 10px;"><label class="float-left" style="padding-right: 30px;min-width: 120px;"><strong>Start Date</strong></label>
+                <div class="dropdown" style="margin-right: 5px;">
 
+                    <button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="false" type="button" style="width: 60px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">MM</button>
                     
-                    <div class="col" style="padding: 0px;">
-
-                        <div class="dropdown d-inline-flex" style="padding-bottom: 16px;width: 100px;padding-left: 3px;"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="background-color: rgb(255,255,255);color: rgb(0,0,0);text-align: left;width: 100px;">Month</button>
-                            <div class="dropdown-menu"
-                                role="menu" style="width: 180px;"><a class="dropdown-item" role="presentation" href="#">Real Estate Training</a><a class="dropdown-item" role="presentation" href="#">Marketing Training</a></div>
-                        </div>
-
-                        <div class="dropdown d-inline-flex" style="padding-bottom: 16px;width: 100px;padding-left: 3px;"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="background-color: rgb(255,255,255);color: rgb(0,0,0);text-align: left;width: 100px;">Day</button>
-                            <div class="dropdown-menu"
-                                role="menu" style="width: 180px;"><a class="dropdown-item" role="presentation" href="#">Real Estate Training</a><a class="dropdown-item" role="presentation" href="#">Marketing Training</a></div>
-                        </div>
-
-                        <div class="dropdown d-inline-flex" style="padding-bottom: 16px;width: 100px;padding-left: 3px;"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="background-color: rgb(255,255,255);color: rgb(0,0,0);text-align: left;width: 100px;">Year</button>
-                            <div class="dropdown-menu"
-                                role="menu" style="width: 180px;"><a class="dropdown-item" role="presentation" href="#">Real Estate Training</a><a class="dropdown-item" role="presentation" href="#">Marketing Training</a></div>
-                        </div>
+                    <div class="dropdown-menu">
+                        {{#each month}}
+                        <a class="dropdown-item" href="#">{{this}}</a>
+                        {{/each}}
                     </div>
-
-                </div>
-
-                <div class="form-row form-group" style="padding: 5px;">
-                    <div class="col-sm-4 label-column" style="max-width: 20%;"><label class="col-form-label" for="name-input-field"><strong>End Date</strong></label></div>
-                    <div class="col" style="padding: 0px;">
-                        <div class="dropdown d-inline-flex" style="padding-bottom: 16px;width: 100px;padding-left: 3px;"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="background-color: rgb(255,255,255);color: rgb(0,0,0);text-align: left;width: 100px;">Month</button>
-                            <div class="dropdown-menu"
-                                role="menu" style="width: 180px;"><a class="dropdown-item" role="presentation" href="#">Real Estate Training</a><a class="dropdown-item" role="presentation" href="#">Marketing Training</a></div>
-                        </div>
-                        <div class="dropdown d-inline-flex" style="padding-bottom: 16px;width: 100px;padding-left: 3px;"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="background-color: rgb(255,255,255);color: rgb(0,0,0);text-align: left;width: 100px;">Day</button>
-                            <div class="dropdown-menu"
-                                role="menu" style="width: 180px;"><a class="dropdown-item" role="presentation" href="#">Real Estate Training</a><a class="dropdown-item" role="presentation" href="#">Marketing Training</a></div>
-                        </div>
-                        <div class="dropdown d-inline-flex" style="padding-bottom: 16px;width: 100px;padding-left: 3px;"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="background-color: rgb(255,255,255);color: rgb(0,0,0);text-align: left;width: 100px;">Year</button>
-                            <div class="dropdown-menu"
-                                role="menu" style="width: 180px;"><a class="dropdown-item" role="presentation" href="#">Real Estate Training</a><a class="dropdown-item" role="presentation" href="#">Marketing Training</a></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-row form-group" style="padding: 5px;">
-                    <div class="col-sm-4 label-column" style="max-width: 20%;"><label class="col-form-label" for="name-input-field"><strong>Start Time</strong></label></div>
-                    <div class="col" style="padding: 0px;">
-                        <div class="dropdown d-inline-flex" style="padding-bottom: 16px;width: 100px;padding-left: 3px;"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="background-color: rgb(255,255,255);color: rgb(0,0,0);text-align: left;width: 100px;">Time</button>
-                            <div class="dropdown-menu"
-                                role="menu" style="width: 180px;"><a class="dropdown-item" role="presentation" href="#">Real Estate Training</a><a class="dropdown-item" role="presentation" href="#">Marketing Training</a></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-row form-group" style="padding: 5px;">
-                    <div class="col-sm-4 label-column" style="max-width: 20%;"><label class="col-form-label" for="name-input-field"><strong>End Time</strong></label></div>
-                    <div class="col" style="padding: 0px;">
-                        <div class="dropdown d-inline-flex" style="padding-bottom: 16px;width: 100px;padding-left: 3px;"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="background-color: rgb(255,255,255);color: rgb(0,0,0);text-align: left;width: 100px;">Time</button>
-                            <div class="dropdown-menu"
-                                role="menu" style="width: 180px;"><a class="dropdown-item" role="presentation" href="#">Real Estate Training</a><a class="dropdown-item" role="presentation" href="#">Marketing Training</a></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-
-                    <button class="btn btn-primary" type="submit" style="background-color: #006739;margin-right: 5px;">Create</button>
-
-                    <a href="/quizlist"><button class="btn btn-primary" type="submit" style="background-color: #da6b59;margin: 10px 0px;">Cancel</button></a></form>
-            </form>
+                    
+            </div>
+            <div class="dropdown" style="margin-right: 5px;"><button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="true" type="button" style="width: 60px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">DD</button>
+                <div
+                    class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>
         </div>
-        </div><img src="assets/img/stockconf.jpeg" style="max-width: 53%;">
+        <div class="dropdown" style="margin-right: 5px;"><button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="false" type="button" style="width: 75px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">YYYY</button>
+            <div
+                class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>
     </div>
+    </div>
+    <div class="d-flex" style="margin: 20px 10px;"><label class="float-left" style="padding-right: 30px;min-width: 120px;"><strong>End Date</strong></label>
+        <div class="dropdown" style="margin-right: 5px;"><button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="false" type="button" style="width: 60px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">MM</button>
+            <div
+                class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>
+    </div>
+    <div class="dropdown" style="margin-right: 5px;"><button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="false" type="button" style="width: 60px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">DD</button>
+        <div
+            class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>
+    </div>
+    <div class="dropdown" style="margin-right: 5px;"><button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="false" type="button" style="width: 75px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">YYYY</button>
+        <div
+            class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>
+    </div>
+    </div>
+    <div class="d-flex" style="margin: 20px 10px;"><label class="float-left" style="padding-right: 30px;min-width: 120px;"><strong>Start Time</strong></label>
+        <div class="dropdown" style="margin-right: 5px;width: 75px;"><button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="false" type="button" style="width: 75px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">00:00</button>
+            <div
+                class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>
+    </div>
+    </div>
+    <div class="d-flex" style="margin: 20px 10px;"><label class="float-left" style="padding-right: 30px;min-width: 120px;"><strong>End Time</strong></label>
+        <div class="dropdown" style="margin-right: 5px;width: 75px;"><button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="false" type="button" style="width: 75px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">00:00</button>
+            <div
+                class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>
+    </div>
+    </div><button class="btn btn-primary" type="submit" style="background-color: #006739;margin: 0px 10px;">Create</button><button class="btn btn-primary" type="submit" style="background-color: #da6b59;margin: 10px 0px;">Cancel</button></div>
+    </div>
+</div>

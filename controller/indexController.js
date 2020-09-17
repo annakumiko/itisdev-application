@@ -215,7 +215,6 @@ const rendFunctions = {
 						}},
 						{$unwind: "$course"}
 				]);
-				 console.log(classVar);
 				 
  				// clients
  				var clientsVar = await clientlistsModel.aggregate([
@@ -228,13 +227,12 @@ const rendFunctions = {
 					 }},
 					 {$unwind: "$clientList"}
  				]);
- 				console.log(clientsVar);
 
  				res.render('trainee-profile', {
 	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
 					uType: req.session.user.userType,
 
-					// classes: classVar,             // then sa hbs classList.section ???
+					// classes: classVar,          
 					section: classVar[0].classList.section,
 					course: classVar[0].course.courseName,
 					clients: clientsVar
@@ -296,10 +294,27 @@ const rendFunctions = {
 
  	getCreateClass: function(req, res, next) {
  		if (req.session.user) {
- 			res.render('create-class', {
- 				//boom
+ 			var userID = req.session.user._id;
+
+ 			var mm = [ "01", "02", "03", "04", "05", "06",
+ 			"07", "08", "09", "10", "11", "12" ];
+
+ 			var courseDet = coursesModel.find({}, function(courses) {
+ 				var details = JSON.parse(JSON.stringify(courses));
+ 				
+ 				// console.log(details);	
+
+ 				
  			});
+
+ 			console.log(mm);
+
+ 			res.render('create-class', {
+					courseList: courseDet,
+					month: mm
+			});
  		}
+
  		else res.redirect('login');
  	},
 
@@ -331,9 +346,8 @@ const rendFunctions = {
 		res.redirect("login");
 	},
 
-	// for encrypting
+	// for encrypting / mimic register
 	postRegister: async function(req, res, next) {
-	//	console.log(req.body);
 		// users
 		try {
 			let hash = await bcrypt.hash(req.body.password, saltRounds);
@@ -344,7 +358,6 @@ const rendFunctions = {
 		} catch(e) {
 			console.log(e);
 		}
-		// verification test...
 	},
 
 	getClientsList: function(req, res, next) {
