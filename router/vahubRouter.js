@@ -32,8 +32,7 @@ router.post('/register', controller.postRegister);
 //router.post('/manage-clientslist', controller.postManageClients);
 
 // TRAINER
-// router.post('/quizlist', controller.postQuizList);
-//router.post('/trainer-dashboard', controller.postDashboard);
+router.post('/create-class', controller.postCreateClass);
 
 // TRAINEE
 router.post('/verification', controller.postVerification);

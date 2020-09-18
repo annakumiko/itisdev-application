@@ -19,6 +19,20 @@ const usersModel = require('../models/usersdb');
 const verificationModel = require('../models/verificationdb');
 const db = require('../models/db');
 
+// constructor for class
+function createClass(courseID, trainerID, section, startDate, endDate, sTime, eTime) {
+	var tempClass = {
+		courseID: courseID,
+		trainerID: trainerID,
+		section: section,
+		startDate: startDate,
+		endDate: endDate,
+		startTime: sTime,
+		endTime: eTime
+	};
+
+	return tempClass;
+}
 // format date
 function getDate(date) {
 	var newDate = new Date(date);
@@ -45,25 +59,22 @@ function getDate(date) {
 	return mm + " " + dd + ", " + yy;
 }
 
-// format time
-function getTime(time) {
-	return time;
-}
-
 // generate section for class; numClass = no. of classes under the course
 function generateSection(course, numClass){
 
 	var newSec = course;
 
-	if(section === "Real Estate") {
-		// R + numclass + 1
-		// check if existing section... how
+	if(newSec === "Real Estate") {
+		for (var i = 0; i < numClass; i++) {
+			newSec = 'R' + (i + 1);
+		}
 	}
 	else {
-		// M + numclass + 1
-		// check if existing
+		for (var i = 0; i < numClass; i++) {
+			newSec = 'M' + (i + 1);
+		}
 	}
-
+	
 	return newSec;
 }
 
@@ -347,20 +358,48 @@ const rendFunctions = {
  		// count classes under course
 
  		coursesModel.findOne({courseName: course}, function(err, course) {
-			classesModel.find({courseID: courseID}, function(err, classes) {
+
+ 			var courseID = course.courseID; // dis works
+
+			classesModel.find({courseID: courseID}, function(err, classes) {//
  				var classVar = classes;
  				var numClass = classVar.length;
+ 				var trainerID = req.session.user._id;
+ 				var sTime = new Date("Jan 01 2020 " + startTime + ":00");
+ 				var eTime = new Date("Jan 01 2020 " + endTime + ":00");
+		 		console.log("numClass - " + numClass);
 
-		 		console.log(numClass);
+		 		var cName = null;
+		 		if (courseID == "5f51f73f76707d0788f0f333")
+		 			cName = "Marketing";
+		 		else cName = "Real Estate";
+
+		 		console.log('course ' + cName);
 
 		 		// generate section
-		 //		var section = generateSection(course, numClass);
+		 		var tempSec = generateSection(cName, numClass);
+		 		var section = null;
+		 		for(var i = 0; i < numClass; i++) {
+		 			if(tempSec != classVar[i].section)
+		 				section = tempSec;
+		 			else {
+		 				tempSec = generateSection(cName, numClass);
+		 				i = 0;
+		 			}
+		 		}
+		 		console.log("section - " + section);
+		 		console.log("trainer - " + trainerID);
+		 		console.log("startDate - " + startDate);
+		 		console.log("sTime - " + sTime);
+		 		
+		 		// create the class
+		 	    var c = createClass(courseID, trainerID, section, startDate, endDate, sTime, eTime);
 
-		 		// create
-		 	//	var c = createClass()
-
-
-		 		// put to classesModel
+		 		// put into classesModel
+		 		classesModel.create(c, function(error) {
+		 			if (error) res.send({status: 500, mssg: "Error: Cannot create class."});
+		 			else res.send({status: 200, mssg: 'Class created!'});
+		 		});
 
  			});
 		});
