@@ -1,5 +1,5 @@
 $(document).ready(function() {
-// LOG-IN VALIDATION
+	// LOG-IN VALIDATION
 	$('button#login-btn').click(function() {
 		var email = validator.trim($('#email').val());
 		var password = validator.trim($('#password').val());
@@ -92,5 +92,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$('.dropdown-toggle').dropdown();
+	// CREATE CLASS VALIDATION 
+	$('button#create-class-btn').click(function() {
+	});
 });

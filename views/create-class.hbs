@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 
+<title> TVH - Create Class </title>
+
 {{>sidebar-trainer}}
+
 
 <div>
         <div style="padding: 20px;padding-left: 100px;"><label style="font-size: 24px;color: #006739;"><strong>Create a class</strong></label>
@@ -12,60 +15,96 @@
 
                     <strong>Course</strong></label>
                     
-                    <div class="dropdown"><button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="false" type="button" style="width: 150px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">Select Course&nbsp;</button>
-                        <div class="dropdown-menu">
+                    <div style="margin-right: 5px;width: 150px; height: 30px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;">
+                        <select style="width: 150px;">
                             {{#each courseList}}
-                            <a class="dropdown-item" href="#"> {{courseList.courseName}}</a>
+                            <option class="dropdown-item" href="#"> {{courseName}}</option>
                             {{/each}}
-                        </div>
+                        </select>
                     </div>
                 </div>
             <div class="d-flex" style="margin: 20px 10px;"><label class="float-left" style="padding-right: 30px;min-width: 120px;"><strong>Start Date</strong></label>
-                <div class="dropdown" style="margin-right: 5px;">
-
-                    <button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="false" type="button" style="width: 60px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">MM</button>
-                    
-                    <div class="dropdown-menu">
-                        {{#each month}}
-                        <a class="dropdown-item" href="#">{{this}}</a>
-                        {{/each}}
-                    </div>
-                    
-            </div>
-            <div class="dropdown" style="margin-right: 5px;"><button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="true" type="button" style="width: 60px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">DD</button>
-                <div
-                    class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>
+                <div style="margin-right: 5px;width: 60px; height: 30px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;">
+            <select style="width: 60px;">
+                    {{#each month}}
+                    <option class="dropdown-item" style="width: 60px;" href="#">{{this}}</option>
+                    {{/each}}
+            </select>
         </div>
-        <div class="dropdown" style="margin-right: 5px;"><button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="false" type="button" style="width: 75px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">YYYY</button>
-            <div
-                class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>
-    </div>
+        <div style="margin-right: 5px;width: 60px; height: 30px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;">
+            <select style="width: 60px;">
+                    {{#each day}}
+                    <option class="dropdown-item" style="width: 60px;" href="#">{{this}}</option>
+                    {{/each}}
+            </select>
+        </div>
+        <div style="margin-right: 5px;width: 60px; height: 30px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;">
+            <select style="width: 60px;">
+                    {{#each year}}
+                    <option class="dropdown-item" style="width: 60px;" href="#">{{this}}</option>
+                    {{/each}}
+            </select>
+        </div>
     </div>
     <div class="d-flex" style="margin: 20px 10px;"><label class="float-left" style="padding-right: 30px;min-width: 120px;"><strong>End Date</strong></label>
-        <div class="dropdown" style="margin-right: 5px;"><button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="false" type="button" style="width: 60px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">MM</button>
-            <div
-                class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>
-    </div>
-    <div class="dropdown" style="margin-right: 5px;"><button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="false" type="button" style="width: 60px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">DD</button>
-        <div
-            class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>
-    </div>
-    <div class="dropdown" style="margin-right: 5px;"><button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="false" type="button" style="width: 75px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">YYYY</button>
-        <div
-            class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>
-    </div>
+        <div style="margin-right: 5px;width: 60px; height: 30px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;;">
+            <select style="width: 60px;">
+                    {{#each month}}
+                    <option class="dropdown-item" style="width: 60px;" href="#">{{this}}</option>
+                    {{/each}}
+            </select>
+        </div>
+        <div style="margin-right: 5px;width: 60px; height: 30px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;">
+            <select style="width: 60px;">
+                    {{#each day}}
+                    <option class="dropdown-item" style="width: 60px;" href="#">{{this}}</option>
+                    {{/each}}
+            </select>
+        </div>
+        <div style="margin-right: 5px;width: 60px; height: 30px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;">
+            <select style="width: 60px;">
+                    {{#each year}}
+                    <option class="dropdown-item" style="width: 60px;" href="#">{{this}}</option>
+                    {{/each}}
+            </select>
+        </div>
     </div>
     <div class="d-flex" style="margin: 20px 10px;"><label class="float-left" style="padding-right: 30px;min-width: 120px;"><strong>Start Time</strong></label>
-        <div class="dropdown" style="margin-right: 5px;width: 75px;"><button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="false" type="button" style="width: 75px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">00:00</button>
-            <div
-                class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>
-    </div>
+        <div style="margin-right: 5px;width: 60px; height: 30px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">
+            <select style="margin-right: 5px width: 60px;">
+                    {{#each hour}}
+                    <option class="dropdown-item" style="width: 60px;" href="#">{{this}}</option>
+                    {{/each}}
+            </select>
+        </div>
+        <div style="margin-right: 5px;width: 60px; height: 30px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">
+            <select style="margin-right: 5px width: 60px;">
+                    {{#each indicator}}
+                    <option class="dropdown-item" style="width: 60px;" href="#">{{this}}</option>
+                    {{/each}}
+            </select>
+        </div>
     </div>
     <div class="d-flex" style="margin: 20px 10px;"><label class="float-left" style="padding-right: 30px;min-width: 120px;"><strong>End Time</strong></label>
-        <div class="dropdown" style="margin-right: 5px;width: 75px;"><button class="btn btn-primary dropdown-toggle text-right text-dark" data-toggle="dropdown" aria-expanded="false" type="button" style="width: 75px;height: 30px;padding: 2px;background: #ffffff;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">00:00</button>
-            <div
-                class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>
+        <div style="margin-right: 5px;width: 60px; height: 30px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">
+            <select style="margin-right: 5px width: 60px;">
+                    {{#each hour}}
+                    <option class="dropdown-item" style="width: 60px;" href="#">{{this}}</option>
+                    {{/each}}
+            </select>
+        </div>
+        <div style="margin-right: 5px;width: 60px; height: 30px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;padding-right: 10px;">
+            <select style="margin-right: 5px width: 60px;">
+                    {{#each indicator}}
+                    <option class="dropdown-item" style="width: 60px;" href="#">{{this}}</option>
+                    {{/each}}
+            </select>
+        </div>
+
     </div>
-    </div><button class="btn btn-primary" type="submit" style="background-color: #006739;margin: 0px 10px;">Create</button><button class="btn btn-primary" type="submit" style="background-color: #da6b59;margin: 10px 0px;">Cancel</button></div>
+
+    <button class="btn btn-primary" id="create-class-btn" type="button" style="background-color: #006739;margin: 0px 10px;">Create</button>
+    <button class="btn btn-primary" type="submit" style="background-color: #da6b59;margin: 10px 0px;">Cancel</button></div>
+
     </div>
 </div>
