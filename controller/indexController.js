@@ -295,39 +295,17 @@ const rendFunctions = {
  	getCreateClass: function(req, res, next) {
  		if (req.session.user) {
  			if(req.session.user.userType === "Trainer") {
-
 	 			// courses
-	 		coursesModel.find({}, function(courses) {
-	 				// var details = JSON.parse(JSON.stringify(courses));
-	 			var courseDet = courses;	
-	 			var userID = req.session.user._id;
+		 		coursesModel.find({}, function(err, data) {
+		 			var details = JSON.parse(JSON.stringify(data));
+		 			var courseDet = details;	
+		 			var userID = req.session.user._id;
 
-	 			var mm = [ "01", "02", "03", "04", "05", "06",
-	 			"07", "08", "09", "10", "11", "12" ];
-
-	 			var dd = [ "01", "02", "03", "04", "05", "06",
-	 			"07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17",
-	 			"18", "19", "20", "21", "22", "23", "24", "25", "26", "27",
-	 			"28", "29", "30", "31"];
-
-	 			var yyyy = [ "2018", "2019", "2020", "2021", "2022", "2023", "2024"];
-
-	 			var hh = [ "01:00", "01:30", "02:00","02:30", "03:00", "03:30", "04:00", "04:30", 
-	 			"05:00", "05:30", "06:00", "06:30", "07:00", "07:30", "08:00", "08:30", 
-	 			"09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30"];
-
-	 			var ampm = ["AM", "PM"];
-
-	 			console.log(courseDet);	
- 				res.render('create-class', {
-					courseList: courseDet,
-					month: mm,
-					day: dd,
-					year: yyyy,
-					hour: hh,
-					indicator: ampm
-				});
-	 		});
+		 			//console.log(courseDet);	
+	 				res.render('create-class', {
+						courseList: courseDet
+					});
+		 		});
 
 			} else res.redirect('login');
  		}

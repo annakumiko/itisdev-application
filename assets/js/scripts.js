@@ -92,7 +92,45 @@ $(document).ready(function() {
 		}
 	});
 
+
 	// CREATE CLASS VALIDATION 
 	$('button#create-class-btn').click(function() {
+		var dateToday = new Date();
+		var startDate = new Date($('#startDate').val());
+		var endDate = new Date($('#endDate').val());
+		var starTime = new Date($('#startTime').val());
+		var endTime = new Date($('#endTime').val());
+
+		var numDays = Math.round(endDate- startDate) / (1000 * 60 * 60 * 24) + 1;
+		var numHours = Math.round(endTime- endDate) / (1000 * 60 * 60);
+
+		var course = $('#course').val();
+		console.log(course);
+		// var startYear = startDate.getFullYear();
+		// var startMonth = startDate.getMonth() + 1; 
+		// var startDay = startDate.getDate();
+		// var endMonth = startDate.getDate());
+
+		console.log(course);
+
+
+		$('p#sDate').text('');
+		$('p#eDate').text('');
+		$('p#sTime').text('');
+		$('p#eTime').text('');
+
+		if (course) $('p#courseError').text('Select a course.');
+
+		if (startDate || endDate) $('p#sDate').text('Set date.');
+
+		if (numDays != 8) $('p#eDate').text('Classes should last for eight (8) days.');
+		if (startDate < dateToday) $('p#sDate').text('Date should not be earlier than today.');
+		if (startDate > endDate) $('p#sDate').text('Start Date should be earlier than End Date.');
+
+		if (startTime || endTime) $('p#sTime').text('Set time.');
+ 
+		if (numHours != 10) $('p#eTime').text('Classes should last for 10 hours a day.');
+		
+		// if !(any above) -> alert {successfully added}
 	});
-});
+}); 
