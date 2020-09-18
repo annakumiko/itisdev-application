@@ -50,10 +50,10 @@ function getTime(time) {
 	return time;
 }
 
-// pass course here
-function generateSection(section, numClass){
+// generate section for class; numClass = no. of classes under the course
+function generateSection(course, numClass){
 
-	var newSec = section;
+	var newSec = course;
 
 	if(section === "Real Estate") {
 		// R + numclass + 1
@@ -78,6 +78,34 @@ const rendFunctions = {
 			});
 		}
 	 },
+
+	postLogin: async function(req, res, next) {
+		let { email, password } = req.body;
+
+		var user = await db.findOne(usersModel, {email: email});
+
+		// SEARCH USER IN DB
+		try {
+			if (!user) // USER NOT IN DB
+				res.send({status: 401});
+			else { // SUCCESS
+				bcrypt.compare(password, user.password, function(err, match) {
+					if (match){
+						req.session.user = user;
+						res.send({status: 200});
+					} else
+						res.send({status: 401});
+				});
+			}		
+		} catch(e) {
+			console.log(e);
+		}
+	},
+
+ 	postLogout: function(req, res) {
+		req.session.destroy();
+		res.redirect("login");
+	},
 	 
 	getVerification: function(req, res, next) {
 		// if user not verified..
@@ -312,33 +340,31 @@ const rendFunctions = {
  		else res.redirect('login');
  	},
 
- 	postLogin: async function(req, res, next) {
-		let { email, password } = req.body;
 
-		var user = await db.findOne(usersModel, {email: email});
+ 	postCreateClass: function(req, res, next) {
+ 		let { course, startDate, endDate, startTime, endTime } = req.body;
+ 		
+ 		// count classes under course
 
-		// SEARCH USER IN DB
-		try {
-			if (!user) // USER NOT IN DB
-				res.send({status: 401});
-			else { // SUCCESS
-				bcrypt.compare(password, user.password, function(err, match) {
-					if (match){
-						req.session.user = user;
-						res.send({status: 200});
-					} else
-						res.send({status: 401});
-				});
-			}		
-		} catch(e) {
-			console.log(e);
-		}
-	},
+ 		coursesModel.findOne({courseName: course}, function(err, course) {
+			classesModel.find({courseID: courseID}, function(err, classes) {
+ 				var classVar = classes;
+ 				var numClass = classVar.length;
 
- 	postLogout: function(req, res) {
-		req.session.destroy();
-		res.redirect("login");
-	},
+		 		console.log(numClass);
+
+		 		// generate section
+		 //		var section = generateSection(course, numClass);
+
+		 		// create
+		 	//	var c = createClass()
+
+
+		 		// put to classesModel
+
+ 			});
+		});
+ 	},
 
 	// for encrypting / mimic register
 	postRegister: async function(req, res, next) {

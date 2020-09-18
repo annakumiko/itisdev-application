@@ -98,39 +98,84 @@ $(document).ready(function() {
 		var dateToday = new Date();
 		var startDate = new Date($('#startDate').val());
 		var endDate = new Date($('#endDate').val());
-		var starTime = new Date($('#startTime').val());
-		var endTime = new Date($('#endTime').val());
-
+		var startTime = $('#startTime').val();
+		var endTime = $('#endTime').val();
 		var numDays = Math.round(endDate- startDate) / (1000 * 60 * 60 * 24) + 1;
-		var numHours = Math.round(endTime- endDate) / (1000 * 60 * 60);
+		//var numHours = endTime- startTime;
+
+        hours = endTime.split(':')[0] - startTime.split(':')[0],
+        minutes = endTime.split(':')[1] - startTime.split(':')[1];
+
+	    minutes = minutes.toString().length<2?'0'+minutes:minutes;
+	    if(minutes<0){ 
+	        hours--;
+	        minutes = 60 + minutes;
+	    }
+
+	    hours = hours.toString().length<2?'0'+hours:hours;
+
+	    numHours = hours + (minutes*100);
 
 		var course = $('#course').val();
-		console.log(course);
-		// var startYear = startDate.getFullYear();
-		// var startMonth = startDate.getMonth() + 1; 
-		// var startDay = startDate.getDate();
-		// var endMonth = startDate.getDate());
+		console.log(numHours);
+		//console.log(course);
 
-		console.log(course);
-
-
+		// dis not resetting ??
 		$('p#sDate').text('');
 		$('p#eDate').text('');
 		$('p#sTime').text('');
 		$('p#eTime').text('');
+		$('p#courseError').text('');
 
-		if (course) $('p#courseError').text('Select a course.');
+		console.log("Course: " + course);
+				
+		// date
+		if (!startDate || !endDate) {
+			if (!startDate) $('p#sDate').text('Set date.');
+			//console.log("SDate: " + startDate);
 
-		if (startDate || endDate) $('p#sDate').text('Set date.');
+			else $('p#eDate').text('Set date.');
+		}
+		else {
+			if (numDays != 8) $('p#eDate').text('Classes should last for eight (8) days.');
+			console.log("numDays: " + numDays);
+			if (startDate < dateToday) $('p#sDate').text('Date should not be earlier than today.');
 
-		if (numDays != 8) $('p#eDate').text('Classes should last for eight (8) days.');
-		if (startDate < dateToday) $('p#sDate').text('Date should not be earlier than today.');
-		if (startDate > endDate) $('p#sDate').text('Start Date should be earlier than End Date.');
-
-		if (startTime || endTime) $('p#sTime').text('Set time.');
- 
-		if (numHours != 10) $('p#eTime').text('Classes should last for 10 hours a day.');
+			if (startDate > endDate) $('p#sDate').text('Start Date should be earlier than End Date.'); 
+		}
 		
-		// if !(any above) -> alert {successfully added}
+		// time
+		if (!startTime || !endTime) {
+			if (!startTime) $('p#sTime').text('Set time.');
+			if (!endTime) $('p#eTime').text('Set time.');
+		}
+		else {
+			if (numHours != 10) $('p#eTime').text('Classes should last for 10 hours a day.');
+			console.log("numHours: " + numHours);
+
+			if (startTime > endTime) $('p#eTime').text('Start Time should be earlier than End Time.');
+		}
+		
+		// if no empty submit to backend
+		if (startDate && endDate && startTime && endTime && course) {
+			$.post('/create-class', {course: course, startDate: startDate, endDate: endDate,
+									startTime: starTime, endTime: endTime}, function(res) {
+				switch (res.status){
+					case 200: {
+						window.location.href = '/dashboard';
+						alert('Class created!');
+						break;
+					}
+					case 401: {
+						
+						break;								
+					}
+					case 500: {
+						
+						break;
+					}
+				}
+			});
+		}
 	});
 }); 
