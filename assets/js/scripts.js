@@ -193,22 +193,23 @@ $(document).ready(function() {
 		}
 	});
 
-	// ADD ANOTHER CHOOSE FILE BUTTON
-	$('button#addAnotherBTN').click(function(){
-		var set = '<div id="set"> <input id="courseMod" type="file"> <button style="margin-left:196px;font-weight:bold;color:#da6b59;border:none" id="delMod"> X </button> </div> <br>';
-
-		if(!($('#courseMod').get(0).files.length === 0))
-			$("#container").append(set);
-		else
-			$('p#fileError').text('Add file.');
-	});
-
-	// REMOVE FILE not working
-	$('button#delMod').click(function(){
-		$("#delMod").parent().remove();
-	});
-
 	// DEFINE COURSE 
 	$('button#publishCourseBTN').click(function() {
+		var courseName = $('#courseName').val();
+		var courseDesc = $('#courseDesc').val();
+		console.log(courseName + " -> " + courseDesc);
+
+		$.post('/define-course', {courseName: courseName, courseDesc: courseDesc}, function(res) {
+				switch (res.status){
+					case 200: {
+						alert(res.mssg);
+						break;
+					}
+					case 500: { 
+						alert(res.mssg);
+						break;
+					}
+					}
+				});
 	});
 });

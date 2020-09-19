@@ -444,7 +444,6 @@ const rendFunctions = {
 				coursesModel.find({}, function(err, data) {
 					var details = JSON.parse(JSON.stringify(data));
 					var courseDet = details;	
-					var userID = req.session.user._id;
 
 					res.render('define-course', {
 					 courseList: courseDet
@@ -458,16 +457,16 @@ const rendFunctions = {
 
 	 postDefineCourse: function(req, res, next) {
 		let { courseName, courseDesc } = req.body;
-		coursesModel.findOne({courseName: courseName}, function(err, course) {
 
-		var course = defineCourse(courseName, courseDesc);
-		
-		coursesModel.create(course, function(error) {
-					if (error) res.send({status: 500, mssg: "Error."});
-					else res.send({status: 200, mssg: 'Course updated!'});
-				});
+		console.log(courseName + " - " + courseDesc);
 
-			});
+		coursesModel.findOneAndUpdate({courseName: courseName},
+			{$set:{courseDesc: courseDesc}}, {new: true}, (err, doc) => {
+			if (err) {
+					console.log("Something wrong when updating data!");
+			}
+			console.log(doc);
+	});
 	},
 }
 

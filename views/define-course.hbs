@@ -6,9 +6,10 @@
 <label style="color: #006739;font-size: 25px;font-weight: bold;margin-top: 20px;">Define Course</label>
 <hr> <br>
 <div style="padding:20px;max-width: 95%;background-color:#f0f0f2">
+    <form method="post" id="define-course" name="defineCourse">
     <div id="courseDiv" style="margin-top: 30px;width: 800px;">
         <label style="color: #006739;font-size: 15px;font-weight: bold">Course Name</label>
-            <select style="margin-left: 48px; height: 32px;padding: 2px;border-radius: 5px;width: 150px;" id="course">
+            <select style="margin-left: 48px; height: 32px;padding: 2px;border-radius: 5px;width: 150px;" id="courseName">
                 {{#each courseList}}
                 <option class="dropdown-item" href="#">{{courseName}}</option>
                 {{/each}}
@@ -19,15 +20,12 @@
     <div id="modulesDiv" style="width: 800px;margin-top: 30px;">
         <label style="color: #006739;font-size: 20px;font-weight: bold;margin-top: 20;">Modules</label>
         {{!-- <button id="addAnotherBTN" class="btn btn-primary" type="button" style="margin-left:10px; margin-top:-6px;font-size: 13px;line-height: 10px;background-color: #00a99d;">Add another</button>  --}}
-        <p id="fileError" class="error" style="display:inline-block; padding-left: 30px">{{fileError}}</p> </div>
+        <p id="fileError" class="error" style="display:inline-block; padding-left: 30px">{{fileError}}</p> 
         <br>
-        <div id="container">
-        <div id="set"> 
-            <input id="courseMod" type="file" multiple> 
-            {{!-- <button style="margin-left:196px;font-weight:bold;color:#da6b59;border:none" id="delMod"> X </button> --}}
-        </div> <br> </div>
-        <br>
+        <input id="courseMod" type="file" multiple> 
+            <div id="container"> </div>
+        </div> <br>
         <button id="publishCourseBTN" class="btn btn-primary" type="button" style="margin-left: 445px;margin-top: 23px;font-size: 20px;text-align: center;background-color: #37ac50;width: 100px;">Publish</button>
-
+    </form>
 </div>
 </div>
