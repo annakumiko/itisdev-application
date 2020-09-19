@@ -197,11 +197,11 @@ $(document).ready(function() {
 	$('button#publishCourseBTN').click(function() {
 		var courseName = $('#courseName').val();
 		var courseDesc = $('#courseDesc').val();
-		console.log(courseName + " -> " + courseDesc);
 
 		$.post('/define-course', {courseName: courseName, courseDesc: courseDesc}, function(res) {
 				switch (res.status){
 					case 200: {
+						window.location.href = '/';
 						alert(res.mssg);
 						break;
 					}

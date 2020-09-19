@@ -460,8 +460,10 @@ const rendFunctions = {
 
 		console.log(courseName + " - " + courseDesc);
 
-		coursesModel.findOneAndUpdate({courseName: courseName},
-			{$set:{courseDesc: courseDesc}}, {new: true}, (err, doc) => {
+		coursesModel.findOneAndUpdate({ courseName: courseName },
+			{ $set: {courseDesc: courseDesc} },
+			{ useFindAndModify: false },
+			function(err, match) {
 			if (err) {
 				res.send({status: 500, mssg: "Error in updating course."});
 				console.log("Error in updating course");
@@ -470,7 +472,7 @@ const rendFunctions = {
 				res.send({status: 200, mssg: "Course updated."});
 				console.log("Course updated.");
 			}
-			console.log(doc);
+			console.log(match);
 	});
 	},
 }
