@@ -78,15 +78,6 @@ function generateSection(course, numClass){
 	return newSec;
 }
 
-function defineCourse(courseName, courseDesc) {
-	var courseVar = {
-		courseName: courseName,
-		courseDesc: courseDesc,
-	};
-
-	return courseVar;
-}
-
 // main functions for getting and posting data
 const rendFunctions = {
 
@@ -460,20 +451,23 @@ const rendFunctions = {
 
 		console.log(courseName + " - " + courseDesc);
 
-		coursesModel.findOneAndUpdate({ courseName: courseName },
-			{ $set: {courseDesc: courseDesc} },
+		coursesModel.findOneAndUpdate(
+			{ courseName: courseName },
+			{ $set: {
+				courseDesc: courseDesc,
+				//files
+			}},
 			{ useFindAndModify: false },
 			function(err, match) {
-			if (err) {
-				res.send({status: 500, mssg: "Error in updating course."});
-				console.log("Error in updating course");
-			}
-			else{
-				res.send({status: 200, mssg: "Course updated."});
-				console.log("Course updated.");
-			}
-			console.log(match);
-	});
+				if (err) {
+					res.send({status: 500, mssg: "Error in updating course."});
+					console.log("Error in updating course");
+				}
+				else{
+					res.send({status: 200, mssg: "Course updated."});
+					console.log("Course updated.");
+				}
+		});
 	},
 }
 
