@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 var quizzesSchema = new mongoose.Schema({
 	quizID: String,
 	classID: String,
+	quizTitle: String,
 	quizDate: Date,
 	startTime: Date,
 	endTime: Date,

@@ -428,6 +428,47 @@ const rendFunctions = {
 		}
 	 },
 
+	getViewGrades: async function(req, res, next) {
+		if (req.session.user){
+			if(req.session.user.userType === "Trainee") {
+				var userID = req.session.user._id;
+				var classVar = await traineelistsModel.aggregate([
+					{$match: {traineeID: userID}},
+					{$lookup: {
+						 from: "classes",
+						 localField: "classID",
+						 foreignField: "classID",
+						 as: "classList"
+					}},
+					{$unwind: "$classList"},
+					{$lookup: {
+						 from: "courses",
+						 localField: "classList.courseID",
+						 foreignField: "courseID",
+						 as: "course"
+					 }},
+					 {$unwind: "$course"}
+			 ]);
+
+			 // compute skills
+
+			 //compute quizzes
+
+				res.render('view-grades', {
+					fullName: req.session.user.lastName + ", " + req.session.user.firstName,
+					section: classVar[0].classList.section,
+					course: classVar[0].course.courseName,
+
+					//SKILLS
+
+					//QUIZZES
+				});
+			}
+		} else {
+			res.redirect('/')
+		}
+	 },
+
 	 getDefineCourse: function(req, res, next) {
 		if (req.session.user) {
 			if(req.session.user.userType === "Admin") {

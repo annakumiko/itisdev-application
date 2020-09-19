@@ -20,6 +20,7 @@ router.get('/dashboard', controller.getDashboard);
 // TRAINEE
 router.get('/verification', controller.getVerification);
 router.get('/clientslist', controller.getClientsList);
+router.get('/view-grades', controller.getViewGrades);
 //router.get('/contact-clients', controller.getContactClient);
 
 /*POST functions*/
