@@ -78,6 +78,15 @@ function generateSection(course, numClass){
 	return newSec;
 }
 
+function defineCourse(courseName, courseDesc) {
+	var courseVar = {
+		courseName: courseName,
+		courseDesc: courseDesc,
+	};
+
+	return courseVar;
+}
+
 // main functions for getting and posting data
 const rendFunctions = {
 
@@ -426,7 +435,40 @@ const rendFunctions = {
 			res.render('clientlist', {
 			});
 		}
-	 }
-};
+	 },
+
+	 getDefineCourse: function(req, res, next) {
+		if (req.session.user) {
+			if(req.session.user.userType === "Admin") {
+
+				coursesModel.find({}, function(err, data) {
+					var details = JSON.parse(JSON.stringify(data));
+					var courseDet = details;	
+					var userID = req.session.user._id;
+
+					res.render('define-course', {
+					 courseList: courseDet
+				 });
+				});
+
+		 } else res.redirect('login');
+		}
+		else res.redirect('login');
+	 },
+
+	 postDefineCourse: function(req, res, next) {
+		let { courseName, courseDesc } = req.body;
+		coursesModel.findOne({courseName: courseName}, function(err, course) {
+
+		var course = defineCourse(courseName, courseDesc);
+		
+		coursesModel.create(course, function(error) {
+					if (error) res.send({status: 500, mssg: "Error."});
+					else res.send({status: 200, mssg: 'Course updated!'});
+				});
+
+			});
+	},
+}
 
 module.exports = rendFunctions;
