@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express();
+const middleware = require('../middleware/vahubMiddleware');
 const controller = require('../controller/indexController');
 
 /*GET functions*/
@@ -32,7 +33,7 @@ router.post('/register', controller.postRegister);
 //router.post('/manage-clientslist', controller.postManageClients);
 
 // TRAINER
-router.post('/create-class', controller.postCreateClass);
+router.post('/create-class', middleware.validateCreateClass, controller.postCreateClass);
 
 // TRAINEE
 router.post('/verification', controller.postVerification);

@@ -16,6 +16,71 @@ const usersModel = require('../models/usersdb');
 const verificationModel = require('../models/verificationdb');
 const db = require('../models/db');
 
-function isOverlap (dateA, dateB) {
-	// homaygad
+function isOverlap (startDate1, endDate1, startDate2, endDate2, startTime1, endTime1, startTime2, endTime2) {
+	
+/*
+	TEST CASES
+	1. same date same time = overlap - if (dateOverlap && timeOverlap) return true;
+	2. same date different time 
+		a. overlapping time = overlap if (dateOverlap && timeOverlap) return true;
+		b. not overlapping if (dateOverlap && !timeOverlap) return false;
+	3. different date different time = nop if (!dateOverlap && !timeOverlap) return false;
+	4. different date same time = nop if (!dateOverlap && timeOverlap) return false;
+	5. overlapping dates same time = overlap // #2
+*/
+	var sTime1 = new Date("Jan 01 2020 " + startTime1 + ":00");
+	var eTime1 = new Date("Jan 01 2020 " + endTime1 + ":00");
+	var sTime2 = new Date("Jan 01 2020 " + startTime2 + ":00");
+	var eTime2 = new Date("Jan 01 2020 " + endTime2 + ":00");
+
+	var overlap = false;
+	// if dateOverlap -> check timeOverlap
+	if((startDate1 <= endDate2) && (startDate2 <= endDate1)) {
+		// if timeOverlap
+  		if((sTime1 <= eTime2) && (sTime2 <= eTime1)) overlap = true;
+  		else overlap = false;
+	} // if !dateOverlap -> check timeOverlap
+	else overlap = false;
+
+	return overlap;
 }
+
+const vahubMiddleware = {
+
+	validateCreateClass: async function (req, res, next) {
+		// things
+		var trainerID = JSON.parse(JSON.stringify(req.session.user._id));
+
+		let { startDate, endDate, startTime, endTime } = req.body; 
+
+		/*
+			STEPS
+			1. go through classes of trainer (assign to object, get numClass?)
+			2. for each class, compare dates and timez (isOverlap(put everythin here))
+			3. conditions
+				a. if overlap = res.send({status: 401, mssg: 'This class schedule overlaps with one of your classes.'});
+				b. else... return next(); ???
+		*/
+
+		let trainerClasses = await classesModel.find({trainerID: trainerID});
+		var numClass = trainerClasses.length;
+		var overlapSched = false;
+
+		var i = 0;
+		do {
+			if(isOverlap(startDate, endDate, trainerClasses[i].startDate, trainerClasses[i].endDate, 
+				startTime, endTime, trainerClasses[i].startTime, trainerClasses[i].endTime))
+					overlapSched = true;
+
+			i++;
+		} while (false)
+
+		console.log("overlap - " + overlapSched);
+
+		if(overlapSched)
+			res.send({status: 401, mssg: 'This class schedule overlaps with one of your classes.'});
+		else return next();
+	},
+}
+
+module.exports = vahubMiddleware;

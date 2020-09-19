@@ -62,9 +62,9 @@ function getDate(date) {
 // generate section for class; numClass = no. of classes under the course
 function generateSection(course, numClass){
 
-	var newSec = course;
+	var newSec = "S0";
 
-	if(newSec === "Real Estate") {
+	if(course === "Real Estate") {
 		for (var i = 0; i < numClass; i++) {
 			newSec = 'R' + (i + 1);
 		}
@@ -377,23 +377,23 @@ const rendFunctions = {
 		 		console.log('course ' + cName);
 
 		 		// generate section
-		 		var tempSec = generateSection(cName, numClass);
-		 		var section = null;
-		 		for(var i = 0; i < numClass; i++) {
-		 			if(tempSec != classVar[i].section)
-		 				section = tempSec;
-		 			else {
-		 				tempSec = generateSection(cName, numClass);
-		 				i = 0;
-		 			}
+		 		var tempSec = generateSection(cName, numClass); // 1.
+		 		// console.log("tempSec " + tempSec);
+		 		var sec = "S0";
+		 		
+		 		for (var i = 0; i < numClass; i++) {
+		 			if (tempSec !== classVar[i].section)
+		 				sec = tempSec;
+		 			else tempSec++;
 		 		}
-		 		console.log("section - " + section);
+
+		 		console.log("section - " + sec);
 		 		console.log("trainer - " + trainerID);
 		 		console.log("startDate - " + startDate);
 		 		console.log("sTime - " + sTime);
 		 		
 		 		// create the class
-		 	    var c = createClass(courseID, trainerID, section, startDate, endDate, sTime, eTime);
+		 	    var c = createClass(courseID, trainerID, sec, startDate, endDate, sTime, eTime);
 
 		 		// put into classesModel
 		 		classesModel.create(c, function(error) {
