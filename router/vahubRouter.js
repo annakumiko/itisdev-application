@@ -11,7 +11,8 @@ router.get('/create-class', controller.getCreateClass);
 
 //admin
 router.get('/define-course', controller.getDefineCourse);
-//router.get('/manage-clientslist', controller.getManageClients);
+router.get('/clientlist', controller.getClientList);
+router.get('/manage-clientlist', controller.getManageClients);
 
 // TRAINER
 router.get('/dashboard', controller.getDashboard);
@@ -19,7 +20,7 @@ router.get('/dashboard', controller.getDashboard);
 
 // TRAINEE
 router.get('/verification', controller.getVerification);
-router.get('/clientslist', controller.getClientsList);
+router.get('/clientlist', controller.getClientList);
 router.get('/view-grades', controller.getViewGrades);
 //router.get('/contact-clients', controller.getContactClient);
 
@@ -30,7 +31,7 @@ router.post('/register', controller.postRegister);
 
 //admin
 router.post('/define-course', controller.postDefineCourse);
-//router.post('/manage-clientslist', controller.postManageClients);
+//router.post('/manage-clientlist', controller.postManageClients);
 
 // TRAINER
 router.post('/create-class', controller.postCreateClass);

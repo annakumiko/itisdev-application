@@ -419,13 +419,23 @@ const rendFunctions = {
 		}
 	},
 
-	getClientsList: function(req, res, next) {
-		if (req.session.user){
-			res.redirect('/');
-		} else {
-			res.render('clientlist', {
-			});
+	getClientList: function(req, res, next) {
+		if (req.session.user) {
+			if(req.session.user.userType === "Trainee") {
+
+				clientsModel.find({}, function(err, data) {
+					var details = JSON.parse(JSON.stringify(data));
+					var clients = details;	
+					console.log(clients);
+					
+					res.render('clientlist', {
+					 clients: clients,
+				 });
+				});
+
+		 } else res.redirect('login');
 		}
+		else res.redirect('login');
 	 },
 
 	getViewGrades: async function(req, res, next) {
@@ -510,6 +520,26 @@ const rendFunctions = {
 				}
 		});
 	},
+
+	getManageClients: function(req, res, next) {
+		if (req.session.user) {
+			if(req.session.user.userType === "Admin") {
+
+				clientsModel.find({}, function(err, data) {
+					var details = JSON.parse(JSON.stringify(data));
+					var clients = details;	
+					console.log(clients);
+
+					res.render('manage-clientlist', {
+					 clients: clients,
+				 });
+				});
+
+		 } else res.redirect('login');
+		}
+		else res.redirect('login');
+	 },
+
 }
 
 module.exports = rendFunctions;

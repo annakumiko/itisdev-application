@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser'); //generates cookies to keep track
 const session = require('express-session'); //keeps track of who's logged in
 const mongoose = require('mongoose');
 const path = require('path');
+const nodemailer = require('nodemailer'); //for sending emails
 
 require('dotenv').config();
 
