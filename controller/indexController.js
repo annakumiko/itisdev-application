@@ -463,7 +463,12 @@ const rendFunctions = {
 		coursesModel.findOneAndUpdate({courseName: courseName},
 			{$set:{courseDesc: courseDesc}}, {new: true}, (err, doc) => {
 			if (err) {
-					console.log("Something wrong when updating data!");
+				res.send({status: 500, mssg: "Error in updating course."});
+				console.log("Error in updating course");
+			}
+			else{
+				res.send({status: 200, mssg: "Course updated."});
+				console.log("Course updated.");
 			}
 			console.log(doc);
 	});
