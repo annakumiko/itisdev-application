@@ -197,6 +197,7 @@ $(document).ready(function() {
 	$('button#publishCourseBTN').click(function() {
 		var courseName = $('#courseName').val();
 		var courseDesc = $('#courseDesc').val();
+		var courseModules = $("#courseMod").val().
 
 		$.post('/define-course', {courseName: courseName, courseDesc: courseDesc}, function(res) {
 				switch (res.status){
