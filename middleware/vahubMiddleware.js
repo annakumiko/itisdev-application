@@ -28,20 +28,22 @@ function isOverlap (startDate1, endDate1, startDate2, endDate2, startTime1, endT
 	4. different date same time = nop if (!dateOverlap && timeOverlap) return false;
 	5. overlapping dates same time = overlap // #2
 */
+	
 	var sTime1 = new Date("Jan 01 2020 " + startTime1 + ":00");
 	var eTime1 = new Date("Jan 01 2020 " + endTime1 + ":00");
-	var sTime2 = new Date("Jan 01 2020 " + startTime2 + ":00");
-	var eTime2 = new Date("Jan 01 2020 " + endTime2 + ":00");
-
+	//var sTime2 = new Date("Jan 01 2020 " + startTime2 + ":00");
+	//var eTime2 = new Date("Jan 01 2020 " + endTime2 + ":00");
 	var overlap = false;
+
 	// if dateOverlap -> check timeOverlap
 	if((startDate1 <= endDate2) && (startDate2 <= endDate1)) {
 		// if timeOverlap
-  		if((sTime1 <= eTime2) && (sTime2 <= eTime1)) overlap = true;
+  		if((sTime1 <= endTime2) && (startTime2 <= eTime1)) overlap = true;
   		else overlap = false;
 	} // if !dateOverlap -> check timeOverlap
 	else overlap = false;
 
+	console.log("isOverlap - " + overlap);
 	return overlap;
 }
 
@@ -66,14 +68,16 @@ const vahubMiddleware = {
 		var numClass = trainerClasses.length;
 		var overlapSched = false;
 
-		var i = 0;
-		do {
+		console.log(startDate + "-" + endDate);
+		console.log(trainerClasses[0].startDate  + "-" + trainerClasses[0].endDate); 
+		console.log(startTime  + "-" + endTime);
+		console.log(trainerClasses[0].startTime + "-" + trainerClasses[0].endTime);
+
+		for(var i = 0; i < numClass; i++) {
 			if(isOverlap(startDate, endDate, trainerClasses[i].startDate, trainerClasses[i].endDate, 
 				startTime, endTime, trainerClasses[i].startTime, trainerClasses[i].endTime))
 					overlapSched = true;
-
-			i++;
-		} while (false)
+		}
 
 		console.log("overlap - " + overlapSched);
 
@@ -81,6 +85,16 @@ const vahubMiddleware = {
 			res.send({status: 401, mssg: 'This class schedule overlaps with one of your classes.'});
 		else return next();
 	},
+
+	/*
+	validateAddTrainees: async function(req, res, next) {
+		
+		
+		// check if trainee -- already had a class with the course
+		// check if trainee -- in another active (ongoing)
+	}	
+
+	*/
 }
 
 module.exports = vahubMiddleware;

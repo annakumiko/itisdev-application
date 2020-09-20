@@ -405,6 +405,24 @@ const rendFunctions = {
 		});
  	},
 
+ 	getAddTrainees: function(req, res, next) {
+ 		/*
+ 			1. get class (section) and course of selected class
+			2. get endorsed trainees (trainees not belonging in a class yet)
+			3. get trainees already in the class
+		*/
+ 		res.render('add-trainees', {
+
+ 		});
+ 	},
+
+ 	postAddTrainees: function(req, res, next) {
+ 		// add
+
+
+ 		// remove
+ 	},
+
 	// for encrypting / mimic register
 	postRegister: async function(req, res, next) {
 		// users

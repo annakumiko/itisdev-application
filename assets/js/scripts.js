@@ -181,7 +181,7 @@ $(document).ready(function() {
 						break;
 					}
 					case 401: {
-						
+						alert(res.mssg);
 						break;								
 					}
 					case 500: {
@@ -192,4 +192,12 @@ $(document).ready(function() {
 			});
 		}
 	});
+
+	// ADD TRAINEES VALIDATION
+	/*
+		$('button#').click(function() {
+			// get the traineeID of the trainee being added
+			// pass to backend
+		});
+	*/
 }); 
