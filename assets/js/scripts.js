@@ -198,5 +198,7 @@ $(document).ready(function() {
 		// get the traineeID of the trainee being added
 		// pass to backend
 	});
+
+	
 */
 }); 

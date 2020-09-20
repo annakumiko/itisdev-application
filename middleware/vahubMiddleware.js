@@ -31,11 +31,12 @@ function isOverlap (startDate1, endDate1, startDate2, endDate2, startTime1, endT
 	
 	var sTime1 = new Date("Jan 01 2020 " + startTime1 + ":00");
 	var eTime1 = new Date("Jan 01 2020 " + endTime1 + ":00");
-	//var sTime2 = new Date("Jan 01 2020 " + startTime2 + ":00");
-	//var eTime2 = new Date("Jan 01 2020 " + endTime2 + ":00");
 	var overlap = false;
+	
 	console.log("starttime input - " + sTime1);
 	console.log("endtime input - " + eTime1);
+	console.log("starttime checking - " + startTime2);
+	console.log("endTime checking - " + endTime2);
 
 	// if dateOverlap -> check timeOverlap
 	if((startDate1 <= endDate2) && (startDate2 <= endDate1)) {
@@ -53,7 +54,7 @@ const vahubMiddleware = {
 
 	validateCreateClass: async function (req, res, next) {
 		// things
-		var trainerID = JSON.parse(JSON.stringify(req.session.user._id));
+		var trainerID = JSON.parse(JSON.stringify(req.session.user.userID));
 
 		let { startDate, endDate, startTime, endTime } = req.body; 
 
@@ -70,15 +71,12 @@ const vahubMiddleware = {
 		var numClass = trainerClasses.length;
 		var overlapSched = false;
 
-		console.log(startDate + "-" + endDate);
-		console.log(trainerClasses[0].startDate  + "-" + trainerClasses[0].endDate); 
-		console.log(startTime  + "-" + endTime);
-		console.log(trainerClasses[0].startTime + "-" + trainerClasses[0].endTime);
-
 		for(var i = 0; i < numClass; i++) {
 			if(isOverlap(startDate, endDate, trainerClasses[i].startDate, trainerClasses[i].endDate, 
-				startTime, endTime, trainerClasses[i].startTime, trainerClasses[i].endTime))
+				startTime, endTime, trainerClasses[i].startTime, trainerClasses[i].endTime)) {
 					overlapSched = true;
+					console.log("trainer class start " + i + " - " + trainerClasses[i].startDate);
+				}
 		}
 
 		console.log("overlap - " + overlapSched);
