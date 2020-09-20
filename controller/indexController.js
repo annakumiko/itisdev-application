@@ -95,15 +95,28 @@ function generateClassID() {
 	return classID;
 }
 
-/*
 function generateQuizID() {
+	var quizID = "Q";
+	var idLength = 8;
 
+	for (var i = 0; i < idLength; i++) {
+		quizID += Math.random().toString();
+	}
+
+	return quizID;
 }
 
 function generateClientID() {
+	var clientID = "CL";
+	var idLength = 7;
 
+	for (var i = 0; i < idLength; i++) {
+		clientID += Math.random().toString();
+	}
+
+	return clientID;
 }
-*/
+
 
 // main functions for getting and posting data
 const rendFunctions = {
@@ -403,6 +416,9 @@ const rendFunctions = {
 
 		 		console.log('course ' + cName);
 
+				//generate classID
+				var classID = generateClassID();
+
 		 		// generate section
 		 		var tempSec = generateSection(cName, numClass); // dis works
 		 		console.log("tempSec " + tempSec);
@@ -420,7 +436,7 @@ const rendFunctions = {
 		 		console.log("sTime - " + sTime);
 		 		
 		 		// create the class
-		 	    var c = createClass(courseID, trainerID, sec, startDate, endDate, sTime, eTime);
+		 	    var c = createClass(classID, courseID, trainerID, sec, startDate, endDate, sTime, eTime);
 
 		 		// put into classesModel
 		 		classesModel.create(c, function(error) {
