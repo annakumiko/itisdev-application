@@ -3,24 +3,55 @@
 {{>sidebar-trainee}}
 <div style="padding-left: 100px">
 <label style="color: #006739;font-size: 25px;font-weight: bold;margin-top: 20px;">The VA Hub Clients</label><label></label>
+    <hr>
     <div class="table-responsive" style="width: 95%;margin-top: 25px;background-color: rgba(163,164,167,0.11);">
-        <table class="table">
+        <table class="table" id="clientTable">
             <thead>
-                <tr style="text-align: center;font-size: 17px;">
-                    <th id="clientName">Name</th>
-                    <th id="clientCompany">Company</th>
-                    <th id="clientEmail" style="width: 250px;">Email</th>
-                    <th id="clientContactNum" style="width: 200px;">Contact Number</th>
+                <tr style="text-align: center;font-size: 17px;background-color:#006739;color:white">
+                    <th id="clientName" style="width: 25%;">Name</th>
+                    <th id="clientCompany" style="width: 30%;">Company</th>
+                    <th id="clientEmail">Position</th>
+                    <th id="clientContactNum">Contact Number</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td style="width: 255px;">Cell 1</td>
-                    <td>Cell 2</td>
-                    <td>Cell 2</td>
-                    <td>Cell 2</td>
+                {{#each clients}}
+                <tr onclick="openModal()">
+                    <td>{{clientName}}</td>
+                    <td>{{companyName}}</td>
+                    <td>{{email}}</td>
+                    <td>{{contactNo}}</td>
                 </tr>
+                {{/each}}
             </tbody>
         </table>
     </div>
 </div>
+
+{{#each clients}}
+<div class="contact-clean" id="contactDiv">
+    <form method="post" style="margin-top: -30px;max-width: 650px;">
+        <h2 class="text-center">Request an Interview</h2>
+        <div class="form-group"><input class="form-control" type="email" name="email" placeholder={{email}}></div>
+        <div class="form-group"><input class="form-control" type="text" name="subject" placeholder="Subject"></div>
+        <div class="form-group"><textarea class="form-control" name="message" placeholder="Message" rows="14"></textarea></div>
+        <div class="form-group"><button class="btn btn-primary" type="submit">send </button></div>
+    </form>
+</div>
+{{/each}}
+
+
+<script>
+var contactModal = document.getElementById("contactDiv");
+
+    function openModal(){
+		contactModal.style.display = "block";
+
+	}
+
+    window.onclick = function(event) {
+        if (event.target == contactModal) {
+            contactModal.style.display = "none";
+    }
+}
+</script>

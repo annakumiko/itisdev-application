@@ -192,11 +192,25 @@ $(document).ready(function() {
 		}
 	});
 
-	// ADD TRAINEES VALIDATION
-/*
-	$('button#').click(function() {
-		// get the traineeID of the trainee being added
-		// pass to backend
+	// DEFINE COURSE 
+	$('button#publishCourseBTN').click(function() {
+		var courseName = $('#courseName').val();
+		var courseDesc = $('#courseDesc').val();
+		var courseModules = $("#courseMod").val().
+
+		$.post('/define-course', {courseName: courseName, courseDesc: courseDesc}, function(res) {
+				switch (res.status){
+					case 200: {
+						window.location.href = '/';
+						alert(res.mssg);
+						break;
+					}
+					case 500: { 
+						alert(res.mssg);
+						break;
+					}
+					}
+				});
 	});
-*/
-}); 
+
+});

@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const nodemailer = require('nodemailer'); //for sending emails
 
 /* DBs */
 const classesModel = require('../models/classesdb');
@@ -18,6 +19,15 @@ const traineelistsModel = require('../models/traineelistsdb');
 const usersModel = require('../models/usersdb');
 const verificationModel = require('../models/verificationdb');
 const db = require('../models/db');
+
+/* EMAIL */
+// let transport = nodemailer.createTransport(options[, defaults]);
+let transport = nodemailer.createTransport({
+	auth: {
+		 user: 'put_your_username_here',
+		 pass: 'put_your_password_here'
+	}
+});
 
 // constructor for class
 function createClass(courseID, trainerID, section, startDate, endDate, sTime, eTime) {
@@ -483,14 +493,127 @@ const rendFunctions = {
 		}
 	},
 
-	getClientsList: function(req, res, next) {
-		if (req.session.user){
-			res.redirect('/');
-		} else {
-			res.render('clientlist', {
-			});
+	getClientList: function(req, res, next) {
+		if (req.session.user) {
+			if(req.session.user.userType === "Trainee") {
+
+				clientsModel.find({}, function(err, data) {
+					var details = JSON.parse(JSON.stringify(data));
+					var clients = details;	
+					console.log(clients);
+					
+					res.render('clientlist', {
+					 clients: clients,
+				 });
+				});
+
+		 } else res.redirect('login');
 		}
-	 }
-};
+		else res.redirect('login');
+	 },
+
+	getViewGrades: async function(req, res, next) {
+		if (req.session.user){
+			if(req.session.user.userType === "Trainee") {
+				var userID = req.session.user._id;
+				var classVar = await traineelistsModel.aggregate([
+					{$match: {traineeID: userID}},
+					{$lookup: {
+						 from: "classes",
+						 localField: "classID",
+						 foreignField: "classID",
+						 as: "classList"
+					}},
+					{$unwind: "$classList"},
+					{$lookup: {
+						 from: "courses",
+						 localField: "classList.courseID",
+						 foreignField: "courseID",
+						 as: "course"
+					 }},
+					 {$unwind: "$course"}
+			 ]);
+
+			 // compute skills
+
+			 //compute quizzes
+
+				res.render('view-grades', {
+					fullName: req.session.user.lastName + ", " + req.session.user.firstName,
+					section: classVar[0].classList.section,
+					course: classVar[0].course.courseName,
+
+					//SKILLS
+
+					//QUIZZES
+				});
+			}
+		} else {
+			res.redirect('/')
+		}
+	 },
+
+	 getDefineCourse: function(req, res, next) {
+		if (req.session.user) {
+			if(req.session.user.userType === "Admin") {
+
+				coursesModel.find({}, function(err, data) {
+					var details = JSON.parse(JSON.stringify(data));
+					var courseDet = details;	
+
+					res.render('define-course', {
+					 courseList: courseDet
+				 });
+				});
+
+		 } else res.redirect('login');
+		}
+		else res.redirect('login');
+	 },
+
+	 postDefineCourse: function(req, res, next) {
+		let { courseName, courseDesc } = req.body;
+
+		console.log(courseName + " - " + courseDesc);
+
+		coursesModel.findOneAndUpdate(
+			{ courseName: courseName },
+			{ $set: {
+				courseDesc: courseDesc,
+				//files
+			}},
+			{ useFindAndModify: false },
+			function(err, match) {
+				if (err) {
+					res.send({status: 500, mssg: "Error in updating course."});
+					console.log("Error in updating course");
+				}
+				else{
+					res.send({status: 200, mssg: "Course updated."});
+					console.log("Course updated.");
+				}
+		});
+	},
+
+	getManageClients: function(req, res, next) {
+		if (req.session.user) {
+			if(req.session.user.userType === "Admin") {
+
+				clientsModel.find({}, function(err, data) {
+					var details = JSON.parse(JSON.stringify(data));
+					var clients = details;	
+					console.log(clients);
+
+					res.render('manage-clientlist', {
+					 clients: clients,
+				 });
+				});
+
+		 } else res.redirect('login');
+		}
+		else res.redirect('login');
+	 },
+
+}
 
 module.exports = rendFunctions;
