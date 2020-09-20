@@ -33,7 +33,7 @@ router.post('/register', controller.postRegister);
 //router.post('/manage-clientslist', controller.postManageClients);
 
 // TRAINER
-router.post('/create-class', middleware.validateCreateClass, controller.postCreateClass);
+router.post('/create-class', controller.postCreateClass);
 // router.post('/add-trainees', middleware.validateAddTrainees, controller.postAddTrainees);
 
 // TRAINEE

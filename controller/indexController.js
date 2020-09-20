@@ -86,10 +86,10 @@ function generateSection(course, numClass){
 //
 function generateClassID() {
 	var classID = "C";
-	var idLength = 8;
+	var idLength = 7;
 
 	for (var i = 0; i < idLength; i++) {
-		classID += Math.random().toString();
+		classID += (Math.round(Math.random() * 10)).toString();
 	}
 
 	return classID;
@@ -108,7 +108,7 @@ function generateQuizID() {
 
 function generateClientID() {
 	var clientID = "CL";
-	var idLength = 7;
+	var idLength = 8;
 
 	for (var i = 0; i < idLength; i++) {
 		clientID += Math.random().toString();
@@ -226,7 +226,7 @@ const rendFunctions = {
 			 // var idArray = [];
  			if (req.session.user.userType === "Trainer") {
  				
-				var userID = req.session.user._id;
+				var userID = req.session.user.userID;
 				 
 				 var classVar = await classlistsModel.aggregate([
 					 {$match: {trainerID: userID}},
@@ -274,7 +274,7 @@ const rendFunctions = {
 				});
 	 		}
  			else if (req.session.user.userType === "Trainee"){
- 				var userID = req.session.user._id;
+ 				var userID = req.session.user.userID;
 
  				// class details - for trainees
  				var classVar = await traineelistsModel.aggregate([
@@ -326,7 +326,7 @@ const rendFunctions = {
 
  	getDashboard: async function(req, res, next) {
  		if (req.session.user) {
- 			var userID = req.session.user._id;
+ 			var userID = req.session.user.userID;
 
  			var classVar = await classlistsModel.aggregate([
 					 {$match: {trainerID: userID}},
@@ -378,7 +378,7 @@ const rendFunctions = {
 		 		coursesModel.find({}, function(err, data) {
 		 			var details = JSON.parse(JSON.stringify(data));
 		 			var courseDet = details;	
-		 			var userID = req.session.user._id;
+		 			var userID = req.session.user.userID;
 
 		 			//console.log(courseDet);	
 	 				res.render('create-class', {
@@ -404,13 +404,13 @@ const rendFunctions = {
 			classesModel.find({courseID: courseID}, function(err, classes) {//
  				var classVar = classes;
  				var numClass = classVar.length;
- 				var trainerID = req.session.user._id;
+ 				var trainerID = req.session.user.userID;
  				var sTime = new Date("Jan 01 2020 " + startTime + ":00");
  				var eTime = new Date("Jan 01 2020 " + endTime + ":00");
 		 		console.log("numClass - " + numClass);
 
 		 		var cName = null;
-		 		if (courseID == "5f51f73f76707d0788f0f333")
+		 		if (courseID == "CO870081")
 		 			cName = "Marketing";
 		 		else cName = "Real Estate";
 
@@ -418,6 +418,7 @@ const rendFunctions = {
 
 				//generate classID
 				var classID = generateClassID();
+				console.log("ClassID : " + classID);
 
 		 		// generate section
 		 		var tempSec = generateSection(cName, numClass); // dis works
@@ -436,7 +437,7 @@ const rendFunctions = {
 		 		console.log("sTime - " + sTime);
 		 		
 		 		// create the class
-		 	    var c = createClass(classID, courseID, trainerID, sec, startDate, endDate, sTime, eTime);
+		 	  var c = createClass(classID, courseID, trainerID, sec, startDate, endDate, sTime, eTime);
 
 		 		// put into classesModel
 		 		classesModel.create(c, function(error) {
