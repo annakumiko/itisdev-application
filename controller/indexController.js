@@ -59,6 +59,11 @@ function getDate(date) {
 	return mm + " " + dd + ", " + yy;
 }
 
+// two digits
+function n(n) {
+    return n > 9 ? "" + n: "0" + n;
+}
+
 // generate section for class; numClass = no. of classes under the course
 function generateSection(course, numClass){
 
@@ -66,17 +71,39 @@ function generateSection(course, numClass){
 
 	if(course === "Real Estate") {
 		for (var i = 0; i < numClass; i++) {
-			newSec = 'R' + (i + 1);
+			newSec = 'R' + n(i + 1);
 		}
 	}
 	else {
 		for (var i = 0; i < numClass; i++) {
-			newSec = 'M' + (i + 1);
+			newSec = 'M' + n(i + 1);
 		}
 	}
 	
 	return newSec;
 }
+
+//
+function generateClassID() {
+	var classID = "C";
+	var idLength = 8;
+
+	for (var i = 0; i < idLength; i++) {
+		classID += Math.random().toString();
+	}
+
+	return classID;
+}
+
+/*
+function generateQuizID() {
+
+}
+
+function generateClientID() {
+
+}
+*/
 
 // main functions for getting and posting data
 const rendFunctions = {
@@ -377,14 +404,14 @@ const rendFunctions = {
 		 		console.log('course ' + cName);
 
 		 		// generate section
-		 		var tempSec = generateSection(cName, numClass); // 1.
-		 		// console.log("tempSec " + tempSec);
-		 		var sec = "S0";
+		 		var tempSec = generateSection(cName, numClass); // dis works
+		 		console.log("tempSec " + tempSec);
+		 		// var sec = "S00";
 		 		
 		 		for (var i = 0; i < numClass; i++) {
-		 			if (tempSec !== classVar[i].section)
-		 				sec = tempSec;
-		 			else tempSec++;
+		 			if (tempSec === classVar[i].section) // if equal ++
+		 				tempSec++; //sec = tempSec
+		 			else var sec = tempSec; // if not assign section 
 		 		}
 
 		 		console.log("section - " + sec);
@@ -407,12 +434,14 @@ const rendFunctions = {
 
  	getAddTrainees: function(req, res, next) {
  		/*
- 			1. get class (section) and course of selected class
+ 			1. get class (section) and course of selected class // display
 			2. get endorsed trainees (trainees not belonging in a class yet)
 			3. get trainees already in the class
 		*/
- 		res.render('add-trainees', {
 
+		// kunin yung classes ni trainer -> array
+ 		res.render('add-trainees', {
+ 			
  		});
  	},
 

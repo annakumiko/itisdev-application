@@ -34,6 +34,8 @@ function isOverlap (startDate1, endDate1, startDate2, endDate2, startTime1, endT
 	//var sTime2 = new Date("Jan 01 2020 " + startTime2 + ":00");
 	//var eTime2 = new Date("Jan 01 2020 " + endTime2 + ":00");
 	var overlap = false;
+	console.log("starttime input - " + sTime1);
+	console.log("endtime input - " + eTime1);
 
 	// if dateOverlap -> check timeOverlap
 	if((startDate1 <= endDate2) && (startDate2 <= endDate1)) {

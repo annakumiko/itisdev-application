@@ -158,7 +158,6 @@ $(document).ready(function() {
 		else if (startTime && endTime) {
 			if ((numHours != 10) || (startTime > endTime)) {
 				if (numHours != 10) $('p#eTime').text('Classes should last for 10 hours a day.');
-//				console.log("numHours: " + numHours);
 
 				if (startTime > endTime) $('p#eTime').text('Start Time should be earlier than End Time.');
 			}
@@ -167,10 +166,10 @@ $(document).ready(function() {
 		}
 		else timeErrors = false;
 
-		console.log(dateErrors);
-		console.log(timeErrors);
+		// console.log(dateErrors);
+		// console.log(timeErrors);
 
-		// if no empty submit to backend
+		// if no errors submit to backend
 		if (!dateErrors && !timeErrors) {
 			$.post('/create-class', {course: course, startDate: startDate, endDate: endDate,
 									startTime: startTime, endTime: endTime}, function(res) {
@@ -194,10 +193,10 @@ $(document).ready(function() {
 	});
 
 	// ADD TRAINEES VALIDATION
-	/*
-		$('button#').click(function() {
-			// get the traineeID of the trainee being added
-			// pass to backend
-		});
-	*/
+/*
+	$('button#').click(function() {
+		// get the traineeID of the trainee being added
+		// pass to backend
+	});
+*/
 }); 
