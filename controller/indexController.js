@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const nodemailer = require('nodemailer'); //for sending emails
 
 /* DBs */
 const classesModel = require('../models/classesdb');
@@ -18,6 +19,15 @@ const traineelistsModel = require('../models/traineelistsdb');
 const usersModel = require('../models/usersdb');
 const verificationModel = require('../models/verificationdb');
 const db = require('../models/db');
+
+/* EMAIL */
+// let transport = nodemailer.createTransport(options[, defaults]);
+let transport = nodemailer.createTransport({
+	auth: {
+		 user: 'put_your_username_here',
+		 pass: 'put_your_password_here'
+	}
+});
 
 // constructor for class
 function createClass(courseID, trainerID, section, startDate, endDate, sTime, eTime) {
