@@ -14,6 +14,14 @@ function calculateHours(startTime, endTime) {
     return hours + (minutes*100);
 }
 
+function getClass(element) {
+  var rowData = $(this).parent().children("td").map(function() {
+        return $(this).text();
+    }).get();
+  // pass to another page
+  window.location = '/add-trainees' + JSON.stringify(rowData);
+}
+
 $(document).ready(function() {
 	// LOG-IN VALIDATION
 	$('button#login-btn').click(function() {
@@ -213,4 +221,33 @@ $(document).ready(function() {
 				});
 	});
 
+});
+	// ADD TRAINEES VALIDATION
+			// dashboard.hbs -> add-trainees.hbs
+	
+			// adding trianees
+
+	// Delete Class
+	$('button#delClass').click(function() {
+		var row = $(this).parent().parent();
+		var delClassNum = row.attr("id");
+
+		$.post('/delete-class', {classNum: delClassNum}, function(result) {
+			switch(result.status) {
+				case 200: {
+					alert(result.mssg);
+					row.remove();
+					break;
+				}
+				case 401: {
+					alert(result.mssg);
+					break;
+				}
+				case 500: {
+					alert(result.mssg);
+					break;
+				}
+			}
+		});
+	});
 });

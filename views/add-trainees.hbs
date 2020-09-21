@@ -16,13 +16,17 @@
                         <tr>
                             <th style="background-color: #006739;color: rgb(255,255,255);">Trainees Endorsed</th>
                             <th style="background-color: #006739;color: rgb(255,255,255);"></th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);"></th>
                         </tr>
                     </thead>
                     <tbody style="background-color: #f6f6f6;">
-                        <tr>
-                            <td>Trainee name</td>
-                            <td style="width: 20%;padding: 10px;text-align: center;"><button class="btn btn-primary" type="button" style="background-color: #3e914d;"><strong>+</strong></button></td>
+                        {{#each trainees}}
+                        <tr id="{{{traineeList.userID}}}">
+                            <td style="width: 25%">{{traineeList.lastName}}, {{traineeList.firstName}}</td>
+                            <td style="width: 15%">{{traineeList.email}}</td>
+                            <td style="width: 10%;padding: 10px;text-align: right;"><button class="btn btn-primary add-trainee" type="button" style="background-color: #3e914d;"><strong>+</strong></button></td>
                         </tr>
+                        {{/each}}
                     </tbody>
                 </table>
             </div>
@@ -39,7 +43,7 @@
                     <tbody style="background-color: #f6f6f6;">
                         <tr>
                             <td>Trainee name</td>
-                            <td style="width: 20%;padding: 10px;text-align: center;"><button class="btn btn-primary" type="button" style="background-color: #3e914d;"><strong>-</strong></button></td>
+                            <td style="width: 20%;padding: 10px;text-align: right;"><button class="btn btn-primary" type="button" style="background-color: #3e914d;"><strong>-</strong></button></td>
                         </tr>
                     </tbody>
                 </table>

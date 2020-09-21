@@ -30,8 +30,9 @@ let transport = nodemailer.createTransport({
 });
 
 // constructor for class
-function createClass(courseID, trainerID, section, startDate, endDate, sTime, eTime) {
+function createClass(classID, courseID, trainerID, section, startDate, endDate, sTime, eTime) {
 	var tempClass = {
+		classID: classID,
 		courseID: courseID,
 		trainerID: trainerID,
 		section: section,
@@ -43,6 +44,22 @@ function createClass(courseID, trainerID, section, startDate, endDate, sTime, eT
 
 	return tempClass;
 }
+
+function createClassList(trainerID, classID) {
+	var tempList = {
+		trainerID: trainerID,
+		classID: classID
+	};
+
+	return tempList;
+}
+
+
+// two digits
+function n(n) {
+    return n > 9 ? "" + n: "0" + n;
+}
+
 // format date
 function getDate(date) {
 	var newDate = new Date(date);
@@ -69,9 +86,16 @@ function getDate(date) {
 	return mm + " " + dd + ", " + yy;
 }
 
-// two digits
-function n(n) {
-    return n > 9 ? "" + n: "0" + n;
+//format time
+function getTime(time) {
+	var time = new Date(time);
+
+	// console.log("time: " + time)
+
+	var hh = n(time.getHours());
+	var min = n(time.getMinutes());
+
+	return hh + ":" + min; 
 }
 
 // generate section for class; numClass = no. of classes under the course
@@ -79,15 +103,11 @@ function generateSection(course, numClass){
 
 	var newSec = "S0";
 
-	if(course === "Real Estate") {
-		for (var i = 0; i < numClass; i++) {
-			newSec = 'R' + n(i + 1);
-		}
+	if(course === "Real Estate") { //2
+		newSec = 'R' + n(numClass + 1);
 	}
 	else {
-		for (var i = 0; i < numClass; i++) {
-			newSec = 'M' + n(i + 1);
-		}
+		newSec = 'M' + n(numClass + 1);
 	}
 	
 	return newSec;
@@ -96,7 +116,7 @@ function generateSection(course, numClass){
 //
 function generateClassID() {
 	var classID = "C";
-	var idLength = 7;
+	var idLength = 6;
 
 	for (var i = 0; i < idLength; i++) {
 		classID += (Math.round(Math.random() * 10)).toString();
@@ -107,10 +127,10 @@ function generateClassID() {
 
 function generateQuizID() {
 	var quizID = "Q";
-	var idLength = 8;
+	var idLength = 6;
 
 	for (var i = 0; i < idLength; i++) {
-		quizID += Math.random().toString();
+		quizID += (Math.round(Math.random() * 10)).toString();
 	}
 
 	return quizID;
@@ -118,10 +138,10 @@ function generateQuizID() {
 
 function generateClientID() {
 	var clientID = "CL";
-	var idLength = 8;
+	var idLength = 5;
 
 	for (var i = 0; i < idLength; i++) {
-		clientID += Math.random().toString();
+		clientID += (Math.round(Math.random() * 10)).toString();
 	}
 
 	return clientID;
@@ -256,15 +276,11 @@ const rendFunctions = {
 						{$unwind: "$course"}
 				]);
 
-				var sArray = [];
-				var eArray = [];
 
 				for(let i = 0; i < classVar.length; i++) {
 					sDate = getDate(classVar[i].classList.startDate);
 					eDate = getDate(classVar[i].classList.endDate);
 
-					sArray.push(sDate);
-					eArray.push(eDate);
 
 					classVar[i].classList.startDate = sDate;
 					classVar[i].classList.endDate = eDate;
@@ -277,10 +293,6 @@ const rendFunctions = {
 					uType: req.session.user.userType,
 
 					classes: classVar
-					// courseName: classVar.classList.courseID,
-					// startDate: classVar.classList.startDate,
-					// endDate: classVar.classList.endDate,
-
 				});
 	 		}
  			else if (req.session.user.userType === "Trainee"){
@@ -356,18 +368,18 @@ const rendFunctions = {
 						{$unwind: "$course"}
 				]);
 
- 			var sArray = [];
-			var eArray = [];
-
+ 			// console.log("numclasses: " + classVar.length);
+ 			
 			for(let i = 0; i < classVar.length; i++) {
 				sDate = getDate(classVar[i].classList.startDate);
 				eDate = getDate(classVar[i].classList.endDate);
-
-				sArray.push(sDate);
-				eArray.push(eDate);
+				sTime = getTime(classVar[i].classList.startTime);
+				eTime = getTime(classVar[i].classList.endTime);
 
 				classVar[i].classList.startDate = sDate;
 				classVar[i].classList.endDate = eDate;
+				classVar[i].classList.startTime = sTime;
+				classVar[i].classList.endTime = eTime;
 			}
 
 
@@ -403,13 +415,13 @@ const rendFunctions = {
 
 
  	postCreateClass: function(req, res, next) {
- 		let { course, startDate, endDate, startTime, endTime } = req.body;
- 		
+		let { course, startDate, endDate, startTime, endTime } = req.body;
+		
  		// count classes under course
-
  		coursesModel.findOne({courseName: course}, function(err, course) {
 
- 			var courseID = course.courseID; // dis works
+ 			var courseID = course.courseID;
+ 			// console.log(courseID); -- dis works
 
 			classesModel.find({courseID: courseID}, function(err, classes) {//
  				var classVar = classes;
@@ -420,7 +432,7 @@ const rendFunctions = {
 		 		console.log("numClass - " + numClass);
 
 		 		var cName = null;
-		 		if (courseID == "CO870081")
+		 		if (courseID === "CO870081")
 		 			cName = "Marketing";
 		 		else cName = "Real Estate";
 
@@ -433,12 +445,12 @@ const rendFunctions = {
 		 		// generate section
 		 		var tempSec = generateSection(cName, numClass); // dis works
 		 		console.log("tempSec " + tempSec);
-		 		// var sec = "S00";
+		 		var sec = "S00";
 		 		
 		 		for (var i = 0; i < numClass; i++) {
 		 			if (tempSec === classVar[i].section) // if equal ++
-		 				tempSec++; //sec = tempSec
-		 			else var sec = tempSec; // if not assign section 
+		 				tempSec = generateSection(cName, numClass+1); //sec = tempSec
+		 			else sec = tempSec; // if not assign section 
 		 		}
 
 		 		console.log("section - " + sec);
@@ -447,29 +459,85 @@ const rendFunctions = {
 		 		console.log("sTime - " + sTime);
 		 		
 		 		// create the class
-		 	  var c = createClass(classID, courseID, trainerID, sec, startDate, endDate, sTime, eTime);
+		 	  	var c = createClass(classID, courseID, trainerID, sec, startDate, endDate, sTime, eTime);
+		 	  	var cl = createClassList(trainerID, classID);
 
 		 		// put into classesModel
 		 		classesModel.create(c, function(error) {
-		 			if (error) res.send({status: 500, mssg: "Error: Cannot create class."});
+		 			if (error) {
+		 				res.send({status: 500, mssg: "Error: Cannot create class."});
+		 				console.log("create-class error: " + error);
+		 			}
 		 			else res.send({status: 200, mssg: 'Class created!'});
 		 		});
+
+		 		// put into classlistsModel
+		 		classlistsModel.create(cl, function(error) {
+		 			if (error) {
+		 				res.send({status: 500, mssg: "Error: Cannot create class."});
+		 				console.log("classlist error: " + error);
+		 			}
+		 			else next();
+		 		});
+
 
  			});
 		});
  	},
 
- 	getAddTrainees: function(req, res, next) {
- 		/*
- 			1. get class (section) and course of selected class // display
-			2. get endorsed trainees (trainees not belonging in a class yet)
-			3. get trainees already in the class
-		*/
+ 	postDeleteClass: function(req, res) {
+ 		let { classNum } = req.body;
 
-		// kunin yung classes ni trainer -> array
- 		res.render('add-trainees', {
- 			
- 		});
+ 		console.log(classNum);
+ 		classesModel.findOne({classID: classNum}, function(err, match) {
+			if (err) {
+				res.send({status: 500, mssg:'Server Error: Query not found.'});
+			}			
+			else {
+				match.remove(); // remove from classes
+
+				classlistsModel.findOne({classID: classNum, trainerID: req.session.user.userID}, function(err, match) {
+					if (err) {
+						res.send({status: 500, mssg:'SERVER ERROR: Cannot update classlist in DB.'});
+					}
+					else {
+						match.remove();
+						res.send({status: 200, mssg: 'Dropped Class Successfully!'});
+					}
+				});
+			}
+		});
+ 	},
+
+ 	getAddTrainees: async function(req, res, next) {
+ 		if(req.session.user) {
+ 			if(req.session.user.userType === "Trainer") {
+ 				/*
+ 		 			1. get class (section) and course of selected class // display
+ 					2. get trainees // sana -> who have not taken the course // 
+ 					3. get trainees already in the class
+ 				*/
+ 	
+ 				var trainees = await usersModel.aggregate([
+					 {$match: {userType: "Trainee"}},
+					 {$lookup: {
+							from: "users",
+							localField: "userID",
+							foreignField: "userID",
+							as: "traineeList" // SLICE
+					 }},
+					 {$unwind: "$traineeList"}
+				]);
+
+ 				// console.log(trainees);
+ 		
+ 				// kunin yung classes ni trainer -> array
+ 		 		res.render('add-trainees', {
+ 		 			trainees: trainees
+ 		 		});
+ 			}
+ 			else res.redirect('/');		
+ 		} else res.redirect('/login');
  	},
 
  	postAddTrainees: function(req, res, next) {
@@ -477,6 +545,12 @@ const rendFunctions = {
 
 
  		// remove
+ 	},
+
+ 	getUpdateScoresheet: function(req, res, next) {
+ 		res.render('update-scoresheet', {
+
+ 		});
  	},
 
 	// for encrypting / mimic register
