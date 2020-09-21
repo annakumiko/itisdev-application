@@ -213,4 +213,27 @@ $(document).ready(function() {
 				});
 	});
 
+	// SEND EMAILS 
+	$('button#sendEmail').click(function() {
+		var email = $('#clientEmail').val();
+		var emailSubject = $('#emailSubject').val();
+		var emailText = $("#emailText").val().
+
+		console.log(email + " - " + emailsubject);
+
+		$.post('/clientlist', {email: email, emailSubject: emailSubject, emailText: emailText}, function(res) {
+				switch (res.status){
+					case 200: {
+						window.location.href = '/';
+						alert(res.mssg);
+						break;
+					}
+					case 500: { 
+						alert(res.mssg);
+						break;
+					}
+					}
+				});
+	});
+
 });

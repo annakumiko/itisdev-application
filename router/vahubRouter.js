@@ -40,7 +40,8 @@ router.post('/create-class', controller.postCreateClass);
 
 // TRAINEE
 router.post('/verification', controller.postVerification);
-//router.post('/contact-clientslist', controller.postContactClient);
+router.get('/clientlist', controller.postClientList);
+// router.post('/contact-clientslist', controller.postContactClient);
 
 
 module.exports = router;

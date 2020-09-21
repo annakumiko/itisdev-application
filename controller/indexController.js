@@ -512,10 +512,41 @@ const rendFunctions = {
 		else res.redirect('login');
 	 },
 
+	postClientList: function(req, res, next) {
+		let { email, emailsubject, emailText } = req.body; // pass client email, email subject, and message
+		
+		//var userID = req.session.user.userID;
+
+			// send email
+			var eTransport = nodemailer.createTransport({
+				service: 'Gmail',
+				auth: {
+					user: req.session.user.userEmail,
+					pass: req.session.user.password
+				}
+			});
+
+			var mailOptions = {
+				from: req.session.user.userEmail,
+				to: email,
+				subject: emailsubject,
+				text: emailText,
+			};
+
+			console.log(email + " - " + emailsubject);
+
+			eTransport.sendMail(mailOptions, function(error) {
+				if (error) console.log(error);
+				else console.log("sent");
+
+				eTransport.close();
+			});
+	 },
+
 	getViewGrades: async function(req, res, next) {
 		if (req.session.user){
 			if(req.session.user.userType === "Trainee") {
-				var userID = req.session.user._id;
+				var userID = req.session.user.userID;
 				var classVar = await traineelistsModel.aggregate([
 					{$match: {traineeID: userID}},
 					{$lookup: {
