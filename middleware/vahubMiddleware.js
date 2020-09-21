@@ -29,19 +29,34 @@ function isOverlap (startDate1, endDate1, startDate2, endDate2, startTime1, endT
 	5. overlapping dates same time = overlap // #2
 */
 	
-	var sTime1 = new Date("Jan 01 2020 " + startTime1 + ":00");
-	var eTime1 = new Date("Jan 01 2020 " + endTime1 + ":00");
-	var overlap = false;
+	var sTime1 = new Date("Jan 01 2020 " + startTime1 + ":00"),
+		eTime1 = new Date("Jan 01 2020 " + endTime1 + ":00"),
+		sDate1 = new Date(startDate1),
+		eDate1 = new Date(endDate1),
+		sTime1value = sTime1.valueOf(),
+		eTime1value = eTime1.valueOf(),
+		sTime2value = startTime2.valueOf(),
+		eTime2value = endTime2.valueOf(),
+		sDate1value = sDate1.valueOf(),
+		eDate1value = eDate1.valueOf(),
+		sDate2value = startDate2.valueOf(),
+		eDate2value = endDate2.valueOf();
+		overlap = true;
 	
-	console.log("starttime input - " + sTime1);
-	console.log("endtime input - " + eTime1);
-	console.log("starttime checking - " + startTime2);
-	console.log("endTime checking - " + endTime2);
+	 // console.log("starttime input - " + sTime1value);
+	 // console.log("endtime input - " + eTime1value);
+	 // console.log("starttime checking - " + sTime2value);
+	 // console.log("endTime checking - " + eTime2value);
+
+	 console.log("startdate input - " + sDate1value);
+	 console.log("enddate input - " + eDate1value);
+	 console.log("startdate checking - " + sDate2value);
+	 console.log("enddate checking - " + eDate2value);
 
 	// if dateOverlap -> check timeOverlap
-	if((startDate1 <= endDate2) && (startDate2 <= endDate1)) {
+	if((sDate1value <= eDate2value) && (sDate2value <= eDate2value)) {
 		// if timeOverlap
-  		if((sTime1 <= endTime2) && (startTime2 <= eTime1)) overlap = true;
+  		if((sTime1value <= eTime2value) && (sTime2value <= eTime1value)) overlap = true;
   		else overlap = false;
 	} // if !dateOverlap -> check timeOverlap
 	else overlap = false;

@@ -17,6 +17,7 @@ router.get('/trainee-profile', controller.getProfile);
 router.get('/dashboard', controller.getDashboard);
 router.get('/create-class', controller.getCreateClass);
 router.get('/add-trainees', controller.getAddTrainees);
+router.get('/update-scoresheet', controller.getUpdateScoresheet);
 
 // TRAINEE
 router.get('/verification', controller.getVerification);
@@ -34,7 +35,8 @@ router.post('/register', controller.postRegister);
 
 // TRAINER
 router.post('/create-class', middleware.validateCreateClass, controller.postCreateClass);
-// router.post('/add-trainees', middleware.validateAddTrainees, controller.postAddTrainees);
+router.post('/add-trainees', controller.postAddTrainees);
+router.post('/delete-class', controller.postDeleteClass);
 
 // TRAINEE
 router.post('/verification', controller.postVerification);

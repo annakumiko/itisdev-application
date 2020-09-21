@@ -80,7 +80,7 @@ function getDate(date) {
 function getTime(time) {
 	var time = new Date(time);
 
-	console.log("time: " + time)
+	// console.log("time: " + time)
 
 	var hh = n(time.getHours());
 	var min = n(time.getMinutes());
@@ -283,10 +283,6 @@ const rendFunctions = {
 					uType: req.session.user.userType,
 
 					classes: classVar
-					// courseName: classVar.classList.courseID,
-					// startDate: classVar.classList.startDate,
-					// endDate: classVar.classList.endDate,
-
 				});
 	 		}
  			else if (req.session.user.userType === "Trainee"){
@@ -479,25 +475,59 @@ const rendFunctions = {
 		});
  	},
 
- 	getAddTrainees: async function(req, res, next) {
- 		/*
- 			1. get class (section) and course of selected class // display
-			2. get endorsed trainees (trainees not belonging in a class yet)
-			3. get trainees already in the class
-		*/
+ 	postDeleteClass: function(req, res) {
+ 		let { classNum } = req.body;
 
-		var allUsers = await usersModel.find({});
-		var numUsers = allUsers.length;
-		// var stringUsers = JSON.parse(JSON.stringify(allUsers));
-/*
-		for(var i = 0; i < numUsers; i++) {
-			if(allUsers[i].userType === "Trainee")
-		}
-*/
-		// kunin yung classes ni trainer -> array
- 		res.render('add-trainees', {
- 			
- 		});
+ 		console.log(classNum);
+ 		classesModel.findOne({classID: classNum}, function(err, match) {
+			if (err) {
+				res.send({status: 500, mssg:'Server Error: Query not found.'});
+			}			
+			else {
+				match.remove(); // remove from classes
+
+				classlistsModel.findOne({classID: classNum, trainerID: req.session.user.userID}, function(err, match) {
+					if (err) {
+						res.send({status: 500, mssg:'SERVER ERROR: Cannot update classlist in DB.'});
+					}
+					else {
+						match.remove();
+						res.send({status: 200, mssg: 'Dropped Class Successfully!'});
+					}
+				});
+			}
+		});
+ 	},
+
+ 	getAddTrainees: async function(req, res, next) {
+ 		if(req.session.user) {
+ 			if(req.session.user.userType === "Trainer") {
+ 				/*
+ 		 			1. get class (section) and course of selected class // display
+ 					2. get trainees // sana -> who have not taken the course // 
+ 					3. get trainees already in the class
+ 				*/
+ 	
+ 				var trainees = await usersModel.aggregate([
+					 {$match: {userType: "Trainee"}},
+					 {$lookup: {
+							from: "users",
+							localField: "userID",
+							foreignField: "userID",
+							as: "traineeList" // SLICE
+					 }},
+					 {$unwind: "$traineeList"}
+				]);
+
+ 				// console.log(trainees);
+ 		
+ 				// kunin yung classes ni trainer -> array
+ 		 		res.render('add-trainees', {
+ 		 			trainees: trainees
+ 		 		});
+ 			}
+ 			else res.redirect('/');		
+ 		} else res.redirect('/login');
  	},
 
  	postAddTrainees: function(req, res, next) {
@@ -505,6 +535,12 @@ const rendFunctions = {
 
 
  		// remove
+ 	},
+
+ 	getUpdateScoresheet: function(req, res, next) {
+ 		res.render('update-scoresheet', {
+
+ 		});
  	},
 
 	// for encrypting / mimic register
