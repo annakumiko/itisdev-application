@@ -489,24 +489,30 @@ const rendFunctions = {
  		let { classNum } = req.body;
 
  		console.log(classNum);
- 		classesModel.findOne({classID: classNum}, function(err, match) {
-			if (err) {
-				res.send({status: 500, mssg:'Server Error: Query not found.'});
-			}			
-			else {
-				match.remove(); // remove from classes
+ 		try {
+ 			classesModel.findOne({classID: classNum}, function(err, match) {
+				if (err) {
+					res.send({status: 500, mssg:'Server Error: Query not found.'});
+				}			
+				else {
+					match.remove(); // remove from classes
 
-				classlistsModel.findOne({classID: classNum, trainerID: req.session.user.userID}, function(err, match) {
-					if (err) {
-						res.send({status: 500, mssg:'SERVER ERROR: Cannot update classlist in DB.'});
-					}
-					else {
-						match.remove();
-						res.send({status: 200, mssg: 'Dropped Class Successfully!'});
-					}
-				});
-			}
-		});
+					classlistsModel.findOne({classID: classNum, trainerID: req.session.user.userID}, function(err, match) {
+						if (err) {
+							res.send({status: 500, mssg:'SERVER ERROR: Cannot update classlist in DB.'});
+						}
+						else {
+							match.remove();		
+							res.send({status: 200, mssg: 'Deleted Class Successfully!'});
+						}
+					});
+				}
+			});
+ 		}
+ 		catch(e) {
+ 			console.log(e);
+ 		}
+ 		
  	},
 
  	getAddTrainees: async function(req, res, next) {
@@ -529,9 +535,6 @@ const rendFunctions = {
 					 {$unwind: "$traineeList"}
 				]);
 
- 				// console.log(trainees);
- 		
- 				// kunin yung classes ni trainer -> array
  		 		res.render('add-trainees', {
  		 			trainees: trainees
  		 		});
@@ -540,13 +543,14 @@ const rendFunctions = {
  		} else res.redirect('/login');
  	},
 
+ 	/*
  	postAddTrainees: function(req, res, next) {
  		// add
 
 
  		// remove
  	},
-
+	*/
  	getUpdateScoresheet: function(req, res, next) {
  		res.render('update-scoresheet', {
 
@@ -589,7 +593,7 @@ const rendFunctions = {
 	getViewGrades: async function(req, res, next) {
 		if (req.session.user){
 			if(req.session.user.userType === "Trainee") {
-				var userID = req.session.user._id;
+				var userID = req.session.user.userID;
 				var classVar = await traineelistsModel.aggregate([
 					{$match: {traineeID: userID}},
 					{$lookup: {
