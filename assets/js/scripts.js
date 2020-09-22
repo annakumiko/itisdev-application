@@ -192,53 +192,6 @@ $(document).ready(function() {
 		}
 	});
 
-	// DEFINE COURSE 
-	$('button#publishCourseBTN').click(function() {
-		var courseName = $('#courseName').val();
-		var courseDesc = $('#courseDesc').val();
-		var courseModules = $("#courseMod").val().
-
-		$.post('/define-course', {courseName: courseName, courseDesc: courseDesc}, function(res) {
-				switch (res.status){
-					case 200: {
-						window.location.href = '/';
-						alert(res.mssg);
-						break;
-					}
-					case 500: { 
-						alert(res.mssg);
-						break;
-					}
-					}
-				});
-	});
-
-
-	// ADD TRAINEES VALIDATION
-	$('button#add-trainee').click(function() {
-		var traineeRow = $(this).closest("tr"),
-			traineeID = row.attr("id");
-
-		$.post('/add-trainees', {traineeID: traineeID}, function(res) {
-			switch(res.status) {
-					case 200: {
-						alert(res.mssg);
-						// add to the added trainees table
-						break;
-					}
-					case 401: {
-						alert(res.mssg);
-						break;
-					}
-					case 500: {
-						alert(res.mssg);
-						break;
-					}
-			}
-		});
-
-	});
-
 	// Delete Class
 	$('button#delClass').click(function() {
 		var row = $(this).parent().parent();
@@ -264,5 +217,84 @@ $(document).ready(function() {
 				}
 			});
 		}			
+	});
+
+	// DEFINE COURSE 
+	$('button#publishCourseBTN').click(function() {
+		var courseName = $('#courseName').val();
+		var courseDesc = $('#courseDesc').val();
+		var courseModules = $("#courseMod").val();
+
+		$.post('/define-course', {courseName: courseName, courseDesc: courseDesc}, function(res) {
+				switch (res.status){
+					case 200: {
+						window.location.href = '/';
+						alert(res.mssg);
+						break;
+					}
+					case 500: { 
+						alert(res.mssg);
+						break;
+					}
+					}
+				});
+	});
+
+
+	// ADD TRAINEES VALIDATION
+	$('button#add-trainee').click(function() {
+		var traineeRow = $(this).closest("tr"),
+			traineeID = traineeRow.attr("id");
+
+		var classSection = $("#classSection").text();
+		console.log("script.js section: " + classSection);
+
+		$.post('/add-trainees', {traineeID: traineeID, section: classSection}, function(res) {
+			switch(res.status) {
+					case 200: {
+						traineeRow.remove();
+						alert(res.mssg);
+						// add to the added trainees table
+						break;
+					}
+					case 401: {
+						alert(res.mssg);
+						break;
+					}
+					case 500: {
+						alert(res.mssg);
+						break;
+					}
+			}
+		});
+
+	});
+
+	// Remove Trainee
+	$('button#remove-trainee').click(function() {
+		var traineeRow = $(this).closest("tr"),
+			traineeID = traineeRow.attr("id");
+		var classSection = $("#classSection").text();
+		var conf = confirm("Remove this trainee?");
+
+		if(conf == true) {
+			$.post('/remove-trainee', {traineeID: traineeID, section: classSection}, function(result) {
+				switch(result.status) {
+					case 200: {
+						alert(result.mssg);
+						row.remove();
+						break;
+					}
+					case 401: {
+						alert(result.mssg);
+						break;
+					}
+					case 500: {
+						alert(result.mssg);
+						break;
+					}
+				}
+			});
+		}
 	});
 });

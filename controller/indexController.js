@@ -45,6 +45,17 @@ function createClass(classID, courseID, trainerID, section, startDate, endDate, 
 	return tempClass;
 }
 
+// constructor for traineelists
+function addTrainee(classID, traineeID) {
+	var tempList = {
+		classID: classID,
+		traineeID: traineeID
+	};
+
+	return tempList;
+}
+
+// constructor for classlists
 function createClassList(trainerID, classID) {
 	var tempList = {
 		trainerID: trainerID,
@@ -488,24 +499,32 @@ const rendFunctions = {
  	postDeleteClass: function(req, res) {
  		let { classNum } = req.body;
 
- 		console.log(classNum);
+ 		console.log("Deteted " + classNum);
  		try {
- 			classesModel.findOne({classID: classNum}, function(err, match) {
+ 			classesModel.findOne({classID: classNum}, function(err, cmatch) {
 				if (err) {
 					res.send({status: 500, mssg:'Server Error: Query not found.'});
 				}			
 				else {
-					match.remove(); // remove from classes
+					cmatch.remove(); // remove from classes
 
-					classlistsModel.findOne({classID: classNum, trainerID: req.session.user.userID}, function(err, match) {
+					// remove from trainer "array"
+					classlistsModel.findOne({classID: classNum, trainerID: req.session.user.userID}, function(err, trmatch) {
 						if (err) {
 							res.send({status: 500, mssg:'SERVER ERROR: Cannot update classlist in DB.'});
 						}
 						else {
-							match.remove();		
-							res.send({status: 200, mssg: 'Deleted Class Successfully!'});
+							trmatch.remove();	
+
+							// remove from trainee "array"
+							traineelistsMode.find({classID: classNum}, function(err, tematch) {
+								tematch.remove();
+								res.send({status: 200, mssg: 'Deleted Class Successfully!'});
+							});
 						}
 					});
+
+
 				}
 			});
  		}
@@ -524,7 +543,8 @@ const rendFunctions = {
  					2. get trainees // sana -> who have not taken the course // 
  					3. get trainees already in the class
  				*/
- 	
+ 				
+ 				// endorsed
  				var trainees = await usersModel.aggregate([
 					 {$match: {userType: "Trainee"}},
 					 {$lookup: {
@@ -536,9 +556,29 @@ const rendFunctions = {
 					 {$unwind: "$traineeList"}
 				]);
 
+ 				var traineelists = await traineelistsModel.find({});
+ 				var endorsed = [];
+
+ 				// compare trainees & traineelists
+ 				// if trainee is not in traineelists ==
+ 				// else add to array
+ 				var classSelected = await classesModel.findOne({section: req.params.section});
+ 				var classID = classSelected.classID;
+ 				var addedList = await traineelistsModel.find({classID: classID});
+ 				var addedTrainees = [];
+
+ 				console.log(addedList);
+ 				// added
+				for(var i = 0; i < addedList.length; i++) {
+					addedTrainees[i] = await usersModel.findOne({userID: addedList[i].traineeID});
+				}
+
+				console.log(addedTrainees);
+				
+				console.log("testing " + addedTrainees[0].lastName);
  		 		res.render('add-trainees', {
  		 			trainees: trainees,
- 		 			//other sss
+ 		 			added: addedTrainees,
  		 			section: req.params.section,
  		 			course: req.params.course
  		 		});
@@ -548,12 +588,42 @@ const rendFunctions = {
  	},
 
  	
- 	postAddTrainees: function(req, res, next) {
+ 	postAddTrainees: async function(req, res, next) {
+ 		let { traineeID, section } = req.body;
+
+ 		var classSelected = await classesModel.findOne({section: section});
+ 		var classID = classSelected.classID;
+ 		console.log(classID);
  		// add
+ 		var a = addTrainee(classID, traineeID);
 
-
- 		// remove
+ 			// put into traineelistsModel
+ 		traineelistsModel.create(a, function(error) {
+		 			if (error) {
+		 				res.send({status: 500, mssg: "Error: Cannot add trainee."});
+		 				console.log("add-trainee error: " + error);
+		 			}
+		 			else res.send({status: 200, mssg: 'Trainee added!'});
+		 		});
  	},
+
+ 	postRemoveTrainee: async function(req, res, next) {
+ 		let { traineeID, section } = req.body;
+
+ 		var classSelected = await classesModel.findOne({section: section});
+ 		var classID = classSelected.classID;
+
+ 		// where do i remove -> traineelistsModel only
+ 		traineelistsModel.findOne({traineeID: traineeID, classID: classID}, function(err, match) {
+			if (err) {
+				res.send({status: 500, mssg:'Server Error: Query not found.'});
+			}			
+			else {
+				match.remove(); // remove from classes
+				res.send({status: 200, mssg:'Trainee removed!'});
+			}
+		});
+ 	}, 
 
  	getQuizList: function(req, res, next) {
  		if(req.session.user) {

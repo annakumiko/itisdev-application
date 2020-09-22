@@ -10,11 +10,11 @@
     <div>
         <div class="d-flex" style="margin: 5px 10px;">
                 <label class="float-left" style="padding-right: 26px;min-width: 70px;"><strong>Section</strong></label>
-                <p>{{section}}</p>
+                <p id="classSection" value="{{{section}}}">{{section}}</p>
             </div>
             <div class="d-flex" style="margin: 5px 10px;">
                 <label class="float-left" style="padding-right: 30px;min-width: 70px;"><strong>Course</strong></label>
-                <p>{{course}} </p>
+                <p id="classCourse">{{course}} </p>
         </div>
         <div class="d-block float-left" style="width: 50%;padding: 20px;">
             <div class="table-responsive">
@@ -31,7 +31,9 @@
                         <tr id="{{{traineeList.userID}}}">
                             <td style="width: 25%">{{traineeList.lastName}}, {{traineeList.firstName}}</td>
                             <td style="width: 15%">{{traineeList.email}}</td>
-                            <td style="width: 10%;padding: 10px;text-align: center;"><button class="btn btn-primary" type="button" id="add-trainee"style="background-color: #3e914d;"><strong>+</strong></button></td>
+                            <td style="width: 10%;padding: 10px;text-align: center;">
+
+                                <button class="btn btn-primary" type="button" id="add-trainee"style="background-color: #3e914d;"><strong>+</strong></button></td>
                         </tr>
                         {{/each}}
                     </tbody>
@@ -48,10 +50,14 @@
                         </tr>
                     </thead>
                     <tbody style="background-color: #f6f6f6;">
+                        {{#each added}}
                         <tr>
-                            <td>Trainee name</td>
-                            <td style="width: 20%;padding: 10px;text-align: center;"><button class="btn btn-primary" type="button" id="remove-trainee" style="background-color: #3e914d;"><strong>-</strong></button></td>
+                            <td>{{lastName}}, {{firstName}}</td>
+                            <td style="width: 20%;padding: 10px;text-align: center;">
+
+                                <button class="btn btn-primary" type="button" id="remove-trainee" style="background-color: #3e914d;"><strong>-</strong></button></td>
                         </tr>
+                        {{/each}}
                     </tbody>
                 </table>
             </div>
