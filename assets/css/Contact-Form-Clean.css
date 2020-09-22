@@ -71,7 +71,6 @@
   font-size: 13px;
   letter-spacing: 0.4px;
   line-height: 1;
-  outline: none !important;
 }
 
 .contact-clean form .btn:hover {
@@ -82,9 +81,32 @@
   transform: translateY(1px);
 }
 
-.contact-clean form .btn-primary {
-  background-color: #055ada !important;
+.contact-clean form #sendEmailBTN {
+  background-color: #00a99d;
   margin-top: 15px;
   color: #fff;
+  width: 120px;
+  height: 49px;
+}
+
+.contact-clean form #cancelEmailBTN {
+  background-color: transparent;
+  border-color: #da6b59;
+  border: 2px solid;
+  margin-top: 15px;
+  color: #da6b59;
+  display: inline-block;
+}
+
+.contact-clean form #cancelEmailBTN:hover {
+  background: #da6b59;
+  color: white;
+  border-color: #da6b59;
+  border: 2px solid;
+}
+
+#btnS {
+  display: absolute;
+  margin-left: 320px;
 }
 

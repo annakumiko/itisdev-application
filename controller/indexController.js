@@ -491,7 +491,7 @@ const rendFunctions = {
 				clientsModel.find({}, function(err, data) {
 					var details = JSON.parse(JSON.stringify(data));
 					var clients = details;	
-					console.log(clients);
+					// console.log(clients);
 					
 					res.render('clientlist', {
 					 clients: clients,
