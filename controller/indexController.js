@@ -637,7 +637,6 @@ const rendFunctions = {
 		//var userID = req.session.user.userID;
 		var fullName = req.session.user.lastName + ", " + req.session.user.firstName;
 
-			console.log("from: " + process.env.EMAIL);
 			console.log("for : " + email,);
 			console.log("messsage : " + emailText);
 
@@ -645,14 +644,14 @@ const rendFunctions = {
 			var smtpTransport = nodemailer.createTransport({
 				service: 'Gmail',
 				auth: {
-					user: process.env.EMAIL,
-					pass: process.env.PASSWORD
+					user: 'training.tvh@gmail.com',
+					pass: 'tvhtraining'
 				}
 			});
 
 			// content
 			var mailOptions = {
-				from: process.env.EMAIL,
+				from: 'training.tvh@gmail.com',
 				to: email,
 				subject: '[REQUEST FOR INTERVIEW] ' + fullName,
 				text: emailText,
