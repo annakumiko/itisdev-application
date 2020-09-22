@@ -514,6 +514,7 @@ const rendFunctions = {
 					
 					res.render('contact-client', {
 					 clients: clients,
+					 fullName: req.session.user.lastName + ", " + req.session.user.firstName
 				 });
 				});
 
@@ -523,33 +524,29 @@ const rendFunctions = {
 	 },
 
 	postContactClient: function(req, res, next) {
-		let { email, emailSubject, emailText } = req.body; // pass client email, email subject, and message
+		let { email, emailText } = req.body; // pass client email, email subject, and message
 		
 		//var userID = req.session.user.userID;
+		var fullName = req.session.user.lastName + ", " + req.session.user.firstName;
 
-			console.log("from: " + req.session.user.email);
+			console.log("from: " + process.env.EMAIL);
 			console.log("for : " + email);
-			console.log("subject : " + emailSubject);
 			console.log("messsage : " + emailText);
 
 			// send email
 			var smtpTransport = nodemailer.createTransport({
 				service: 'Gmail',
 				auth: {
-					type: "OAuth2",
-					user: req.session.user.email,
-					pass: req.session.user.password,
-					clientSecret: process.env.GMAIL_CLIENTSECRET,
-					refreshToken: process.env.GMAIL_REFRESH_TOKEN,
-					accessToken: process.env.GMAIL_ACCESSTOKEN
+					user: process.env.EMAIL,
+					pass: process.env.PASSWORD
 				}
 			});
 
 			// content
 			var mailOptions = {
-				from: req.session.user.email,
+				from: process.env.EMAIL,
 				to: email,
-				subject: emailSubject,
+				subject: '[REQUEST FOR INTERVIEW] ' + fullName,
 				text: emailText,
 			};
 

@@ -216,13 +216,12 @@ $(document).ready(function() {
 	// SEND EMAILS 
 	$('button#sendEmailBTN').click(function() {
 		var email = $('#clientEmail').val();
-		var emailSubject = $('#emailSubject').val();
 		var emailText = $("#emailText").val();
 
 		// console.log("email : " + email);
 		// console.log("subject : " + emailSubject);
 
-		$.post('/contact-client', {email: email, emailSubject: emailSubject, emailText: emailText}, function(res) {
+		$.post('/contact-client', {email: email, emailText: emailText}, function(res) {
 				switch (res.status){
 					case 200: {
 						window.location.href = '/';
