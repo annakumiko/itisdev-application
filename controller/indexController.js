@@ -158,7 +158,6 @@ function generateClientID() {
 	return clientID;
 }
 
-
 // main functions for getting and posting data
 const rendFunctions = {
 
@@ -398,7 +397,6 @@ const rendFunctions = {
  				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
 	 			uType: req.session.user.userType,
 	 			classes: classVar
-	 			// class details 
  			});
  		}
  		else res.redirect('login');
@@ -412,8 +410,7 @@ const rendFunctions = {
 		 			var details = JSON.parse(JSON.stringify(data));
 		 			var courseDet = details;	
 		 			var userID = req.session.user.userID;
-
-		 			//console.log(courseDet);	
+\
 	 				res.render('create-class', {
 						courseList: courseDet
 					});
@@ -537,48 +534,50 @@ const rendFunctions = {
  	getAddTrainees: async function(req, res, next) {
  		console.log(req.params.course);
  		if(req.session.user) {
- 			if(req.session.user.userType === "Trainer") {
- 				/*
- 		 			1. get class (section) and course of selected class // display
- 					2. get trainees // sana -> who have not taken the course // 
- 					3. get trainees already in the class
- 				*/
- 				
- 				// endorsed
- 				var trainees = await usersModel.aggregate([
-					 {$match: {userType: "Trainee"}},
-					 {$lookup: {
-							from: "users",
-							localField: "userID",
-							foreignField: "userID",
-							as: "traineeList" // SLICE
-					 }},
-					 {$unwind: "$traineeList"}
-				]);
-
- 				var traineelists = await traineelistsModel.find({});
- 				var endorsed = [];
-
- 				// compare trainees & traineelists
- 				// if trainee is not in traineelists ==
- 				// else add to array
+ 			if(req.session.user.userType === "Trainer") {	
  				var classSelected = await classesModel.findOne({section: req.params.section});
- 				var classID = classSelected.classID;
- 				var addedList = await traineelistsModel.find({classID: classID});
- 				var addedTrainees = [];
+ 				var classID = classSelected.classID;		
+ 				
+ 				// all trainees
+ 				var trainees = await usersModel.find({userType: "Trainee"});
 
- 				console.log(addedList);
- 				// added
-				for(var i = 0; i < addedList.length; i++) {
-					addedTrainees[i] = await usersModel.findOne({userID: addedList[i].traineeID});
+ 				// trainees already in the class
+ 				var classTrainees = await traineelistsModel.find({classID: classID});
+
+ 				// trainees already in the class - details
+ 				var addedTrainees = [];
+				for(var i = 0; i < classTrainees.length; i++) {
+					addedTrainees[i] = await usersModel.findOne({userID: classTrainees[i].traineeID});
 				}
 
-				console.log(addedTrainees);
+				// endorsed trainees
+					// 1. get ids
+				var atIDs = [];
+				for(var i = 0; i < addedTrainees.length; i++) {
+					atIDs.push(addedTrainees[i].userID);
+				}
+
+				var tIDs = [];
+				for(var i = 0; i < trainees.length; i++) {
+					tIDs.push(trainees[i].userID);
+				}
+
+					// 2. check if exising in addedTrainees
+				var endorsedIDs = tIDs.filter(r=> !atIDs.includes(r));
+
+					// 3. get details
+				var endorsedTrainees = [];
+				for(var i = 0; i < endorsedIDs.length; i++) {
+					endorsedTrainees[i] = await usersModel.findOne({userID: endorsedIDs[i]});
+				}
+
+				var endorsed = JSON.parse(JSON.stringify(endorsedTrainees));
+				var added = JSON.parse(JSON.stringify(addedTrainees));
 				
-				console.log("testing " + addedTrainees[0].lastName);
+				// render
  		 		res.render('add-trainees', {
- 		 			trainees: trainees,
- 		 			added: addedTrainees,
+ 		 			endorsed: endorsed,
+ 		 			added: added,
  		 			section: req.params.section,
  		 			course: req.params.course
  		 		});

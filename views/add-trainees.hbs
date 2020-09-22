@@ -27,10 +27,10 @@
                         </tr>
                     </thead>
                     <tbody style="background-color: #f6f6f6;">
-                        {{#each trainees}}
-                        <tr id="{{{traineeList.userID}}}">
-                            <td style="width: 25%">{{traineeList.lastName}}, {{traineeList.firstName}}</td>
-                            <td style="width: 15%">{{traineeList.email}}</td>
+                        {{#each endorsed}}
+                        <tr id="{{{userID}}}">
+                            <td style="width: 25%">{{lastName}}, {{firstName}}</td>
+                            <td style="width: 15%">{{email}}</td>
                             <td style="width: 10%;padding: 10px;text-align: center;">
 
                                 <button class="btn btn-primary" type="button" id="add-trainee"style="background-color: #3e914d;"><strong>+</strong></button></td>
@@ -51,7 +51,7 @@
                     </thead>
                     <tbody style="background-color: #f6f6f6;">
                         {{#each added}}
-                        <tr>
+                        <tr id="{{{userID}}}">
                             <td>{{lastName}}, {{firstName}}</td>
                             <td style="width: 20%;padding: 10px;text-align: center;">
 

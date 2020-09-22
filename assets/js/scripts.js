@@ -282,7 +282,7 @@ $(document).ready(function() {
 				switch(result.status) {
 					case 200: {
 						alert(result.mssg);
-						row.remove();
+						traineeRow.remove();
 						break;
 					}
 					case 401: {
