@@ -617,10 +617,11 @@ const rendFunctions = {
 				clientsModel.find({}, function(err, data) {
 					var details = JSON.parse(JSON.stringify(data));
 					var clients = details;	
-					console.log(clients);
+					// console.log(clients);
 					
 					res.render('contact-client', {
-					 clients: clients,
+					 email: req.params.email,
+					 companyName: req.params.companyName,
 					 fullName: req.session.user.lastName + ", " + req.session.user.firstName
 				 });
 				});
@@ -637,7 +638,7 @@ const rendFunctions = {
 		var fullName = req.session.user.lastName + ", " + req.session.user.firstName;
 
 			console.log("from: " + process.env.EMAIL);
-			console.log("for : " + email);
+			console.log("for : " + email,);
 			console.log("messsage : " + emailText);
 
 			// send email
@@ -658,8 +659,14 @@ const rendFunctions = {
 			};
 
 			smtpTransport.sendMail(mailOptions, function(error) {
-				if (error) console.log(error);
-				else console.log("sent");
+				if (error){
+					res.send({status: 500, mssg: "There has been an error in sending the email."});
+					console.log(error);
+				}
+				else{
+					res.send({status: 200, mssg: "Email sent succesfully!"});
+					console.log("sent");
+				} 
 
 				smtpTransport.close();
 			});

@@ -206,13 +206,12 @@ $(document).ready(function() {
 
 	// SEND EMAILS 
 	$('button#sendEmailBTN').click(function() {
-		var email = $('#clientEmail').val();
+		var email = $("#email").text()
 		var emailText = $("#emailText").val();
 
-		// console.log("email : " + email);
-		// console.log("subject : " + emailSubject);
+		$('p#eEmail').text('');
 
-		$.post('/contact-client', {email: email, emailText: emailText}, function(res) {
+		$.post('/contact-client', { email: email, emailText: emailText}, function(res) {
 				switch (res.status){
 					case 200: {
 						window.location.href = '/';
@@ -220,7 +219,7 @@ $(document).ready(function() {
 						break;
 					}
 					case 500: { 
-						alert(res.mssg);
+						$('p#eEmail').text(res.mssg);
 						break;
 					}
 					}

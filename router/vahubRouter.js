@@ -27,7 +27,7 @@ router.get('/update-scoresheet', controller.getUpdateScoresheet);
 router.get('/verification', controller.getVerification);
 router.get('/clientlist', controller.getClientList);
 router.get('/view-grades', controller.getViewGrades);
-router.get('/contact-client', controller.getContactClient);
+router.get('/contact-client/:email/:companyName', controller.getContactClient);
 
 /*POST functions*/
 router.post('/logout', controller.postLogout);
