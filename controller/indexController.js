@@ -291,7 +291,6 @@ const rendFunctions = {
 					sDate = getDate(classVar[i].classList.startDate);
 					eDate = getDate(classVar[i].classList.endDate);
 
-
 					classVar[i].classList.startDate = sDate;
 					classVar[i].classList.endDate = eDate;
 				}
@@ -410,7 +409,7 @@ const rendFunctions = {
 		 			var details = JSON.parse(JSON.stringify(data));
 		 			var courseDet = details;	
 		 			var userID = req.session.user.userID;
-\
+
 	 				res.render('create-class', {
 						courseList: courseDet
 					});
@@ -596,13 +595,14 @@ const rendFunctions = {
  		// add
  		var a = addTrainee(classID, traineeID);
 
+ 		var trainee = await usersModel.findOne({userID: traineeID});
  			// put into traineelistsModel
  		traineelistsModel.create(a, function(error) {
 		 			if (error) {
 		 				res.send({status: 500, mssg: "Error: Cannot add trainee."});
 		 				console.log("add-trainee error: " + error);
 		 			}
-		 			else res.send({status: 200, mssg: 'Trainee added!'});
+		 			else res.send({status: 200, mssg: JSON.stringify(trainee)});
 		 		});
  	},
 
@@ -612,6 +612,7 @@ const rendFunctions = {
  		var classSelected = await classesModel.findOne({section: section});
  		var classID = classSelected.classID;
 
+ 		var trainee = await usersModel.findOne({userID: traineeID});
  		// where do i remove -> traineelistsModel only
  		traineelistsModel.findOne({traineeID: traineeID, classID: classID}, function(err, match) {
 			if (err) {
@@ -619,7 +620,7 @@ const rendFunctions = {
 			}			
 			else {
 				match.remove(); // remove from classes
-				res.send({status: 200, mssg:'Trainee removed!'});
+				res.send({status: 200, mssg: JSON.stringify(trainee)});
 			}
 		});
  	}, 

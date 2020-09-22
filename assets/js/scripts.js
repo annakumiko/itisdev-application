@@ -253,8 +253,15 @@ $(document).ready(function() {
 			switch(res.status) {
 					case 200: {
 						traineeRow.remove();
-						alert(res.mssg);
+						alert("Trainee added!");
+						
+						var added = JSON.parse(res.mssg);
 						// add to the added trainees table
+						var data = "<tr><td>"
+                            + added.lastName + ", " + added.firstName + "</td> <td style='width: 20%;padding: 10px;text-align: center;'>"
+							+ "<button class='btn btn-primary' type='button' id='remove-trainee'style='background-color: #3e914d;''><strong>-</strong></button></td></tr>";
+                        console.log(data);
+                        $('#addedtrainees').append(data);
 						break;
 					}
 					case 401: {
@@ -278,19 +285,30 @@ $(document).ready(function() {
 		var conf = confirm("Remove this trainee?");
 
 		if(conf == true) {
-			$.post('/remove-trainee', {traineeID: traineeID, section: classSection}, function(result) {
-				switch(result.status) {
+			$.post('/remove-trainee', {traineeID: traineeID, section: classSection}, function(res) {
+				switch(res.status) {
 					case 200: {
-						alert(result.mssg);
+						alert("Trainee Removed!");
 						traineeRow.remove();
+
+						var endorsed = JSON.parse(res.mssg);
+						// add to the endorsed trainees table
+						var data = "<tr><td style='width: 25%'>"
+                            + endorsed.lastName + ", " + endorsed.firstName + "</td>"
+                            + "<td style='width: 15%'>" + endorsed.email + "</td> <td style='width: 10%;padding: 10px;text-align: center;'>"
+							+ "<button class='btn btn-primary' type='button' id='add-trainee'style='background-color: #3e914d;''><strong>+</strong></button></td></tr>";
+                        
+                        console.log(data);
+                        $('#endorsedtrainees').append(data);
+						break;
 						break;
 					}
 					case 401: {
-						alert(result.mssg);
+						alert(res.mssg);
 						break;
 					}
 					case 500: {
-						alert(result.mssg);
+						alert(res.mssg);
 						break;
 					}
 				}

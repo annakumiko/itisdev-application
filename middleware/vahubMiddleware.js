@@ -65,6 +65,17 @@ function isOverlap (startDate1, endDate1, startDate2, endDate2, startTime1, endT
 	return overlap;
 }
 
+function isOngoing(eDate) {
+	var endDate = new Date(eDate);
+	var eDateValue = eDate.valueOf();
+	var dateToday = new Date();
+	var todayValue = dateToday.valueOf();
+
+	if(eDateValue > todayValue)
+		return true;
+	else return false;
+}
+
 const vahubMiddleware = {
 
 	validateCreateClass: async function (req, res, next) {
@@ -101,15 +112,58 @@ const vahubMiddleware = {
 		else return next();
 	},
 
-	/*
+	
 	validateAddTrainees: async function(req, res, next) {
+		let { traineeID, section } = req.body;
 		
-		
-		// check if trainee -- already had a class with the course
-		// check if trainee -- in another active (ongoing)
-	}	
+		// 1. check if trainee already had a class with the course
+			// get course ID
+		var classSelected = await classesModel.findOne({section: section});
+		var classID = classSelected.classID;
+ 		var courseID = classSelected.courseID;
 
-	*/
+			// get classes under the course
+		var courseClasses = await classesModel.find({courseID: courseID});
+		var cIDs = [];
+		for(var i = 0; i < courseClasses.length; i++) {
+			cIDs.push(courseClasses[i].classID);
+		}
+
+
+			// get trainee's classes
+		var traineeClasses = await traineelistsModel.find({traineeID: traineeID});
+		var tIDs = [];
+		var tEndDates = [];
+		for(var i = 0; i < traineeClasses.length; i++) {
+			tIDs.push(traineeClasses[i].classID);
+			tEndDates.push(traineeClasses[i].endDate);
+		}
+
+		var trainees = await traineelistsModel.find({classID: classID});
+		var numTrainees = trainees.length;
+		console.log(trainees);
+		var existing = cIDs.some(r=> tIDs.includes(r));
+		console.log(existing);
+
+		// 2. check if trainee is in an ongoing class
+		var ongoing = false;
+		for(var i = 0; i < tEndDates.length; i++) {
+			if(tEndDates[i] != null)
+				ongoing = isOngoing(tEndDates[i]);
+			else ongoing = false;
+			console.log(tEndDates[i]);
+		}
+		
+       
+    	console.log(ongoing);
+		if(numTrainees === 20)
+			res.send({status: 401, mssg: 'This class already has 20 trainees.'});
+		else if(ongoing || existing) 
+			res.send({status: 401, mssg: 'This trainee is in an ongoing class or already took this course.'});
+		else return next();
+        
+		
+	}	
 }
 
 module.exports = vahubMiddleware;

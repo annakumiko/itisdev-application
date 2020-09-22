@@ -26,7 +26,7 @@
                             <th style="background-color: #006739;color: rgb(255,255,255);"></th>
                         </tr>
                     </thead>
-                    <tbody style="background-color: #f6f6f6;">
+                    <tbody style="background-color: #f6f6f6;" id="endorsedtrainees">
                         {{#each endorsed}}
                         <tr id="{{{userID}}}">
                             <td style="width: 25%">{{lastName}}, {{firstName}}</td>
@@ -49,7 +49,7 @@
                             <th style="background-color: #006739;"></th>
                         </tr>
                     </thead>
-                    <tbody style="background-color: #f6f6f6;">
+                    <tbody style="background-color: #f6f6f6;" id="addedtrainees">
                         {{#each added}}
                         <tr id="{{{userID}}}">
                             <td>{{lastName}}, {{firstName}}</td>
