@@ -23,7 +23,7 @@ router.get('/add-trainees', controller.getAddTrainees);
 router.get('/verification', controller.getVerification);
 router.get('/clientlist', controller.getClientList);
 router.get('/view-grades', controller.getViewGrades);
-//router.get('/contact-clients', controller.getContactClient);
+router.get('/contact-client', controller.getContactClient);
 
 /*POST functions*/
 router.post('/logout', controller.postLogout);
@@ -40,8 +40,8 @@ router.post('/create-class', controller.postCreateClass);
 
 // TRAINEE
 router.post('/verification', controller.postVerification);
-router.get('/clientlist', controller.postClientList);
-// router.post('/contact-clientslist', controller.postContactClient);
+// router.get('/clientlist', controller.postClientList);
+router.post('/contact-client', controller.postContactClient);
 
 
 module.exports = router;

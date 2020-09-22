@@ -20,15 +20,6 @@ const usersModel = require('../models/usersdb');
 const verificationModel = require('../models/verificationdb');
 const db = require('../models/db');
 
-/* EMAIL */
-// let transport = nodemailer.createTransport(options[, defaults]);
-let transport = nodemailer.createTransport({
-	auth: {
-		 user: 'put_your_username_here',
-		 pass: 'put_your_password_here'
-	}
-});
-
 // constructor for class
 function createClass(courseID, trainerID, section, startDate, endDate, sTime, eTime) {
 	var tempClass = {
@@ -512,34 +503,61 @@ const rendFunctions = {
 		else res.redirect('login');
 	 },
 
-	postClientList: function(req, res, next) {
-		let { email, emailsubject, emailText } = req.body; // pass client email, email subject, and message
+	getContactClient: function(req, res, next) {
+		if (req.session.user) {
+			if(req.session.user.userType === "Trainee") {
+
+				clientsModel.find({}, function(err, data) {
+					var details = JSON.parse(JSON.stringify(data));
+					var clients = details;	
+					console.log(clients);
+					
+					res.render('contact-client', {
+					 clients: clients,
+				 });
+				});
+
+		 } else res.redirect('login');
+		}
+		else res.redirect('login');
+	 },
+
+	postContactClient: function(req, res, next) {
+		let { email, emailSubject, emailText } = req.body; // pass client email, email subject, and message
 		
 		//var userID = req.session.user.userID;
 
+			console.log("from: " + req.session.user.email);
+			console.log("for : " + email);
+			console.log("subject : " + emailSubject);
+			console.log("messsage : " + emailText);
+
 			// send email
-			var eTransport = nodemailer.createTransport({
+			var smtpTransport = nodemailer.createTransport({
 				service: 'Gmail',
 				auth: {
-					user: req.session.user.userEmail,
-					pass: req.session.user.password
+					type: "OAuth2",
+					user: req.session.user.email,
+					pass: req.session.user.password,
+					clientSecret: process.env.GMAIL_CLIENTSECRET,
+					refreshToken: process.env.GMAIL_REFRESH_TOKEN,
+					accessToken: process.env.GMAIL_ACCESSTOKEN
 				}
 			});
 
+			// content
 			var mailOptions = {
-				from: req.session.user.userEmail,
+				from: req.session.user.email,
 				to: email,
-				subject: emailsubject,
+				subject: emailSubject,
 				text: emailText,
 			};
 
-			console.log(email + " - " + emailsubject);
-
-			eTransport.sendMail(mailOptions, function(error) {
+			smtpTransport.sendMail(mailOptions, function(error) {
 				if (error) console.log(error);
 				else console.log("sent");
 
-				eTransport.close();
+				smtpTransport.close();
 			});
 	 },
 

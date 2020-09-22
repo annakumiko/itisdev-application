@@ -196,7 +196,7 @@ $(document).ready(function() {
 	$('button#publishCourseBTN').click(function() {
 		var courseName = $('#courseName').val();
 		var courseDesc = $('#courseDesc').val();
-		var courseModules = $("#courseMod").val().
+		var courseModules = $("#courseMod").val();
 
 		$.post('/define-course', {courseName: courseName, courseDesc: courseDesc}, function(res) {
 				switch (res.status){
@@ -214,14 +214,15 @@ $(document).ready(function() {
 	});
 
 	// SEND EMAILS 
-	$('button#sendEmail').click(function() {
+	$('button#sendEmailBTN').click(function() {
 		var email = $('#clientEmail').val();
 		var emailSubject = $('#emailSubject').val();
-		var emailText = $("#emailText").val().
+		var emailText = $("#emailText").val();
 
-		console.log(email + " - " + emailsubject);
+		// console.log("email : " + email);
+		// console.log("subject : " + emailSubject);
 
-		$.post('/clientlist', {email: email, emailSubject: emailSubject, emailText: emailText}, function(res) {
+		$.post('/contact-client', {email: email, emailSubject: emailSubject, emailText: emailText}, function(res) {
 				switch (res.status){
 					case 200: {
 						window.location.href = '/';
