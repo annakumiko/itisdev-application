@@ -227,4 +227,56 @@ $(document).ready(function() {
 				});
 	});
 
+
+	// ADD TRAINEES VALIDATION
+	$('button#add-trainee').click(function() {
+		var traineeRow = $(this).closest("tr"),
+			traineeID = row.attr("id");
+
+		$.post('/add-trainees', {traineeID: traineeID}, function(res) {
+			switch(res.status) {
+					case 200: {
+						alert(res.mssg);
+						// add to the added trainees table
+						break;
+					}
+					case 401: {
+						alert(res.mssg);
+						break;
+					}
+					case 500: {
+						alert(res.mssg);
+						break;
+					}
+			}
+		});
+
+	});
+
+	// Delete Class
+	$('button#delClass').click(function() {
+		var row = $(this).parent().parent();
+		var delClassNum = row.attr("id");
+		var conf = confirm("Delete this class?");
+
+		if(conf == true) {
+			$.post('/delete-class', {classNum: delClassNum}, function(result) {
+				switch(result.status) {
+					case 200: {
+						alert(result.mssg);
+						row.remove();
+						break;
+					}
+					case 401: {
+						alert(result.mssg);
+						break;
+					}
+					case 500: {
+						alert(result.mssg);
+						break;
+					}
+				}
+			});
+		}			
+	});
 });

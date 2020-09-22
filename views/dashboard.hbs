@@ -18,23 +18,27 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th style="color: rgb(255,255,255);background-color: #006739;width: 15%;">Section</th>
-                            <th style="background-color: #006739;color: rgb(255,255,255);width: 25%;">Course</th>
+                            <th style="color: rgb(255,255,255);background-color: #006739;width: 5%;">Section</th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);width: 15%;">Course</th>
                             <th style="background-color: #006739;color: rgb(255,255,255);width: 15%;">Start Date</th>
                             <th style="background-color: #006739;color: rgb(255,255,255);width: 15%;">End Date</th>
-                            <th style="background-color: #006739;color: rgb(255,255,255);width: 12%;"></th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);width: 13%;"> Schedule </th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);width: 14%;"></th>
                             <th style="background-color: #006739;color: rgb(255,255,255);width: 12%;"></th>
                         </tr>
                     </thead>
                     <tbody>
                         {{#each classes}}
-                        <tr>
-                            <td> {{classList.section}} </td>
-                            <td> {{course.courseName}} </td>
+                        <tr id="{{{classList.classID}}}">
+                            <td value="{{{classList.section}}}"> {{classList.section}} </td>
+                            <td value="{{{course.courseName}}}"> {{course.courseName}} </td>
                             <td> {{classList.startDate}} </td>
                             <td> {{classList.endDate}} </td>
-                            <td><a href="/add-trainees"><button class="btn btn-primary" type="button" style="background-color: #006739;margin: 0px 10px;" id="viewTrainees">Add Trainees</button></a></td>
-                            <td><button class="btn btn-primary" id="delClass" type="button" style="background-color: #006739;margin: 0px 10px;">Delete Class</button></td>
+                            <td> {{classList.startTime}} - {{classList.endTime}} </td>
+                            <td>
+                                <button class="btn btn-primary view-trainees" type="button" onclick="window.location.href = '/add-trainees/{{{classList.section}}}/{{{course.courseName}}}'"style="background-color: #006739;margin: 0px 10px;">Manage Trainees</button></td>
+                            <td>
+                                <button class="btn btn-primary" id="delClass" type="button" style="background-color: #006739;margin: 0px 10px;">Delete Class</button></td>
                         </tr>
                         {{/each}}
                     </tbody>

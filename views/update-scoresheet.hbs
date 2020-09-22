@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+{{>sidebar-trainer}}
+
+<div style="padding: 20px;padding-left: 100px;">
+    <div><label style="font-size: 24px;color: #006739;"><strong>Update scoresheet</strong></label>
+        <p style="margin: 2px;"> Update the daily scoresheet and enter your scores for the students for the day. Give the score between 0 to 10, 10 being the highest. </p> 
+        <p style="margin: 2px;"> The criteria is as follows: 10 - 9 (Outstanding), 8 - 7 (Satisfactory), 6 - 5 (Fairly Satisfactory), 4 - 3 (Needs Improvement), 2 - 0 (Poor)</p>
+        <hr>
+    </div>
+    <div>
+        <div style="padding: 10px 0px;">
+            <div class="d-flex" style="margin: 5px 10px;">
+                <label class="float-left" style="padding-right: 30px;min-width: 70px;"><strong>Section</strong></label>
+                <p>Section</p>
+            </div>
+            <div class="d-flex" style="margin: 5px 10px;">
+                <label class="float-left" style="padding-right: 30px;min-width: 70px;"><strong>Day</strong></label>
+                
+                <div class="d-flex" style="margin-right: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;">
+                    <select style="width: 70px;" id="class-day">
+                        <option class="dropdown-item" id="day1" href="#"> Day 1 </option>
+                        <option class="dropdown-item" id="day2" href="#"> Day 2 </option>
+                        <option class="dropdown-item" id="day3" href="#"> Day 3 </option>
+                        <option class="dropdown-item" id="day4" href="#"> Day 4 </option>
+                        <option class="dropdown-item" id="day5" href="#"> Day 5 </option>
+                        <option class="dropdown-item" id="day6" href="#"> Day 6 </option>
+                        <option class="dropdown-item" id="day7" href="#"> Day 7 </option>
+                        <option class="dropdown-item" id="day8" href="#"> Day 8 </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div><label style="font-size: 25px;color: #006739;"><strong>Scores</strong></label>
+            <div class="table-responsive" style="background-color: #f6f6f6;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="background-color: #006739;color: rgb(255,255,255);">Skill</th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);">Trainee 1</th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);">Trainee 2</th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);">Trainee 3</th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);">Trainee 4</th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);">Trainee 5</th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);">Trainee 6</th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);">Trainee 7</th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);">Trainee 8</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="width: 20%;">Cell 1</td>
+                            <td style="padding: 5px;width: 10%;"><input type="text" style="width: 50px;"></td>
+                            <td style="padding: 5px;width: 10%;"><input type="text" style="width: 50px;"></td>
+                            <td style="padding: 5px;width: 10%;"><input type="text" style="width: 50px;"></td>
+                            <td style="padding: 5px;width: 10%;"><input type="text" style="width: 50px;"></td>
+                            <td style="padding: 5px;width: 10%;"><input type="text" style="width: 50px;"></td>
+                            <td style="padding: 5px;width: 10%;"><input type="text" style="width: 50px;"></td>
+                            <td style="padding: 5px;width: 10%;"><input type="text" style="width: 50px;"></td>
+                            <td style="padding: 5px;width: 10%;"><input type="text" style="width: 50px;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 20%;">Cell 1</td>
+                            <td style="padding: 5px;width: 10%;"><input type="text" style="width: 50px;"></td>
+                            <td style="padding: 5px;width: 10%;"><input type="text" style="width: 50px;"></td>
+                            <td style="padding: 5px;width: 10%;"><input type="text" style="width: 50px;"></td>
+                            <td style="padding: 5px;width: 10%;"><input type="text" style="width: 50px;"></td>
+                            <td style="padding: 5px;width: 10%;"><input type="text" style="width: 50px;"></td>
+                            <td style="padding: 5px;width: 10%;"><input type="text" style="width: 50px;"></td>
+                            <td style="padding: 5px;width: 10%;"><input type="text" style="width: 50px;"></td>
+                            <td style="padding: 5px;width: 10%;"><input type="text" style="width: 50px;"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div><label class="d-flex" style="font-size: 25px;color: #006739; padding: 30px 0px;"><strong>Average:&nbsp;</strong></label><button class="btn btn-primary" type="submit" style="background-color: #006739;margin-right: 5px;">Update</button></div>
+    </div>
+</div>
