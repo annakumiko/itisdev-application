@@ -46,7 +46,7 @@ const router = require('./router/vahubRouter');
 app.use('/', router);
 
 app.use(express.static(__dirname));
-app.use(express.static('public'));
+app.use(express.static('/public'));
 
 /* PORT */
 app.listen(port, function(){

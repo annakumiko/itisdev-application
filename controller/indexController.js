@@ -516,6 +516,7 @@ const rendFunctions = {
  	},
 
  	getAddTrainees: async function(req, res, next) {
+ 		console.log(req.params.course);
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {
  				/*
@@ -538,6 +539,8 @@ const rendFunctions = {
  		 		res.render('add-trainees', {
  		 			trainees: trainees,
  		 			//other sss
+ 		 			section: req.params.section,
+ 		 			course: req.params.course
  		 		});
  			}
  			else res.redirect('/');		

@@ -17,7 +17,7 @@ router.get('/manage-clientlist', controller.getManageClients);
 // TRAINER
 router.get('/dashboard', controller.getDashboard);
 router.get('/create-class', controller.getCreateClass);
-router.get('/add-trainees', controller.getAddTrainees);
+router.get('/add-trainees/:section/:course', controller.getAddTrainees);
 router.get('/quiz-list', controller.getQuizList);
 router.get('/create-quiz', controller.getCreateQuiz);
 router.get('/update-scoresheet', controller.getUpdateScoresheet);

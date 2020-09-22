@@ -215,12 +215,6 @@ $(document).ready(function() {
 
 
 	// ADD TRAINEES VALIDATION
-			// 1. dashboard.hbs -> add-trainees.hbs
-	$('button#manageTrainees').click(function() {
-		// how
-		window.location.href = '/add-trainees';
-	});
-			// 2. adding trianees
 	$('button#add-trainee').click(function() {
 		var traineeRow = $(this).closest("tr"),
 			traineeID = row.attr("id");
