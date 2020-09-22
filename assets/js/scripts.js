@@ -199,18 +199,9 @@ $(document).ready(function() {
 		var courseModules = $("#courseMod").val();
 
 		$.post('/define-course', {courseName: courseName, courseDesc: courseDesc}, function(res) {
-				switch (res.status){
-					case 200: {
-						window.location.href = '/';
-						alert(res.mssg);
-						break;
-					}
-					case 500: { 
-						alert(res.mssg);
-						break;
-					}
-					}
-				});
+			window.location.href = '/';
+			console.log("email sent");
+		});
 	});
 
 	// SEND EMAILS 
