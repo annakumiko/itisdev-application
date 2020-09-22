@@ -536,25 +536,51 @@ const rendFunctions = {
 				]);
 
  		 		res.render('add-trainees', {
- 		 			trainees: trainees
+ 		 			trainees: trainees,
+ 		 			//other sss
  		 		});
  			}
  			else res.redirect('/');		
  		} else res.redirect('/login');
  	},
 
- 	/*
+ 	
  	postAddTrainees: function(req, res, next) {
  		// add
 
 
  		// remove
  	},
-	*/
- 	getUpdateScoresheet: function(req, res, next) {
- 		res.render('update-scoresheet', {
 
- 		});
+ 	getQuizList: function(req, res, next) {
+ 		if(req.session.user) {
+ 			if(req.session.user.userType === "Trainer") {
+ 				res.render('quizlist', {
+
+ 				});		
+ 			} else res.redirect('/');
+ 		} else res.redirect('/login');
+ 		
+ 	},
+
+ 	getCreateQuiz: function(req, res, next) {
+ 		if(req.session.user) {
+ 			if(req.session.user.userType === "Trainer") {
+ 				res.render('create-quiz', {
+
+ 				});		
+ 			} else res.redirect('/');
+ 		} else res.redirect('/login');
+ 	},
+
+ 	getUpdateScoresheet: function(req, res, next) {
+ 		if(req.session.user) {
+ 			if(req.session.user.userType === "Trainer") {
+ 				res.render('update-scoresheet', {
+
+ 				});		
+ 			} else res.redirect('/');
+ 		} else res.redirect('/login');
  	},
 
 	// for encrypting / mimic register

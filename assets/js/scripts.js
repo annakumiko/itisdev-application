@@ -217,20 +217,33 @@ $(document).ready(function() {
 	// ADD TRAINEES VALIDATION
 			// 1. dashboard.hbs -> add-trainees.hbs
 	$('button#manageTrainees').click(function() {
-		var row = $(this).closest("tr"),
-		  	section = row.find("td:nth-child(1)").text(),
-		  	course = row.find("td:nth-child(2)").text();
-
-		console.log("MT section - " + section);
-		console.log("MT course - " + course);
-
-		$.post('/pass-class', {section: section, course: course}, function(res) {
-
-		});
-
-		// append this <label> {{section}} </label><label class="d-flex"> {{course}} </label>
+		// how
+		window.location.href = '/add-trainees';
 	});
 			// 2. adding trianees
+	$('button#add-trainee').click(function() {
+		var traineeRow = $(this).closest("tr"),
+			traineeID = row.attr("id");
+
+		$.post('/add-trainees', {traineeID: traineeID}, function(res) {
+			switch(res.status) {
+					case 200: {
+						alert(res.mssg);
+						// add to the added trainees table
+						break;
+					}
+					case 401: {
+						alert(res.mssg);
+						break;
+					}
+					case 500: {
+						alert(res.mssg);
+						break;
+					}
+			}
+		});
+
+	});
 
 	// Delete Class
 	$('button#delClass').click(function() {
