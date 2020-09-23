@@ -46,6 +46,19 @@ function createClassList(trainerID, classID) {
 }
 
 
+function addClient(clientID, clientName, companyName, email, contactNo, isActive) {
+	var newClient = {
+		clientID: clientID,
+		clientName: clientName,
+		companyName: companyName,
+		email: email,
+		contactNo: contactNo,
+		isActive: isActive
+	};
+
+	return newClient;
+}
+
 // two digits
 function n(n) {
     return n > 9 ? "" + n: "0" + n;
@@ -771,7 +784,7 @@ const rendFunctions = {
 				clientsModel.find({}, function(err, data) {
 					var details = JSON.parse(JSON.stringify(data));
 					var clients = details;	
-					console.log(clients);
+					// console.log(clients);
 
 					res.render('manage-clientlist', {
 					 clients: clients,
@@ -782,6 +795,27 @@ const rendFunctions = {
 		}
 		else res.redirect('login');
 	 },
+
+	 postAddClient: function(req, res, next) {
+		let { clientName, companyName, email, contactNo } = req.body;
+
+		// console.log(clientName, companyName, email, contactNo);
+
+		var clientID = generateClientID();		
+		// console.log("clientID: " + clientID);
+		var isActive = true;
+		var client = addClient(clientID, clientName, companyName, email, contactNo, isActive)
+
+		clientsModel.create(client, function(err){		
+			if (err) {
+				res.send({status: 500, mssg: "Error in adding new client."});
+				console.log("Error in updating course");
+			}
+			else{
+				res.send({status: 200, mssg: "Client added!"});
+			}
+		})
+	},
 
 }
 

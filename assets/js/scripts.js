@@ -241,6 +241,44 @@ $(document).ready(function() {
 		}
 	});
 
+	// ADD NEW CLIENTS 
+	$('button#addClientBTN').click(function() {
+		var clientName = $("#clientName").val()
+		var companyName = $("#companyName").val()
+		var email = $("#email").val()
+		var contactNo = $("#contactNo").val();
+
+		$('p#eAddClient').text('');
+
+		if(validator.isEmpty(clientName))
+			$('p#eAddClient').text('Please input client name.');
+		
+		else if(validator.isEmpty(companyName))
+			$('p#eAddClient').text('Please input company name.');
+
+		else if(validator.isEmpty(email))
+			$('p#eAddClient').text('Please input client email.');
+
+		else if(validator.isEmpty(contactNo))
+			$('p#eAddClient').text('Please input client contact number.');
+		
+		else { 
+			$.post('/add-client', { clientName: clientName, companyName: companyName, email: email, contactNo: contactNo}, function(res) {
+					switch (res.status){
+						case 200: {
+							window.location.href = '/manage-clientlist';
+							alert(res.mssg);
+							break;
+						}
+						case 500: { 
+							$('p#eAddClient').text(res.mssg);
+							break;
+						}
+						}
+					});
+		}
+	});
+
 
 	// ADD TRAINEES VALIDATION
 	$('button#add-trainee').click(function() {

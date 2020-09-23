@@ -36,6 +36,7 @@ router.post('/register', controller.postRegister);
 
 //admin
 router.post('/define-course', controller.postDefineCourse);
+router.post('/add-client', controller.postAddClient);
 //router.post('/manage-clientlist', controller.postManageClients);
 
 // TRAINER
