@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+{{>sidebar-trainer}}
+
+<div style="padding-left: 100px">
+		<div style="padding: 20px" class="report-header">
+			<div><label style="font-size: 30px;color: #006739;"><strong>Class Detailed Report: </strong></label></strong></label>
+            <label style="font-size: 30px;color: #006739;" id="classid-detailed"> <strong> {{classID}} </strong> </label>
+			<p>Date stamp thign idk</p>
+            <hr>
+		</div>
+        <div class="traineereport">
+            <label style="font-size: 25px;color: #006739;"><strong>Class Trainees</strong></label>
+            <table class="reports">
+                <thead style="background-color: #f6f6f6; padding:5px; height: 35px;">
+                    <tr class="row-reports">
+                        <th class="col-reports" style="width: 10%">Trainee ID</th>
+                        <th class="col-reports"  style="width: 20%;">Name</th>
+                        <th class="col-reports"  style="width: 10%;">Email</th>
+                        <th class="col-reports"  style="width: 15%;">Quiz Average</th>
+                        <th class="col-reports"  style="width: 15%;">Scoresheet Average</th>
+                        <th class="col-reports"  style="width: 10%;">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody style="background-color: #fff;" id="endorsedtrainees">
+                    {{#each trainees}}
+                    <tr  class="row-reports">
+                        <td class="col-reports" >{{userID}}</td>
+                        <td class="col-reports" >{{lastName}}, {{firstName}}</td>
+                        <td class="col-reports" >{{email}}</td>
+                        <td class="col-reports" >secret</td>
+                        <td class="col-reports" >secret</td>
+                        <td class="col-reports" >secret</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="quizzesreport">
+            <label style="font-size: 25px;color: #006739; padding-top: 20px;"><strong>Class Quizzes</strong></label>
+            <table class="reports">
+                <thead style="background-color: #f6f6f6; padding:5px; height: 35px;">
+                    <tr class="row-reports">
+                        <th class="col-reports" style="width: 15%">Quiz ID</th>
+                        <th class="col-reports"  style="width: 25%;">Date Given</th>
+                        <th class="col-reports"  style="width: 10%;">Number of Items</th>
+                    </tr>
+                </thead>
+                <tbody style="background-color: #fff;" id="endorsedtrainees">
+
+                    <tr  class="row-reports" onclick="window.location.href = '/class-detailed'">
+                        <td class="col-reports" >hello</td>
+                        <td class="col-reports" >hello</td>
+                        <td class="col-reports" >hello</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="padding-top: 10px;"class="report-footer">
+            <p>END OF REPORT</p>
+        </div>
+	</div>

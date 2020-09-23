@@ -646,6 +646,37 @@ const rendFunctions = {
  		} else res.redirect('/login');
  	},
 
+ 	getScoresheets: async function(req, res, next) {
+ 		if(req.session.user) {
+ 			if(req.session.user.userType === "Trainer") {
+
+ 				// get the classes of the trainer
+ 				var classes = await classlistsModel.find({trainerID: req.session.user.userID});
+ 				var numClasses = classes.length;
+
+ 				var trainerclasses = [];
+ 				for(var i = 0; i < numClasses; i++) {
+ 					trainerclasses[i] = await classesModel.findOne({classID: classes[i].classID});
+ 				}
+
+ 				var classDet = JSON.parse(JSON.stringify(trainerclasses));
+
+ 				// get the skills
+ 				var skills = await skilltypesModel.find({});
+ 				var skillTypes = JSON.parse(JSON.stringify(skills));
+ 				console.log("section index 0 - " + classDet[0].section)
+ 				
+ 				console.log(classDet);
+
+ 				res.render('scoresheets', {
+ 					classes: classDet,
+ 					skills: skillTypes
+ 				});		
+
+ 			} else res.redirect('/');
+ 		} else res.redirect('/login');
+ 	},
+
  	getUpdateScoresheet: function(req, res, next) {
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {
@@ -655,6 +686,84 @@ const rendFunctions = {
  			} else res.redirect('/');
  		} else res.redirect('/login');
  	},
+
+ 	getSummaryReports: async function(req, res, next) {
+ 		if(req.session.user) {
+ 			if(req.session.user.userType === "Trainer") {
+ 				var userID = req.session.user.userID;
+ 				// get the classes of the trainer
+ 				var classVar = await classlistsModel.aggregate([
+					 {$match: {trainerID: userID}},
+					 {$lookup: {
+							from: "classes",
+							localField: "classID",
+							foreignField: "classID",
+							as: "classList" // SLICE
+					 }},
+					 {$unwind: "$classList"},
+					 {$lookup: {
+							from: "courses",
+							localField: "classList.courseID",
+							foreignField: "courseID",
+							as: "course"
+						}},
+						{$unwind: "$course"}
+				]);
+
+ 				var numStudents = [];
+ 				for(var i = 0; i < classVar.length; i++) {
+ 					// format date and time
+					sDate = getDate(classVar[i].classList.startDate);
+					eDate = getDate(classVar[i].classList.endDate);
+					sTime = getTime(classVar[i].classList.startTime);
+					eTime = getTime(classVar[i].classList.endTime);
+
+					classVar[i].classList.startDate = sDate;
+					classVar[i].classList.endDate = eDate;
+					classVar[i].classList.startTime = sTime;
+					classVar[i].classList.endTime = eTime;
+
+					// num students
+					var trainees = await traineelistsModel.find({classID: classVar[i].classID});
+					classVar[i].numStudents = trainees.length;
+				}
+
+				
+				console.log(numStudents);
+				console.log(classVar);
+ 				res.render('classes-summary', {
+ 					classes: classVar,
+ 					//numStudents: numStudents
+ 				});
+
+ 			} else res.redirect('/');
+ 		} else res.redirect('/login');
+ 	},
+
+ 	getDetailedReports: async function(req, res, next) {
+ 		if(req.session.user) {
+ 			if(req.session.user.userType === "Trainer") {
+ 				var classID = req.params.classid;
+
+ 				// get trainees
+ 				var trainees = await traineelistsModel.find({classID: classID});
+
+ 				// get trainee details
+ 				var traineeDet = [];
+ 				for(var i = 0; i < trainees.length; i++) {
+ 					traineeDet[i] = await usersModel.findOne({userID: trainees[i].traineeID});
+ 				}
+
+ 				var classTrainees = JSON.parse(JSON.stringify(traineeDet));
+ 				// get quizzes
+ 				res.render('class-detailed', {
+ 					classID: classID,
+ 					trainees: classTrainees
+ 				});		
+ 			} else res.redirect('/');
+ 		} else res.redirect('/login');
+ 	},
+
 
 	// for encrypting / mimic register
 	postRegister: async function(req, res, next) {
