@@ -19,6 +19,7 @@ const traineelistsModel = require('../models/traineelistsdb');
 const usersModel = require('../models/usersdb');
 const verificationModel = require('../models/verificationdb');
 const db = require('../models/db');
+const { countDocuments } = require('../models/classesdb');
 
 // constructor for class
 function createClass(classID, courseID, trainerID, section, startDate, endDate, sTime, eTime) {
@@ -816,11 +817,13 @@ const rendFunctions = {
 	 },
 
 	 postUpdateClients: function(req, res, next) {
-		let { clientName, companyName, email, contactNo, isActive } = req.body;
+		let { clientID, clientName, companyName, email, contactNo, isActive } = req.body;
 
 		// console.log(clientName, companyName, email, contactNo);
+		var clientCount = clientsModel.countDocuments();
+		console.log(clientCount);
 
-		clientsModel.create(client, function(err){		
+		clientsModel.update(client, function(err){		
 			if (err) {
 				res.send({status: 500, mssg: "Error in adding new client."});
 				console.log("Error in updating course");

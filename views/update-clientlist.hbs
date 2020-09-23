@@ -25,10 +25,10 @@
                 {{#each clients}}
                 <tr id="{{{clientID}}}">
                     <td><label class="switch"><input type="checkbox"><span id="isActive" class="slider round"></span></label></td>
-                    <td><input type="text" style="width: 90%;" placeholder="{{clientName}}"></td>
-                    <td><input type="text" style="width: 90%;" placeholder="{{companyName}}"></td>
-                    <td><input type="text" style="width: 90%;" placeholder="{{email}}"></td>
-                    <td><input type="text" style="width: 90%;" placeholder="{{contactNo}}"></td>
+                    <td><input type="text" style="width: 90%;" value="{{clientName}}"></td>
+                    <td><input type="text" style="width: 90%;" value="{{companyName}}"></td>
+                    <td><input type="text" style="width: 90%;" value="{{email}}"></td>
+                    <td><input type="text" style="width: 90%;" value="{{contactNo}}"></td>
                     <td align="center"><button id="xdeleteBTN" class="delete" title="Remove Client"><i class="fa fa-remove"></i></button></td> 
                 </tr>
                 {{/each}}
