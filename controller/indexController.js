@@ -654,7 +654,17 @@ const rendFunctions = {
 				from: 'training.tvh@gmail.com',
 				to: email,
 				subject: '[REQUEST FOR INTERVIEW] ' + fullName,
-				text: emailText,
+				// text: emailText,
+				html: `<p>${emailText}</p> <br> <br> <img src="cid:signature"/>`,
+				attachments: [{
+						filename: 'TVH.png',
+						path: __dirname+'/TVH.png',
+						cid: 'signature' //same cid value as in the html img src
+				}]
+				// attachments: [
+				// 	{   // filename of CV
+				// 			filename: '\assets\img\TVH.png'
+				// 	},]
 			};
 
 			smtpTransport.sendMail(mailOptions, function(error) {

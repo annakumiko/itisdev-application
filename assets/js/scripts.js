@@ -221,19 +221,24 @@ $(document).ready(function() {
 
 		$('p#eEmail').text('');
 
-		$.post('/contact-client', { email: email, emailText: emailText}, function(res) {
-				switch (res.status){
-					case 200: {
-						window.location.href = '/';
-						alert(res.mssg);
-						break;
-					}
-					case 500: { 
-						$('p#eEmail').text(res.mssg);
-						break;
-					}
-					}
-				});
+		if(validator.isEmpty(emailText))
+			$('p#eEmail').text('Please write message.');
+		
+		if (!(validator.isEmpty(emailText))) { 
+			$.post('/contact-client', { email: email, emailText: emailText}, function(res) {
+					switch (res.status){
+						case 200: {
+							window.location.href = '/';
+							alert(res.mssg);
+							break;
+						}
+						case 500: { 
+							$('p#eEmail').text(res.mssg);
+							break;
+						}
+						}
+					});
+		}
 	});
 
 
