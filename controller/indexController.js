@@ -796,6 +796,41 @@ const rendFunctions = {
 		else res.redirect('login');
 	 },
 
+	 getUpdateClients: function(req, res, next) {
+		if (req.session.user) {
+			if(req.session.user.userType === "Admin") {
+
+				clientsModel.find({}, function(err, data) {
+					var details = JSON.parse(JSON.stringify(data));
+					var clients = details;	
+					// console.log(clients);
+
+					res.render('update-clientlist', {
+					 clients: clients,
+				 });
+				});
+
+		 } else res.redirect('login');
+		}
+		else res.redirect('login');
+	 },
+
+	 postUpdateClients: function(req, res, next) {
+		let { clientName, companyName, email, contactNo, isActive } = req.body;
+
+		// console.log(clientName, companyName, email, contactNo);
+
+		clientsModel.create(client, function(err){		
+			if (err) {
+				res.send({status: 500, mssg: "Error in adding new client."});
+				console.log("Error in updating course");
+			}
+			else{
+				res.send({status: 200, mssg: "Client added!"});
+			}
+		})
+		},
+
 	 postAddClient: function(req, res, next) {
 		let { clientName, companyName, email, contactNo } = req.body;
 
@@ -809,12 +844,25 @@ const rendFunctions = {
 		clientsModel.create(client, function(err){		
 			if (err) {
 				res.send({status: 500, mssg: "Error in adding new client."});
-				console.log("Error in updating course");
 			}
 			else{
 				res.send({status: 200, mssg: "Client added!"});
 			}
 		})
+	},
+
+	postRemoveClient: function(req, res) {
+		let { clientID } = req.body;
+		
+			clientsModel.findOne({clientID: clientID}, function(err, match) {
+			 if (err) {
+				 res.send({status: 500, mssg:'Error in removing client.'});
+			 }			
+			 else {
+				 match.remove();
+				 res.send({status: 200, mssg:'Client removed.'});
+			 }
+		 });
 	},
 
 }

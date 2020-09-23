@@ -13,6 +13,7 @@ router.get('/trainee-profile', controller.getProfile);
 router.get('/define-course', controller.getDefineCourse);
 router.get('/clientlist', controller.getClientList);
 router.get('/manage-clientlist', controller.getManageClients);
+router.get('/update-clientlist', controller.getUpdateClients);
 
 // TRAINER
 router.get('/dashboard', controller.getDashboard);
@@ -37,7 +38,8 @@ router.post('/register', controller.postRegister);
 //admin
 router.post('/define-course', controller.postDefineCourse);
 router.post('/add-client', controller.postAddClient);
-//router.post('/manage-clientlist', controller.postManageClients);
+router.post('/remove-client', controller.postRemoveClient);
+router.post('/update-clientlist', controller.postUpdateClients);
 
 // TRAINER
 router.post('/create-class', middleware.validateCreateClass, controller.postCreateClass);
@@ -46,7 +48,6 @@ router.post('/delete-class', controller.postDeleteClass);
 
 // TRAINEE
 router.post('/verification', controller.postVerification);
-// router.get('/clientlist', controller.postClientList);
 router.post('/contact-client', controller.postContactClient);
 
 

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+{{>sidebar-admin}}
+  
+<div style="padding-left: 100px;">
+<label style="color: #006739;font-size: 25px;font-weight: bold;margin-top: 20px;">The VA Hub Clients</label>
+<button id="saveCLBTN" class="btn btn-primary" type="button"><strong>Save</strong></button>
+<button id="xaddCLBTN" class="btn btn-primary" type="button"><strong>Add Client</strong></button>
+<p style="margin: 2px;">Click <strong>Update List</strong> to enable editing of client details. Clients can not be added or removed during editing of details.</p>
+<p id="eUpdateClients" class="error">{{eUpdateClients}}</p>
+<hr>
+    <div class="table-responsive" style="width: 97%;margin-top: 25px;background-color: rgba(163,164,167,0.11);">
+        <table class="table" id="clientTable">
+            <thead>
+                <tr style="text-align: center;font-size: 17px;background-color:#006739;color:white">
+                    <th style="width: 3%;">Active</th>
+                    <th style="width: 24%;">Name</th>
+                    <th style="width: 24%;">Company</th>
+                    <th style="width: 28%;">Email</th>
+                    <th style="width: 15%;">Contact Number</th>
+                    <th style="width: 5%;">Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each clients}}
+                <tr id="{{{clientID}}}">
+                    <td><label class="switch"><input type="checkbox"><span id="isActive" class="slider round"></span></label></td>
+                    <td><input type="text" style="width: 90%;" placeholder="{{clientName}}"></td>
+                    <td><input type="text" style="width: 90%;" placeholder="{{companyName}}"></td>
+                    <td><input type="text" style="width: 90%;" placeholder="{{email}}"></td>
+                    <td><input type="text" style="width: 90%;" placeholder="{{contactNo}}"></td>
+                    <td align="center"><button id="xdeleteBTN" class="delete" title="Remove Client"><i class="fa fa-remove"></i></button></td> 
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>

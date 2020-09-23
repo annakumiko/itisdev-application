@@ -279,6 +279,31 @@ $(document).ready(function() {
 		}
 	});
 
+	// DELETE CLIENT
+	$('button#deleteBTN').click(function() {
+		var row = $(this).parent().parent(); //get row of clicked button
+		var clientID = row.attr("id"); //get clientID from row
+		var deleteConfirm = confirm("Remove client from list?");
+		
+		$('p#eDeleteClient').text('');
+
+		if(deleteConfirm) {
+			$.post('/remove-client', {clientID: clientID}, function(result) {
+				switch(result.status) {
+					case 200: {
+						alert(result.mssg);
+						row.remove();
+						break;
+					}
+					case 500: {
+						$('p#eDeleteClient').text(res.mssg);
+						break;
+					}
+				}
+			});
+		}			
+	});
+
 
 	// ADD TRAINEES VALIDATION
 	$('button#add-trainee').click(function() {

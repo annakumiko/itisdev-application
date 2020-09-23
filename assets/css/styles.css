@@ -54,7 +54,7 @@ body {
 	background-color: rgba(0,0,0,0.4);
 }
 
-.delete {
+#deleteBTN {
 	color: #da6b59;
 	background-color: transparent;
 	border: none;    
@@ -62,18 +62,26 @@ body {
 	margin-top: -5px;
 }
 
-.delete:hover {
+#xdeleteBTN {
+	color: #a7a7a7;
+	background-color: transparent;
+	border: none;    
+	font-size: 20px;
+	margin-top: -5px;
+}
+
+#deleteBTNhover {
 		color: #1a1a1e; 
 }
 
-#updateCLBTN, #addCLBTN {
+#updateCLBTN, #saveCLBTN, #addCLBTN, #xaddCLBTN {
 	position: absolute;
 	margin-top: 25px;
 	width: 120px;
 	height: 43px;
 }
 
-#updateCLBTN {
+#updateCLBTN, #saveCLBTN {
 	right: 180px;
 	background-color: transparent;
 	border: 2px solid;
@@ -81,7 +89,7 @@ body {
 	color: #37ac50;
 }
 
-#updateCLBTN:hover {
+#updateCLBTN:hover, #saveCLBTN:hover {
 	background: #37ac50;
   color: white;
   border-color: #37ac50;
@@ -90,6 +98,11 @@ body {
 #addCLBTN {
 	right: 40px;
 	background-color: #00a99d;
+}
+
+#xaddCLBTN {
+	right: 40px;
+	background-color: #a7a7a7;
 }
 
 #cancelClientBTN {
