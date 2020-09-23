@@ -198,10 +198,20 @@ $(document).ready(function() {
 		var courseDesc = $('#courseDesc').val();
 		var courseModules = $("#courseMod").val();
 
-		$.post('/define-course', {courseName: courseName, courseDesc: courseDesc}, function(res) {
-			window.location.href = '/';
-			console.log("email sent");
-		});
+		$('p#courseDescError').text('');
+		$('p#fileError').text('');
+
+		if(validator.isEmpty(courseDesc))
+			$('p#courseDescError').text('Please write course description.');
+
+		//insert file error
+
+		if (!(validator.isEmpty(courseDesc))) { 
+			$.post('/define-course', {courseName: courseName, courseDesc: courseDesc}, function(res) {
+				window.location.href = '/';
+				console.log("email sent");
+			});
+		}
 	});
 
 	// SEND EMAILS 

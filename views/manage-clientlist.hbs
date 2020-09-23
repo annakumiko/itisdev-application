@@ -5,29 +5,30 @@
 <label style="color: #006739;font-size: 25px;font-weight: bold;margin-top: 20px;">The VA Hub Clients</label>
 <button id="updateCLBTN" class="btn btn-primary" type="button"><strong>Update List</strong></button>
 <button id="addCLBTN" class="btn btn-primary" type="button"><strong>Add Client</strong></button>
+<p style="margin: 2px;">Click <strong>Update List</strong> to enable editing of client details. Clients can not be added or removed during editing of details.</p>
 
 <hr>
     <div class="table-responsive" style="width: 97%;margin-top: 25px;background-color: rgba(163,164,167,0.11);">
-        <table class="table">
+        <table class="table" id="clientTable">
             <thead>
                 <tr style="text-align: center;font-size: 17px;background-color:#006739;color:white">
-                    <th style="width: 50px;">Active</th>
+                    <th style="width: 3%;">Active</th>
                     <th>Name</th>
                     <th>Company</th>
                     <th style="width: 30%;">Email</th>
                     <th style="width: 15%;">Contact Number</th>
-                    <th style="width: 3%;"></th>
+                    <th style="width: 3%;">Remove</th>
                 </tr>
             </thead>
             <tbody>
                 {{#each clients}}
                 <tr>
                     <td><label class="switch"><input type="checkbox"><span id="isActive" class="slider round"></span></label></td>
-                    <td contenteditable="true">{{clientName}}</td>
-                    <td contenteditable="true">{{companyName}}</td>
-                    <td contenteditable="true">{{email}}</td>
-                    <td contenteditable="true">{{contactNo}}</td>
-                    <td><button id="deleteBTN" class="delete" title="Delete" data-toggle="tooltip"><i class="fa fa-trash"></i></button></td> 
+                    <td contenteditable="false">{{clientName}}</td>
+                    <td contenteditable="false">{{companyName}}</td>
+                    <td contenteditable="false">{{email}}</td>
+                    <td contenteditable="false">{{contactNo}}</td>
+                    <td align="center"><button id="deleteBTN" class="delete" title="Remove Client"><i class="fa fa-remove"></i></button></td> 
                 </tr>
                 {{/each}}
             </tbody>

@@ -48,17 +48,19 @@ body {
 
 .delete {
 	color: #da6b59;
-	background-color: Transparent;
+	background-color: transparent;
 	border: none;    
-	height: 30px;
+	font-size: 20px;
+	margin-top: -5px;
 }
 
 .delete:hover {
-		color: #1a1a1e; }
-	
+		color: #1a1a1e; 
+}
+
 #updateCLBTN, #addCLBTN {
 	position: absolute;
-	margin-top: 15px;
+	margin-top: 25px;
 	width: 120px;
 	height: 43px;
 }

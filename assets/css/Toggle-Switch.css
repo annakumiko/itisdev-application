@@ -12,10 +12,6 @@
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   z-index: -1; 
   background-color: #ccc;
   -webkit-transition: .4s;
@@ -35,7 +31,7 @@
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #006739;
+  box-shadow: 0 0 1px #37ac50;
 }
 
 .slider.round {
