@@ -14,17 +14,12 @@ function calculateHours(startTime, endTime) {
     return hours + (minutes*100);
 }
 
-// update scoresheets.hbs upon selection in section dropdown
-function sectionRedirect(dropdownVal) {
-	var dayVal = document.getElementbyId('class-day').value();
-	window.location.href = '/scoresheets/' + dropdownVal + '/' + dayVal;
+
+// for updating scoresheet
+function toggleEditor() {
+	
 }
 
-// update scoresheets.hbs upon selection in day dropdown
-function dayRedirect(dropdownVal) {
-	var sectionVal = document.getElementbyId('scoresheet-section').value();
-	window.location.href = '/scoresheets/' + sectionVal + '/' + dropdownVal;
-}
 
 $(document).ready(function() {
 	// LOG-IN VALIDATION
@@ -340,5 +335,72 @@ $(document).ready(function() {
 		var daySelected = $('#class-day').val();
 
 		window.location.href = '/scoresheets/' + sectionSelected + '/' + daySelected;
+	});
+
+	// edit scores
+	$('.theScore').click(function() {
+		var theScore = document.getElementsByClassName('theScore');
+		var scoresheetEditor = document.getElementsByClassName('scoresheetEditor');
+		var updatebtn = document.getElementById('updateScoresheet');
+		var today = new Date();
+		var date = $('#hide').text();
+		var compareDate = new Date(date);
+
+		console.log(today);
+		console.log(compareDate);
+		console.log(compareDate < today);
+
+		if(compareDate < today) {
+			alert("You cannot edit the scores for this class anymore.");
+		}
+		else {
+			//hide text, show editor
+			for(var i = 0; i < theScore.length; i++) 
+				theScore[i].style.display = 'none';
+			
+			for(var i = 0; i < scoresheetEditor.length; i++) 
+				scoresheetEditor[i].style.display = 'inline';
+			
+			updateScoresheet.style.display = 'inline';
+		}
+	});
+
+	// update scores in db
+	$('button#updateScoresheet').click(function() {
+		var theScore = document.getElementsByClassName('theScore');
+		var scoresheetEditor = document.getElementsByClassName('scoresheetEditor');
+		var updateScoresheet = document.getElementById('updateScoresheet');
+		var validNum = false;
+
+		for(var i = 0; i < scoresheetEditor.length; i++) {
+			var num = scoresheetEditor[i].value;		
+			if(!(Number(num) >= 0) || !(Number(num) <= 10))
+				alert("Some inputs are invalid. Scores must be between 0 to 10.");
+			else validNum = true;
+		} 
+
+
+		// post
+			// pass: section, date, 
+
+			// case 200
+			// 1. Scores saved.
+			// 2. update display
+			for(var i = 0; i < scoresheetEditor.length; i++) {
+				var subject = scoresheetEditor[i].value;
+				console.log(scoresheetEditor[i].value);
+				if(subject != "")
+					theScore[i].innerHTML = subject;
+			}
+		
+			for(var i = 0; i < theScore.length; i++) 
+				theScore[i].style.display = 'inline';
+			
+			for(var i = 0; i < scoresheetEditor.length; i++)
+				scoresheetEditor[i].style.display = 'none';
+
+			updateScoresheet.style.display = 'none';
+
+			// case 500
 	});
 });

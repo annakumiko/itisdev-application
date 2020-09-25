@@ -5,9 +5,9 @@
 <div style="padding: 20px;padding-left: 100px;">
     <div><label style="font-size: 24px;color: #006739;"><strong>Update Scoresheet</strong></label>
         <p style="margin: 2px;"> Select the class and day of the scoresheet you want to update.</p> 
-        <p style="margin: 2px;"> The criteria is as follows: 10 - 9 (Outstanding), 8 - 7 (Satisfactory), 6 - 5 (Fairly Satisfactory), 4 - 3 (Needs Improvement), 2 - 0 (Poor). </p>
-        <p style="margin: 2px;">Click on edit to enter scores.</p>
-        <p><strong>Note:</strong> Once the training period is over, the scoresheet will not be editable.</p>
+        <p style="margin: 2px;">Click on the scores you wish to edit and click on update.</p>
+        <p style="margin: 2px;"> The criteria is as follows: 10 - 9 (Outstanding), 8 - 7 (Satisfactory), 6 - 5 (Fairly Satisfactory), 4 - 3 (Needs Improvement), 2 - 0 (Poor). </p>  
+        <p style="margin: 2px;"><strong>Note:</strong> If the training period class is over, the scoresheet will not be editable.</p>
         <hr>
     </div>
     <div>
@@ -16,7 +16,7 @@
                 <label class="float-left" style="padding-right: 16px;min-width: 70px;"><strong>Section</strong></label>
                 <div class="d-flex" style="margin-right: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;">
                     <select style="width: 70px;" id="scoresheet-section">
-                        <<option class="dropdown-item" id="day1" href="#"> {{secSelected}} </option>
+                        <option class="dropdown-item" id="day1" href="#"> {{secSelected}} </option>
                         {{#each classes}}
                         <option class="dropdown-item" id="day1" href="#"> {{section}} </option>
                         {{/each}}
@@ -27,8 +27,9 @@
                 <label class="float-left" style="padding-right: 30px;min-width: 70px;"><strong>Day</strong></label>
                 
                 <div class="d-flex" style="margin-right: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;">
+                    <p id="hide" val="{{date}}">{{date}}</p>
                     <select style="width: 70px;" id="class-day">
-                        <<option class="dropdown-item" id="day1" href="#"> {{daySelected}} </option>
+                        <option class="dropdown-item" id="day1" href="#"> {{daySelected}} </option>
                         <option class="dropdown-item" id="day1" href="#"> Day 1 </option>
                         <option class="dropdown-item" id="day2" href="#"> Day 2 </option>
                         <option class="dropdown-item" id="day3" href="#"> Day 3 </option>
@@ -44,7 +45,6 @@
         <div>
             <div>
                 <label style="font-size: 25px;color: #006739;"><strong>Scores</strong></label>
-                <button type="button" onclick="window.location.href = '/update-scoresheet/" style="background-color: #006739; border-radius: 4px; color: #ffffff; margin: 0px 5px;">Edit</button>
             </div>
             <div class="table-responsive" style="background-color: #f6f6f6;">
                 <table class="table">
@@ -60,17 +60,31 @@
                         {{#each trainees}}
                         <tr>
                             <td>{{traineeList.lastName}}, {{traineeList.firstName}}</td>
-                            <td><p style="width: 30px;">{{tscore.[0]}}</p></td> 
-                            <td><p style="width: 30px;">{{tscore.[1]}}</p></td>
-                            <td><p style="width: 30px;">{{tscore.[2]}}</p></td>
-                            <td><p style="width: 30px;">{{tscore.[3]}}</p></td>
-                            <td><p style="width: 30px;">{{tscore.[4]}}</p></td>
-                            <td><p style="width: 30px;">{{tscore.[5]}}</p></td>
+
+                            <td><p style="width: 30px;" class="theScore">{{tscore.[0]}}</p>
+                            <input type="text" style="width: 50px;" class="scoresheetEditor" placeholder="{{tscore.[0]}}"></td> 
+                            
+                            <td><p style="width: 30px;" class="theScore">{{tscore.[1]}}</p>
+                            <input type="text" style="width: 50px;" class="scoresheetEditor" placeholder="{{tscore.[1]}}"></td>
+                      
+                            <td><p style="width: 30px;" class="theScore">{{tscore.[2]}}</p>
+                            <input type="text" style="width: 50px;" class="scoresheetEditor" placeholder="{{tscore.[2]}}"></td>
+                          
+                            <td><p style="width: 30px;" class="theScore">{{tscore.[3]}}</p>
+                            <input type="text" style="width: 50px;" class="scoresheetEditor" placeholder="{{tscore.[3]}}"></td>
+
+                            <td><p style="width: 30px;" class="theScore">{{tscore.[4]}}</p>
+                            <input type="text" style="width: 50px;" class="scoresheetEditor" placeholder="{{tscore.[4]}}"></td>
+
+                            <td><p style="width: 30px;" class="theScore">{{tscore.[5]}}</p>
+                            <input type="text" style="width: 50px;" class="scoresheetEditor" placeholder="{{tscore.[5]}}"></td>
                         </tr>
                         {{/each}}
                     </tbody>
                 </table>
             </div>
+
+            <button type="button" id="updateScoresheet" style="background-color: #006739; margin-top: 20px;border-radius: 4px; color: #ffffff;">Update</button>
 
     </div>
 </div>

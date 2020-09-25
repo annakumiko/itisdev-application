@@ -726,26 +726,16 @@ const rendFunctions = {
 				}
 				
 				//console.log(scores.length);
- 				console.log(trainees);
+ 				// console.log(trainees);
  				res.render('scoresheets', {
 	 					skills: skillTypes,
 	 					classes: trainerClasses,
 	 					trainees: trainees,
 	 					daySelected: daySelected,
-	 					secSelected: sectionSelected
+	 					secSelected: sectionSelected,
+	 					date: classSelected.endDate
  				});		
  			} else res.redirect('/');
- 		} else res.redirect('/login');
- 	},
-
- 	getUpdateScoresheet: async function(req, res, next) {
- 		if(req.session.user) {
- 			if(req.session.user.userType === "Trainer") {
- 				res.render('update-scoresheet', {
-
- 				});		
- 				
-			} else res.redirect('/');
  		} else res.redirect('/login');
  	},
 

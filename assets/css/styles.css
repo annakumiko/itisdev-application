@@ -74,3 +74,15 @@ body {
 	box-shadow: none;
 	color: #fff;
 }
+
+.scoresheetEditor {
+	display: none;
+}
+
+#updateScoresheet {
+	display: none;
+}
+
+#hide {
+	display: none;
+}
