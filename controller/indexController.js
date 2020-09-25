@@ -65,6 +65,29 @@ function createClassList(trainerID, classID) {
 	return tempList;
 }
 
+Date.prototype.addDays = function(days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+}
+
+// get date selected dropdown
+function getDateSelected(startDate, endDate, day) {
+	var dateArray = new Array();
+    var sDate = new Date(startDate);
+    var eDate = new Date(endDate);
+    var ind = day.slice(-1);
+
+    while (sDate <= eDate) {
+        dateArray.push(new Date (sDate));
+        sDate = sDate.addDays(1);
+    }
+
+    console.log(dateArray);
+
+    return dateArray[ind-1];
+}
+
 // two digits
 function n(n) {
     return n > 9 ? "" + n: "0" + n;
@@ -648,6 +671,12 @@ const rendFunctions = {
  	getScoresheets: async function(req, res, next) {
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {
+ 				// req.params
+ 				var sectionSelected = req.params.section;
+ 				var daySelected = req.params.day;
+
+ 				console.log("section: " + sectionSelected);
+ 				console.log("day: " + daySelected);
 
  				// get skills
  				var skills = await skilltypesModel.find({});
@@ -657,13 +686,23 @@ const rendFunctions = {
 
  				// get the classes of the trainer
  				var classes = await classesModel.find({trainerID: userID});
- 				var trainerClasses = JSON.parse(JSON.stringify(classes));
- 				var firstClass = classes[0].classID;
- 				var startDate = classes[0].startDate;
 
-				// get trainees first class
+
+ 				// set
+ 				if(sectionSelected === ':section') sectionSelected = classes[0].section;
+ 				else sectionSelected = req.params.section;
+
+ 				if(daySelected === ':day') daySelected = 'Day 1';
+ 				else daySelected = req.params.day;
+ 				
+ 				var trainerClasses = JSON.parse(JSON.stringify(classes));
+ 				var classSelected = await classesModel.findOne({section: sectionSelected}); // section selected
+ 				var classID = classSelected.classID;
+ 				// var startDate = classSelected.startDate;
+
+				// get trainees class Selected
 				var trainees = await traineelistsModel.aggregate([
-					 {$match: {classID: firstClass}},
+					 {$match: {classID: classID}},
 					 {$lookup: {
 							from: "users",
 							localField: "traineeID",
@@ -673,16 +712,16 @@ const rendFunctions = {
 					 {$unwind: "$traineeList"},
 				]);		
 
-				// get scores first class, first day
+				// get scores from day selected
+				var dateSelected = getDateSelected(classSelected.startDate, classSelected.endDate, daySelected);
 				var tscores = [];
 				for (var i = 0; i < trainees.length; i++) {
-					var scores = await skillassessmentsModel.find({classID: firstClass, date: startDate, traineeID: trainees[i].traineeID});
+					var scores = await skillassessmentsModel.find({classID: classID, date: dateSelected, traineeID: trainees[i].traineeID});
 					var traineescores = JSON.parse(JSON.stringify(scores));
 					var xscores = [];
 					for (var x = 0; x < traineescores.length; x++) {
 						xscores[x] = traineescores[x].skillScore;
 					}
-
 					trainees[i].tscore = xscores;
 				}
 				
@@ -691,7 +730,9 @@ const rendFunctions = {
  				res.render('scoresheets', {
 	 					skills: skillTypes,
 	 					classes: trainerClasses,
-	 					trainees: trainees
+	 					trainees: trainees,
+	 					daySelected: daySelected,
+	 					secSelected: sectionSelected
  				});		
  			} else res.redirect('/');
  		} else res.redirect('/login');

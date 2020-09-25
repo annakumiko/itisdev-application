@@ -14,6 +14,18 @@ function calculateHours(startTime, endTime) {
     return hours + (minutes*100);
 }
 
+// update scoresheets.hbs upon selection in section dropdown
+function sectionRedirect(dropdownVal) {
+	var dayVal = document.getElementbyId('class-day').value();
+	window.location.href = '/scoresheets/' + dropdownVal + '/' + dayVal;
+}
+
+// update scoresheets.hbs upon selection in day dropdown
+function dayRedirect(dropdownVal) {
+	var sectionVal = document.getElementbyId('scoresheet-section').value();
+	window.location.href = '/scoresheets/' + sectionVal + '/' + dropdownVal;
+}
+
 $(document).ready(function() {
 	// LOG-IN VALIDATION
 	$('button#login-btn').click(function() {
@@ -314,5 +326,19 @@ $(document).ready(function() {
 				}
 			});
 		}
+	});
+
+	$('#class-day').change(function() {
+		var daySelected = $(this).val();
+		var sectionSelected = $('#scoresheet-section').val();
+
+		window.location.href = '/scoresheets/' + sectionSelected + '/' + daySelected;
+	});
+
+	$('#scoresheet-section').change(function() {
+		var sectionSelected = $(this).val();
+		var daySelected = $('#class-day').val();
+
+		window.location.href = '/scoresheets/' + sectionSelected + '/' + daySelected;
 	});
 });

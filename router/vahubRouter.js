@@ -20,7 +20,7 @@ router.get('/create-class', controller.getCreateClass);
 router.get('/add-trainees/:section/:course', controller.getAddTrainees);
 router.get('/quiz-list', controller.getQuizList);
 router.get('/create-quiz', controller.getCreateQuiz);
-router.get('/scoresheets', controller.getScoresheets);
+router.get('/scoresheets/:section/:day', controller.getScoresheets);
 router.get('/update-scoresheet', controller.getUpdateScoresheet);
 router.get('/classes-summary', controller.getSummaryReports);
 router.get('/class-detailed/:classid', controller.getDetailedReports);
