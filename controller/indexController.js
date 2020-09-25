@@ -883,21 +883,44 @@ const rendFunctions = {
 	postDeactivateAccount: function(req, res) {
 		let { password } = req.body;
 
+		var userIDtemp = req.session.user.userID;
+
 		bcrypt.compare(password, req.session.user.password, function(err, match) {
 			if (!match)
 				res.send({status: 401, mssg: 'Incorrect password.'});
 			
-			else //password matches
-				usersModel.findOne({userID: req.session.user.userID}, function(err, match) {
+			else{ //password matches
+				usersModel.findOne({userID: userIDtemp}, function(err, match) {
 					if (err) {
 						res.send({status: 500, mssg:'There has been an error in deactivating your account.'});
-					}			
+					}
+					
 					else {
+						traineelistsModel.findOne({traineeID: userIDtemp}, function(err, match) {
+								if (err) {
+									console.log(err);
+								}
+								else {
+									match.remove();		
+									console.log("Removed from class.")
+								}
+							});
+
+							clientlistsModel.findOne({traineeID: userIDtemp}, function(err, match) {
+								if (err) {
+									console.log(err);
+								}
+								else {
+									match.remove();		
+									console.log("Removed from client.")
+								}
+							});
+
 						match.remove();
 						res.send({status: 200, mssg:'Account deactivated succesfully.'});
 					}
 				});	
-
+			}
 		});
 	},
 

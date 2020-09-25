@@ -397,7 +397,7 @@ $(document).ready(function() {
 			$.post('/deactivate-account', { password: password}, function(result) {
 				switch(result.status) {
 					case 200: {
-						window.location.href = '/trainee-profile';
+						window.location.href = '/login';
 						alert(result.mssg);
 						break;
 					}
