@@ -678,8 +678,12 @@ const rendFunctions = {
 				for (var i = 0; i < trainees.length; i++) {
 					var scores = await skillassessmentsModel.find({classID: firstClass, date: startDate, traineeID: trainees[i].traineeID});
 					var traineescores = JSON.parse(JSON.stringify(scores));
-					trainees[i].tscores = traineescores;
-					console.log(traineescores);
+					var xscores = [];
+					for (var x = 0; x < traineescores.length; x++) {
+						xscores[x] = traineescores[x].skillScore;
+					}
+
+					trainees[i].tscore = xscores;
 				}
 				
 				//console.log(scores.length);
