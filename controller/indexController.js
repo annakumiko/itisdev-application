@@ -337,7 +337,6 @@ const rendFunctions = {
  				res.render('trainee-profile', {
 	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
 					uType: req.session.user.userType,
-					userID: req.session.user.userID,
 
 					// classes: classVar,          
 					section: classVar[0].classList.section,
@@ -882,14 +881,14 @@ const rendFunctions = {
 	 },
 	 
 	postDeactivateAccount: function(req, res) {
-		let { userID, password } = req.body;
+		let { password } = req.body;
 
 		bcrypt.compare(password, req.session.user.password, function(err, match) {
 			if (!match)
 				res.send({status: 401, mssg: 'Incorrect password.'});
 			
 			else //password matches
-				usersModel.findOne({userID: userID}, function(err, match) {
+				usersModel.findOne({userID: req.session.user.userID}, function(err, match) {
 					if (err) {
 						res.send({status: 500, mssg:'There has been an error in deactivating your account.'});
 					}			

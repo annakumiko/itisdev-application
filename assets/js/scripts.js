@@ -228,7 +228,7 @@ $(document).ready(function() {
 			$.post('/contact-client', { email: email, emailText: emailText}, function(res) {
 					switch (res.status){
 						case 200: {
-							window.location.href = '/';
+							window.location.href = '/clientlist';
 							alert(res.mssg);
 							break;
 						}
@@ -266,8 +266,8 @@ $(document).ready(function() {
 			$.post('/add-client', { clientName: clientName, companyName: companyName, email: email, contactNo: contactNo}, function(res) {
 					switch (res.status){
 						case 200: {
-							window.location.href = '/manage-clientlist';
 							alert(res.mssg);
+							window.location.href = '/manage-clientlist';
 							break;
 						}
 						case 500: { 
@@ -385,7 +385,7 @@ $(document).ready(function() {
 
 	// DEACTIVATE ACCOUNT
 	$('button#finalDA').click(function() {
-		var userID = $("#userID").text()
+		// var userID = $("#userID").text()
 		var password = $("#password").val()
 		
 		$('p#ePass').text('');
@@ -394,9 +394,10 @@ $(document).ready(function() {
 			$('p#ePass').text('Please input password to proceed.');
 		
 		else{
-			$.post('/deactivate-account', {userID: userID, password: password}, function(result) {
+			$.post('/deactivate-account', { password: password}, function(result) {
 				switch(result.status) {
 					case 200: {
+						window.location.href = '/trainee-profile';
 						alert(result.mssg);
 						break;
 					}

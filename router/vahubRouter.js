@@ -29,7 +29,7 @@ router.get('/verification', controller.getVerification);
 router.get('/clientlist', controller.getClientList);
 router.get('/view-grades', controller.getViewGrades);
 router.get('/contact-client/:email/:companyName', controller.getContactClient);
-router.get('/deactivate-account/:userID', controller.getDeactivateAccount);
+router.get('/deactivate-account', controller.getDeactivateAccount);
 
 /*POST functions*/
 router.post('/logout', controller.postLogout);
