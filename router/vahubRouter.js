@@ -29,6 +29,7 @@ router.get('/verification', controller.getVerification);
 router.get('/clientlist', controller.getClientList);
 router.get('/view-grades', controller.getViewGrades);
 router.get('/contact-client/:email/:companyName', controller.getContactClient);
+router.get('/deactivate-account/:userID', controller.getDeactivateAccount);
 
 /*POST functions*/
 router.post('/logout', controller.postLogout);
@@ -49,6 +50,6 @@ router.post('/delete-class', controller.postDeleteClass);
 // TRAINEE
 router.post('/verification', controller.postVerification);
 router.post('/contact-client', controller.postContactClient);
-
+router.post('/deactivate-account', controller.postDeactivateAccount);
 
 module.exports = router;

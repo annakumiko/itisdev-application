@@ -337,6 +337,7 @@ const rendFunctions = {
  				res.render('trainee-profile', {
 	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
 					uType: req.session.user.userType,
+					userID: req.session.user.userID,
 
 					// classes: classVar,          
 					section: classVar[0].classList.section,
@@ -866,6 +867,39 @@ const rendFunctions = {
 				 res.send({status: 200, mssg:'Client removed.'});
 			 }
 		 });
+	},
+
+	getDeactivateAccount: function(req, res, next) {
+		if (req.session.user) {
+			if(req.session.user.userType === "Trainee")
+				res.render('deactivate-account', {
+					userID: req.params.userID,
+				});
+			
+			else res.redirect('login');
+		}
+		else res.redirect('login');
+	 },
+	 
+	postDeactivateAccount: function(req, res) {
+		let { userID, password } = req.body;
+
+		bcrypt.compare(password, req.session.user.password, function(err, match) {
+			if (!match)
+				res.send({status: 401, mssg: 'Incorrect password.'});
+			
+			else //password matches
+				usersModel.findOne({userID: userID}, function(err, match) {
+					if (err) {
+						res.send({status: 500, mssg:'There has been an error in deactivating your account.'});
+					}			
+					else {
+						match.remove();
+						res.send({status: 200, mssg:'Account deactivated succesfully.'});
+					}
+				});	
+
+		});
 	},
 
 }

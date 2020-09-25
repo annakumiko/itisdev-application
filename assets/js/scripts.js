@@ -67,7 +67,7 @@ $(document).ready(function() {
 		var verifyCode = validator.trim($('#verifyCode').val());
 				
 		if((validator.isEmpty(email)) || (validator.isEmpty(verifyCode))){
-			console.log("pls don't be empty !!") 
+			console.log("Missing input credentials.") 
 		}
 		else{
 
@@ -374,6 +374,36 @@ $(document).ready(function() {
 						alert(result.mssg);
 						break;
 					}
+					case 500: {
+						alert(result.mssg);
+						break;
+					}
+				}
+			});
+		}			
+	});
+
+	// DEACTIVATE ACCOUNT
+	$('button#finalDA').click(function() {
+		var userID = $("#userID").text()
+		var password = $("#password").val()
+		
+		$('p#ePass').text('');
+
+		if(validator.isEmpty(password))
+			$('p#ePass').text('Please input password to proceed.');
+		
+		else{
+			$.post('/deactivate-account', {userID: userID, password: password}, function(result) {
+				switch(result.status) {
+					case 200: {
+						alert(result.mssg);
+						break;
+					}
+					case 401: {
+						$('p#ePass').text(result.mssg);
+						break;
+					}				
 					case 500: {
 						alert(result.mssg);
 						break;
