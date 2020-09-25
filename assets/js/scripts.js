@@ -14,12 +14,31 @@ function calculateHours(startTime, endTime) {
     return hours + (minutes*100);
 }
 
+// format date
+function getDate(date) {
+	var newDate = new Date(date);
 
-// for updating scoresheet
-function toggleEditor() {
-	
+	var mm = newDate.getMonth() + 1;
+	switch(mm) {
+		case 1: mm = "January"; break;
+		case 2: mm = "February"; break;
+		case 3: mm = "March"; break;
+		case 4: mm = "April"; break;
+		case 5: mm = "May"; break;
+		case 6: mm = "June"; break;
+		case 7: mm = "July"; break;
+		case 8: mm = "August"; break;
+		case 9: mm = "September"; break;
+		case 10: mm = "October"; break;
+		case 11: mm = "November"; break;
+		case 12: mm = "December"; break;
+	}
+
+	var dd = newDate.getDate();
+	var yy = newDate.getFullYear();
+
+	return mm + " " + dd + ", " + yy;
 }
-
 
 $(document).ready(function() {
 	// LOG-IN VALIDATION
@@ -351,7 +370,7 @@ $(document).ready(function() {
 		console.log(compareDate < today);
 
 		if(compareDate < today) {
-			alert("You cannot edit the scores for this class anymore.");
+			alert("This class ended in " + getDate(compareDate) + ". You cannot edit the scores for this class anymore.");
 		}
 		else {
 			//hide text, show editor
