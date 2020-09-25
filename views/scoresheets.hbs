@@ -55,24 +55,17 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {{#each trainees}}
                         <tr>
-                            <td>Cell 1</td>
-                            <td><p style="width: 30px;">10</p></td>
+                            <td>{{traineeList.lastName}}, {{traineeList.firstName}}</td>
+                            <td><p style="width: 30px;">0</p></td> 
                             <td><p style="width: 30px;">10</p></td>
                             <td><p style="width: 30px;">10</p></td>
                             <td><p style="width: 30px;">10</p></td>
                             <td><p style="width: 30px;">10</p></td>
                             <td><p style="width: 30px;">10</p></td>
                         </tr>
-                        <tr>
-                            <td>Cell 1</td>
-                            <td><p style="width: 30px;">10</p></td>
-                            <td><p style="width: 30px;">10</p></td>
-                            <td><p style="width: 30px;">10</p></td>
-                            <td><p style="width: 30px;">10</p></td>
-                            <td><p style="width: 30px;">10</p></td>
-                            <td><p style="width: 30px;">10</p></td>
-                        </tr>
+                        {{/each}}
                     </tbody>
                 </table>
             </div>

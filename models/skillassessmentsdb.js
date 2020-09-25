@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
-var skillassesmentsSchema = new mongoose.Schema({
+var skillassessmentsSchema = new mongoose.Schema({
 	skillID: String,
 	classID: String,
 	traineeID: String,
 	date: Date,
-	skillScore: Number
-}, {collection: "skillassesments"});
+	skillScore: String
+}, {collection: "skillassessments"});
 
-module.exports = mongoose.model("skillassesments", skillassesmentsSchema);
+module.exports = mongoose.model("skillassessments", skillassessmentsSchema);

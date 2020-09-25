@@ -65,7 +65,6 @@ function createClassList(trainerID, classID) {
 	return tempList;
 }
 
-
 // two digits
 function n(n) {
     return n > 9 ? "" + n: "0" + n;
@@ -650,40 +649,58 @@ const rendFunctions = {
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {
 
- 				// get the classes of the trainer
- 				var classes = await classlistsModel.find({trainerID: req.session.user.userID});
- 				var numClasses = classes.length;
-
- 				var trainerclasses = [];
- 				for(var i = 0; i < numClasses; i++) {
- 					trainerclasses[i] = await classesModel.findOne({classID: classes[i].classID});
- 				}
-
- 				var classDet = JSON.parse(JSON.stringify(trainerclasses));
-
- 				// get the skills
+ 				// get skills
  				var skills = await skilltypesModel.find({});
  				var skillTypes = JSON.parse(JSON.stringify(skills));
- 				console.log("section index 0 - " + classDet[0].section)
- 				
- 				console.log(classDet);
 
+ 				var userID = req.session.user.userID;
+
+ 				// get the classes of the trainer
+ 				var classes = await classesModel.find({trainerID: userID});
+ 				var trainerClasses = JSON.parse(JSON.stringify(classes));
+ 				var firstClass = classes[0].classID;
+ 				var startDate = classes[0].startDate;
+
+				// get trainees first class
+				var trainees = await traineelistsModel.aggregate([
+					 {$match: {classID: firstClass}},
+					 {$lookup: {
+							from: "users",
+							localField: "traineeID",
+							foreignField: "userID",
+							as: "traineeList" // SLICE
+					 }},
+					 {$unwind: "$traineeList"},
+				]);		
+
+				// get scores first class, first day
+				var tscores = [];
+				for (var i = 0; i < trainees.length; i++) {
+					var scores = await skillassessmentsModel.find({classID: firstClass, date: startDate, traineeID: trainees[i].traineeID});
+					var traineescores = JSON.parse(JSON.stringify(scores));
+					trainees[i].tscores = traineescores;
+					console.log(traineescores);
+				}
+				
+				//console.log(scores.length);
+ 				console.log(trainees);
  				res.render('scoresheets', {
- 					classes: classDet,
- 					skills: skillTypes
+	 					skills: skillTypes,
+	 					classes: trainerClasses,
+	 					trainees: trainees
  				});		
-
  			} else res.redirect('/');
  		} else res.redirect('/login');
  	},
 
- 	getUpdateScoresheet: function(req, res, next) {
+ 	getUpdateScoresheet: async function(req, res, next) {
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {
  				res.render('update-scoresheet', {
 
  				});		
- 			} else res.redirect('/');
+ 				
+			} else res.redirect('/');
  		} else res.redirect('/login');
  	},
 
