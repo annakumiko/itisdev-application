@@ -362,17 +362,17 @@ $(document).ready(function() {
 		var scoresheetEditor = document.getElementsByClassName('scoresheetEditor');
 		var updatebtn = document.getElementById('updateScoresheet');
 		var today = new Date();
-		var date = $('#hide').text();
+		var date = $('#idhide').text();
 		var compareDate = new Date(date);
 
 		console.log(today);
 		console.log(compareDate);
 		console.log(compareDate < today);
 
-		if(compareDate < today) {
-			alert("This class ended in " + getDate(compareDate) + ". You cannot edit the scores for this class anymore.");
-		}
-		else {
+	//	if(compareDate < today) {
+	//		alert("This class ended in " + getDate(compareDate) + ". You cannot edit the scores for this class anymore.");
+	//	}
+	//	else {
 			//hide text, show editor
 			for(var i = 0; i < theScore.length; i++) 
 				theScore[i].style.display = 'none';
@@ -381,7 +381,7 @@ $(document).ready(function() {
 				scoresheetEditor[i].style.display = 'inline';
 			
 			updateScoresheet.style.display = 'inline';
-		}
+	//	}
 	});
 
 	// update scores in db
@@ -391,6 +391,10 @@ $(document).ready(function() {
 		var updateScoresheet = document.getElementById('updateScoresheet');
 		var validNum = false;
 
+		var classid = $('#classhide').text(); //classid
+		var date = $('#idhide').text(); // date
+
+		// accept only numbers 0-10
 		for(var i = 0; i < scoresheetEditor.length; i++) {
 			var num = scoresheetEditor[i].value;		
 			if(!(Number(num) >= 0) || !(Number(num) <= 10))
@@ -398,19 +402,42 @@ $(document).ready(function() {
 			else validNum = true;
 		} 
 
-
-		// post
-			// pass: section, date, 
-
-			// case 200
-			// 1. Scores saved.
-			// 2. update display
+		if(validNum) {
 			for(var i = 0; i < scoresheetEditor.length; i++) {
 				var subject = scoresheetEditor[i].value;
-				console.log(scoresheetEditor[i].value);
+				//console.log(scoresheetEditor[i].value);
 				if(subject != "")
 					theScore[i].innerHTML = subject;
 			}
+		}
+
+		var scoresArr = []; // array of scores
+		var traineeArr = []; // array of trainees
+
+		$("#traineeScores input").each(function() {
+			scoresArr.push(this.val);
+		});
+
+
+		$("#traineeScores tr").each(function() {
+			traineeArr.push(this.id);
+		});
+
+		console.log(scoresArr);
+		console.log(traineeArr);
+		// post
+	//	if(validNum) {
+			//$.post('/scoresheets')
+			// pass: classid, date, traineearr, scoresarr
+			// case 200
+			// 1. Scores saved.
+			// 2. update display
+			// for(var i = 0; i < scoresheetEditor.length; i++) {
+			// 	var subject = scoresheetEditor[i].value;
+			// 	//console.log(scoresheetEditor[i].value);
+			// 	if(subject != "")
+			// 		theScore[i].innerHTML = subject;
+			// }
 		
 			for(var i = 0; i < theScore.length; i++) 
 				theScore[i].style.display = 'inline';
@@ -421,5 +448,7 @@ $(document).ready(function() {
 			updateScoresheet.style.display = 'none';
 
 			// case 500
+	//	}
+			
 	});
 });

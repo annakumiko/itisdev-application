@@ -65,6 +65,19 @@ function createClassList(trainerID, classID) {
 	return tempList;
 }
 
+// constructor for skillassessments
+function createAssessment(skillID, classID, traineeID, date, skillScore) {
+	var tempAssessment = {
+		skillID: skillID,
+		classID: classID,
+		traineeID: traineeID,
+		date: date,
+		skillScore: skillScore
+	}
+
+	return tempAssessment;
+}
+
 Date.prototype.addDays = function(days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
@@ -687,7 +700,6 @@ const rendFunctions = {
  				// get the classes of the trainer
  				var classes = await classesModel.find({trainerID: userID});
 
-
  				// set
  				if(sectionSelected === ':section') sectionSelected = classes[0].section;
  				else sectionSelected = req.params.section;
@@ -725,7 +737,7 @@ const rendFunctions = {
 					trainees[i].tscore = xscores;
 				}
 				
-				//console.log(scores.length);
+				// console.log(scores.length);
  				// console.log(trainees);
  				res.render('scoresheets', {
 	 					skills: skillTypes,
@@ -733,10 +745,18 @@ const rendFunctions = {
 	 					trainees: trainees,
 	 					daySelected: daySelected,
 	 					secSelected: sectionSelected,
+	 					classSelected: classID,
 	 					date: classSelected.endDate
  				});		
  			} else res.redirect('/');
  		} else res.redirect('/login');
+ 	},
+
+ 	postScoresheets: function(req, res, next) {
+ 		let {  } = req.body;
+ 		// create Skillassessments object
+ 		// .create sa model yas na naka loop ?  
+
  	},
 
  	getSummaryReports: async function(req, res, next) {

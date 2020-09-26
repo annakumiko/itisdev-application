@@ -83,6 +83,6 @@ body {
 	display: none;
 }
 
-#hide {
+#idhide, #classhide{
 	display: none;
 }
