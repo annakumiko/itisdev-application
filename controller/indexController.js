@@ -699,6 +699,8 @@ const rendFunctions = {
 		if (req.session.user){
 			if(req.session.user.userType === "Trainee") {
 				var userID = req.session.user.userID;
+				console.log(userID);
+
 				var classVar = await traineelistsModel.aggregate([
 					{$match: {traineeID: userID}},
 					{$lookup: {
@@ -714,10 +716,30 @@ const rendFunctions = {
 						 foreignField: "courseID",
 						 as: "course"
 					 }},
-					 {$unwind: "$course"}
+					 {$unwind: "$course"},
 			 ]);
 
-			 // compute skills
+			 console.log(classVar);
+			 
+			// get skills
+			 var skillVar = await skillassessmentsModel.aggregate([
+				{$match: {traineeID: userID}},
+				{$lookup: {
+					from: "skilltypes",
+					localField: "skillID",
+					foreignField: "skillID",
+					as: "skillGrades"
+				}},
+				{$unwind: "$skillGrades"},
+			]);
+			
+			console.log(skillVar);
+
+			//  skillassessmentsModel.find({traineeID: userID}, function(err, data) {
+			// 	var details = JSON.parse(JSON.stringify(data));
+			// 	var grades = details;	
+			
+			// 	console.log(grades);
 
 			 //compute quizzes
 
@@ -727,9 +749,11 @@ const rendFunctions = {
 					course: classVar[0].course.courseName,
 
 					//SKILLS
+					skills: skillVar,
 
 					//QUIZZES
 				});
+			// });
 			}
 		} else {
 			res.redirect('/')

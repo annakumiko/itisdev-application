@@ -5,7 +5,7 @@ var skillassesmentsSchema = new mongoose.Schema({
 	classID: String,
 	traineeID: String,
 	date: Date,
-	skillScore: Number
+	skillScore: String,
 }, {collection: "skillassesments"});
 
 module.exports = mongoose.model("skillassesments", skillassesmentsSchema);
