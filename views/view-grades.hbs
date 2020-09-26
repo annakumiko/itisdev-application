@@ -43,17 +43,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{#each skills.skillGrades.skillName}}
+                        {{#each skills}}
                         <tr>
-                            <td style="width: 33%;">{{skills.skillGrades.skillName}}</td>
-                            <td>{{skillScore}}</td>
-                            <td>{{skillScore}}</td>
-                            <td>{{skillScore}}</td>
-                            <td>{{skillScore}}</td>
-                            <td>{{skillScore}}</td>
-                            <td>{{skillScore}}</td>
-                            <td>{{skillScore}}</td>
-                            <td>{{skillScore}}</td>
+                            <td style="width: 33%;">{{skillName}}</td>
+                            <td>{{skillScores.[0]}}</td>
+                            <td>{{skillScores.[1]}}</td>
+                            <td>{{skillScores.[2]}}</td>
+                            <td>{{skillScores.[3]}}</td>
+                            <td>{{skillScores.[4]}}</td>
+                            <td>{{skillScores.[5]}}</td>
+                            <td>{{skillScores.[6]}}</td>
+                            <td>{{skillScores.[7]}}</td>
                         </tr>
                         {{/each}}
                     </tbody>

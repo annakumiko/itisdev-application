@@ -718,22 +718,37 @@ const rendFunctions = {
 					 }},
 					 {$unwind: "$course"},
 			 ]);
-
 			//  console.log(classVar);
-			 
+
+			var skills = await skilltypesModel.find({});
+			var skillTypes = JSON.parse(JSON.stringify(skills));
+			// console.log(skillTypes);
+
+			var skillScores = [];
+			for (var i = 0; i < skillTypes.length; i++) {
+				var data = await skillassessmentsModel.find({skillID: skillTypes[i].skillID, traineeID: userID});
+				var dumpScores = JSON.parse(JSON.stringify(data));
+				var scores = [];
+
+				for(var x = 0; x < 8; x++)
+					scores[x] = dumpScores[x].skillScore;
+					
+				skillTypes[i].skillScores = scores;
+			}
+			console.log(skillTypes);
+
 			// get skills
-			 var skillVar = await skillassessmentsModel.aggregate([
-				{$match: {traineeID: userID}},
-				{$lookup: {
-					from: "skilltypes",
-					localField: "skillID",
-					foreignField: "skillID",
-					as: "skills"
-				}},
-				{$unwind: "$skills"},
-			]);
-			
-			console.log(skillVar);
+			//  var skillVar = await skillassessmentsModel.aggregate([
+			// 	{$match: {traineeID: userID}},
+			// 	{$lookup: {
+			// 		from: "skilltypes",
+			// 		localField: "skillID",
+			// 		foreignField: "skillID",
+			// 		as: "skills"
+			// 	}},
+			// 	{$unwind: "$skills"},
+			// ]);			
+			// console.log(skillVar);
 
 			 //compute quizzes
 
@@ -743,7 +758,7 @@ const rendFunctions = {
 					course: classVar[0].course.courseName,
 
 					//SKILLS
-					skills: skillVar,
+					skills: skillTypes,
 
 					//QUIZZES
 				});
