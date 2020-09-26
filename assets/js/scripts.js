@@ -56,6 +56,10 @@ $(document).ready(function() {
 						$('p#pwError').text('Server Error.');
 						break;
 					}
+					case 409: {
+						$('p#pwError').text('Verify account to login.');
+						break;
+					}
 				}
 			});
 		}

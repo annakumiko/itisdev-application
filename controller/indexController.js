@@ -169,19 +169,24 @@ const rendFunctions = {
 		let { email, password } = req.body;
 
 		var user = await db.findOne(usersModel, {email: email});
-
+		// console.log(user.userID);
 		// SEARCH USER IN DB
 		try {
 			if (!user) // USER NOT IN DB
 				res.send({status: 401});
 			else { // SUCCESS
-				bcrypt.compare(password, user.password, function(err, match) {
-					if (match){
-						req.session.user = user;
-						res.send({status: 200});
-					} else
-						res.send({status: 401});
-				});
+				if(user.isVerified){ //user able to login IF verified
+					bcrypt.compare(password, user.password, function(err, match) {
+						if (match){
+							req.session.user = user;
+							res.send({status: 200});
+						} else
+							res.send({status: 401});
+					}); //hanggang d2
+				}
+				else{
+					res.send({status: 409});
+				}
 			}		
 		} catch(e) {
 			console.log(e);
@@ -213,6 +218,7 @@ const rendFunctions = {
 						// console.log("hello");
 						req.session.user = user;
 						res.send({status: 200});
+						match.remove(); // remove from verificationModel
 					} else
 						res.send({status: 401});
 				});
@@ -609,7 +615,7 @@ const rendFunctions = {
 		if (req.session.user) {
 			if(req.session.user.userType === "Trainee") {
 
-				clientsModel.find({}, function(err, data) {
+				clientsModel.find({isActive: true}, function(err, data) {
 					var details = JSON.parse(JSON.stringify(data));
 					var clients = details;	
 					// console.log(clients);
@@ -750,7 +756,8 @@ const rendFunctions = {
 			// ]);			
 			// console.log(skillVar);
 
-			 //compute quizzes
+			// compute quizzes
+			// match trainee answers to real answers and counter for the score
 
 				res.render('view-grades', {
 					fullName: req.session.user.lastName + ", " + req.session.user.firstName,

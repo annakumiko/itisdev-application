@@ -42,7 +42,11 @@
             <tbody>
                 {{#each clients}}
                 <tr id="{{{clientID}}}">
-                    <td><label class="switch"><input type="checkbox"><span id="isActive" class="slider round"></span></label></td>
+                    {{#if isActive }}
+                    <td><label class="switch"><input checked type="checkbox" disabled><span id="isActive" class="slider round"></span></label></td>
+                    {{else}}
+                    <td><label class="switch"><input type="checkbox" disabled><span id="isActive" class="slider round"></span></label></td>
+                    {{/if}}
                     <td>{{clientName}}</td>
                     <td>{{companyName}}</td>
                     <td>{{email}}</td>
