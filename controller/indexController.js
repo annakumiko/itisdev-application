@@ -96,7 +96,7 @@ function getDateSelected(startDate, endDate, day) {
         sDate = sDate.addDays(1);
     }
 
-    console.log(dateArray);
+ //   console.log(dateArray);
 
     return dateArray[ind-1];
 }
@@ -639,6 +639,9 @@ const rendFunctions = {
 		 			}
 		 			else res.send({status: 200, mssg: JSON.stringify(trainee)});
 		 		});
+
+ 			// create scoresheet
+ 		
  	},
 
  	postRemoveTrainee: async function(req, res, next) {
@@ -664,7 +667,20 @@ const rendFunctions = {
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {
 
- 				var quizzes = await quizzesModel.find({});
+ 				var quizzes = await quizzesModel.aggregate([
+					 {$lookup: {
+							from: "classes",
+							localField: "classID",
+							foreignField: "classID",
+							as: "quizList" // SLICE
+					 }},
+					 {$unwind: "$quizList"},
+				]);		
+
+ 				for(var i = 0; i < quizzes.length; i++) {
+ 					quizzes[i].quizDate = getDate(quizzes[i].quizDate);
+ 				}
+				// console.log(quizzes);
 
  				res.render('quizlist', {
  					quizzes: quizzes
@@ -703,8 +719,8 @@ const rendFunctions = {
  				var sectionSelected = req.params.section;
  				var daySelected = req.params.day;
 
- 				console.log("section: " + sectionSelected);
- 				console.log("day: " + daySelected);
+ 				//console.log("section: " + sectionSelected);
+ 				//console.log("day: " + daySelected);
 
  				// get skills
  				var skills = await skilltypesModel.find({});
@@ -770,39 +786,35 @@ const rendFunctions = {
  	postScoresheets: function(req, res, next) {
  		let { classid, date, trainees, scores } = req.body;
 
- 		// trainees -> contains all traineeIDs
- 		// scores -> contains all scores per skill (6 skills)
- 		// db contents: skillid, classid, traineeid, date, score 
+ 		var traineeInd = 0;
+ 		var scoreInd = 0;
+ 		var x = 0;
+ 		var y = 0;
+ 		var added = false;
 
- 		// create Skillassessments object
+ 		console.log(trainees[0]);
 
- 		// create sa model yas na naka loop ?  
-
- 		// pano sabihin na every 6 scores,,, next trainee plz
- /*		var scoreCtr = 0;
-
- 		// do {
- 		// 	var i = 0;
- 		// 	
- 		// 	var traineeID = trainees[i];
- 		// 	var score = scores[i];
-
- 		// 	let insert = await db.insertOne(skillassessmentsModel,
-			// 	{skillID: skillID, classID: classid, traineeID: traineeID, date: date, skillScore: score});
-			// console.log(insert);
-
-			// scoreCtr++;
- 		// } while(scoreCtr != 5);
-
- 		for(var i = 0; i < scores.length; i++) {
- 			var skillID = "SKILL0" + (scoreCtr + 1);
-
- 			if(scoreCtr != 5) {
- 				let insert = await db.insertOne(skillassessmentsModel,
-				{skillID: skillID, classID: classid, traineeID: traineeID, date: date, skillScore: score});
-				console.log(insert);
+ 		do {
+ 			console.log("hello");
+ 			var a = 1;
+ 			for(var scoreInd = x; scoreInd < y; scoreInd++) {
+ 				console.log("hi");
+ 				var skillID = "skill" + (a);
+ 				var traineeID = trainees[traineeInd];
+ 				var skillScore = scores[scoreInd];
+ 				var traineeScore = createAssessment(skillID, classid, traineeID, date, skillScore);
+ 				// insert
+ 				var ts = JSON.parse(JSON.stringify(traineeScore))
+				console.log(trainees[0]);
+				a++;
  			}
- 		} */
+ 			traineeInd++;
+ 			x += 6;
+ 			y += 6;
+ 		} while (traineeInd != trainees.length);
+
+ 	//	if(added)
+ 	//		res.send({status:200, mssg:"Scores updated!"});
  	},
 
  	getSummaryReports: async function(req, res, next) {

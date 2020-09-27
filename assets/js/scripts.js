@@ -449,4 +449,16 @@ $(document).ready(function() {
 		}
 			
 	});
+
+
+	// add empty question
+	$('button#addQuestion').click(function() {
+		var qDiv = "<div class='form-row quizquestion'> <div class='col'> <label>Question</label>"
+					+ "<input type='text' style='margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0); width: 100%;border-radius: 5px;'>"
+					+ "<label>Answer</label> <input type='text' style='margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0); width: 100%; border-radius: 5px;'>"
+                    + "</div> <div class='col' style='visibility: hidden; max-width: 10%;'><button id='addQuestion'class='btn btn-primary' type='button' style='background-color: #3e914d;margin: 30px;'>"
+                    + "<strong>+</strong></button></div></div>"
+	
+		$('#questionlist').append(qDiv);					
+	});
 });
