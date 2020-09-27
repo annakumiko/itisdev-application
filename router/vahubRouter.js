@@ -44,6 +44,7 @@ router.post('/create-class', middleware.validateCreateClass, controller.postCrea
 router.post('/add-trainees', middleware.validateAddTrainees, controller.postAddTrainees);
 router.post('/delete-class', controller.postDeleteClass);
 router.post('/remove-trainee', controller.postRemoveTrainee);
+router.post('/scoresheets', controller.postScoresheets);
 
 // TRAINEE
 router.post('/verification', controller.postVerification);

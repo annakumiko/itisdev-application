@@ -11,14 +11,14 @@
         <form style="background-color: #f6f6f6;padding: 5px;">
             <div class="form-row" style="margin: 5px;">
             <div class="col" style="max-width: 15%; margin: 5px;"><label class="col-form-label flex-nowrap" for="name-input-field"><strong>Date</strong><br></label></div>
-            <div class="d-flex" style="margin: 5px; padding-top: 5px;"> date 2day </div>
+            <div class="d-flex" style="margin: 5px; padding-top: 5px;"><input type="date" id="endDate" min="2018-01-01" max="2024-12-31" style="max-height: 32px;"></div>
             </div>
             <div class="form-row" style="margin: 5px;">
                 <div class="col" style="max-width: 15%;margin: 5px;"><label class="col-form-label"><strong>Class</strong></label></div>
                 <div class="d-flex" style="margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;">
                         <select style="width: 150px;" id="course">
-                            {{#each classList}}
-                            <option class="dropdown-item" href="#">{{classList.section}}</option>
+                            {{#each classes}}
+                            <option class="dropdown-item" href="#">{{section}}</option>
                             {{/each}}
                         </select>
                         <p id="courseError" class="error" style="margin-left: 5px; max-height: 32px;">{{courseError}}</p>

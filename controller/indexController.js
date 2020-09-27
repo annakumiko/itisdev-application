@@ -660,22 +660,37 @@ const rendFunctions = {
 		});
  	}, 
 
- 	getQuizList: function(req, res, next) {
+ 	getQuizList: async function(req, res, next) {
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {
- 				res.render('quizlist', {
 
- 				});		
+ 				var quizzes = await quizzesModel.find({});
+
+ 				res.render('quizlist', {
+ 					quizzes: quizzes
+ 				});
+
  			} else res.redirect('/');
- 		} else res.redirect('/login');
+ 		} else res.redirect('login');
  		
  	},
 
- 	getCreateQuiz: function(req, res, next) {
+ 	getCreateQuiz: async function(req, res, next) {
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {
- 				res.render('create-quiz', {
+ 				var userID = req.session.user.userID;
 
+ 				// date today
+ 				var date = new Date();
+ 				var dateToday = getDate(date);
+
+ 				// classes
+ 				var classes = await classesModel.find({trainerID: userID});
+ 				var trainerClasses = JSON.parse(JSON.stringify(classes));
+
+ 				res.render('create-quiz', {
+ 					date: dateToday,
+ 					classes: trainerClasses
  				});		
  			} else res.redirect('/');
  		} else res.redirect('/login');
@@ -753,10 +768,41 @@ const rendFunctions = {
  	},
 
  	postScoresheets: function(req, res, next) {
- 		let {  } = req.body;
- 		// create Skillassessments object
- 		// .create sa model yas na naka loop ?  
+ 		let { classid, date, trainees, scores } = req.body;
 
+ 		// trainees -> contains all traineeIDs
+ 		// scores -> contains all scores per skill (6 skills)
+ 		// db contents: skillid, classid, traineeid, date, score 
+
+ 		// create Skillassessments object
+
+ 		// create sa model yas na naka loop ?  
+
+ 		// pano sabihin na every 6 scores,,, next trainee plz
+ /*		var scoreCtr = 0;
+
+ 		// do {
+ 		// 	var i = 0;
+ 		// 	
+ 		// 	var traineeID = trainees[i];
+ 		// 	var score = scores[i];
+
+ 		// 	let insert = await db.insertOne(skillassessmentsModel,
+			// 	{skillID: skillID, classID: classid, traineeID: traineeID, date: date, skillScore: score});
+			// console.log(insert);
+
+			// scoreCtr++;
+ 		// } while(scoreCtr != 5);
+
+ 		for(var i = 0; i < scores.length; i++) {
+ 			var skillID = "SKILL0" + (scoreCtr + 1);
+
+ 			if(scoreCtr != 5) {
+ 				let insert = await db.insertOne(skillassessmentsModel,
+				{skillID: skillID, classID: classid, traineeID: traineeID, date: date, skillScore: score});
+				console.log(insert);
+ 			}
+ 		} */
  	},
 
  	getSummaryReports: async function(req, res, next) {

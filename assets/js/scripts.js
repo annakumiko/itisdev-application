@@ -402,53 +402,51 @@ $(document).ready(function() {
 			else validNum = true;
 		} 
 
-		if(validNum) {
-			for(var i = 0; i < scoresheetEditor.length; i++) {
-				var subject = scoresheetEditor[i].value;
-				//console.log(scoresheetEditor[i].value);
-				if(subject != "")
-					theScore[i].innerHTML = subject;
-			}
-		}
-
 		var scoresArr = []; // array of scores
 		var traineeArr = []; // array of trainees
 
-		$("#traineeScores input").each(function() {
-			scoresArr.push(this.val);
-		});
-
-
+		// trainees
 		$("#traineeScores tr").each(function() {
 			traineeArr.push(this.id);
+		});
+
+		// scores
+		$('tr input').each(function() {
+			var value = $(this).val();
+			if(value === '') 
+				scoresArr.push($(this).attr('placeholder'));  // if trainer did not input any score, put the placeholder
+			else scoresArr.push(value);		
 		});
 
 		console.log(scoresArr);
 		console.log(traineeArr);
 		// post
-	//	if(validNum) {
-			//$.post('/scoresheets')
-			// pass: classid, date, traineearr, scoresarr
-			// case 200
-			// 1. Scores saved.
-			// 2. update display
-			// for(var i = 0; i < scoresheetEditor.length; i++) {
-			// 	var subject = scoresheetEditor[i].value;
-			// 	//console.log(scoresheetEditor[i].value);
-			// 	if(subject != "")
-			// 		theScore[i].innerHTML = subject;
-			// }
-		
-			for(var i = 0; i < theScore.length; i++) 
-				theScore[i].style.display = 'inline';
-			
-			for(var i = 0; i < scoresheetEditor.length; i++)
-				scoresheetEditor[i].style.display = 'none';
+		if(validNum) {
+			$.post('/scoresheets', {classid: classid, date: date, trainees: traineeArr, scores: scoresArr}, function(res) {
+				switch(res.status) {
+					case 200: {
+						alert(res.mssg);
+						for(var i = 0; i < scoresheetEditor.length; i++) {
+							var subject = scoresheetEditor[i].value;
+							//console.log(scoresheetEditor[i].value);
+							if(subject != "")
+								theScore[i].innerHTML = subject;
+						}
+					
+						for(var i = 0; i < theScore.length; i++) 
+							theScore[i].style.display = 'inline';
+						
+						for(var i = 0; i < scoresheetEditor.length; i++)
+							scoresheetEditor[i].style.display = 'none';
 
-			updateScoresheet.style.display = 'none';
-
-			// case 500
-	//	}
+						updateScoresheet.style.display = 'none';
+					}
+					case 500: {
+						alert(res.mssg);
+					}
+				}
+			});
+		}
 			
 	});
 });
