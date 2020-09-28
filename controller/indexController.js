@@ -638,10 +638,7 @@ const rendFunctions = {
 		 				console.log("add-trainee error: " + error);
 		 			}
 		 			else res.send({status: 200, mssg: JSON.stringify(trainee)});
-		 		});
-
- 			// create scoresheet
- 		
+		 		});		
  	},
 
  	postRemoveTrainee: async function(req, res, next) {
@@ -760,16 +757,25 @@ const rendFunctions = {
 				var tscores = [];
 				for (var i = 0; i < trainees.length; i++) {
 					var scores = await skillassessmentsModel.find({classID: classID, date: dateSelected, traineeID: trainees[i].traineeID});
-					var traineescores = JSON.parse(JSON.stringify(scores));
 					var xscores = [];
-					for (var x = 0; x < traineescores.length; x++) {
-						xscores[x] = traineescores[x].skillScore;
+
+					if(scores.length == 0) {
+						for (var x = 0; x < 6; x++) {
+							xscores[x] = "0";
+						}
 					}
+					else {
+						var traineescores = JSON.parse(JSON.stringify(scores));
+					
+						for (var x = 0; x < traineescores.length; x++) {
+							xscores[x] = traineescores[x].skillScore;
+						}
+					}
+
 					trainees[i].tscore = xscores;
+					
 				}
-				
-				// console.log(scores.length);
- 				// console.log(trainees);
+
  				res.render('scoresheets', {
 	 					skills: skillTypes,
 	 					classes: trainerClasses,
@@ -777,35 +783,60 @@ const rendFunctions = {
 	 					daySelected: daySelected,
 	 					secSelected: sectionSelected,
 	 					classSelected: classID,
-	 					date: classSelected.endDate
+	 					date: dateSelected
  				});		
  			} else res.redirect('/');
  		} else res.redirect('/login');
  	},
 
- 	postScoresheets: function(req, res, next) {
+ 	postScoresheets: async function(req, res, next) {
  		let { classid, date, trainees, scores } = req.body;
 
  		var traineeInd = 0;
  		var scoreInd = 0;
  		var x = 0;
- 		var y = 0;
+ 		var y = 6;
  		var added = false;
 
- 		console.log(trainees[0]);
-
  		do {
- 			console.log("hello");
  			var a = 1;
  			for(var scoreInd = x; scoreInd < y; scoreInd++) {
- 				console.log("hi");
  				var skillID = "skill" + (a);
  				var traineeID = trainees[traineeInd];
  				var skillScore = scores[scoreInd];
  				var traineeScore = createAssessment(skillID, classid, traineeID, date, skillScore);
- 				// insert
- 				var ts = JSON.parse(JSON.stringify(traineeScore))
-				console.log(trainees[0]);
+ 				
+				// check if existing
+				var existing = await skillassessmentsModel.findOne({skillID: skillID, classID: classid, traineeID: traineeID, date: date});
+				console.log("existing");
+				console.log(existing);
+				// if not existing
+				if(!existing) {
+					// create
+					skillassessmentsModel.create(traineeScore, function(err) {
+					if (err) {
+						console.log(err);
+					}
+					});
+					console.log("create");
+					console.log(traineeScore);
+				}
+				else {
+					// update
+					let tsUpdate = await skillassessmentsModel.findOneAndUpdate(
+					{ skillID: skillID, classID: classid, traineeID: traineeID, date: date },
+					{ $set: {
+						skillScore: skillScore,
+					}},
+					{ useFindAndModify: false },
+					function(err, match) {
+						if(err) 
+						console.log(err);
+					});
+					console.log("update");
+					console.log(tsUpdate);
+				}
+						
 				a++;
  			}
  			traineeInd++;
@@ -813,8 +844,9 @@ const rendFunctions = {
  			y += 6;
  		} while (traineeInd != trainees.length);
 
- 	//	if(added)
- 	//		res.send({status:200, mssg:"Scores updated!"});
+ 		if(traineeInd === trainees.length) 
+ 			res.send({status:200, mssg:"Scores updated!"});
+ 		else res.send({status: 500, mssg: "Error."});
  	},
 
  	getSummaryReports: async function(req, res, next) {

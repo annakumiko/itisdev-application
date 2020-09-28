@@ -414,12 +414,13 @@ $(document).ready(function() {
 		$('tr input').each(function() {
 			var value = $(this).val();
 			if(value === '') 
-				scoresArr.push($(this).attr('placeholder'));  // if trainer did not input any score, put the placeholder
+				scoresArr.push($(this).attr('value'));  // if trainer did not input any score, put the placeholder
 			else scoresArr.push(value);		
 		});
 
 		console.log(scoresArr);
 		console.log(traineeArr);
+		
 		// post
 		if(validNum) {
 			$.post('/scoresheets', {classid: classid, date: date, trainees: traineeArr, scores: scoresArr}, function(res) {
@@ -440,9 +441,11 @@ $(document).ready(function() {
 							scoresheetEditor[i].style.display = 'none';
 
 						updateScoresheet.style.display = 'none';
+						break;
 					}
 					case 500: {
 						alert(res.mssg);
+						break;
 					}
 				}
 			});
