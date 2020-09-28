@@ -60,6 +60,10 @@ $(document).ready(function() {
 						$('p#pwError').text('Verify account to login.');
 						break;
 					}
+					case 410: {
+						$('p#pwError').text('Account inactive.');
+						break;
+					}
 				}
 			});
 		}

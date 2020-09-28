@@ -176,13 +176,16 @@ const rendFunctions = {
 				res.send({status: 401});
 			else { // SUCCESS
 				if(user.isVerified){ //user able to login IF verified
-					bcrypt.compare(password, user.password, function(err, match) {
-						if (match){
-							req.session.user = user;
-							res.send({status: 200});
-						} else
-							res.send({status: 401});
-					}); //hanggang d2
+					if(!user.deactivated){ //user able to login IF NOT deactivated
+						bcrypt.compare(password, user.password, function(err, match) {
+								if (match){
+									req.session.user = user;
+									res.send({status: 200});
+								} else
+									res.send({status: 401});
+						}); //hanggang d2
+					}
+					else res.send({status: 410});
 				}
 				else{
 					res.send({status: 409});
