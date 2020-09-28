@@ -367,27 +367,6 @@ $(document).ready(function() {
 
 	// COLLECT DATA FROM TABLE
 	$('button#saveCLBTN').click(function() {
-		// $('#clientTable').find('input[type=text]').each(function() {
-		// 	console.log(this.value)			
-		// });
-
-		// var tableData = document.getElementById('clientTable');
-		// var info = "";
-
-		// 	// LOOP THROUGH EACH ROW OF THE TABLE AFTER HEADER.
-		// 	for (i = 1; i < tableData.rows.length; i++) {
-
-		// 		// GET THE CELLS COLLECTION OF THE CURRENT ROW.
-		// 		var objCells = tableData.rows.item(i).cells;
-
-		// 		// LOOP THROUGH EACH CELL OF THE CURENT ROW TO READ CELL VALUES.
-		// 		for (var j = 0; j < objCells.length; j++) {
-		// 				info.innerHTML = info.innerHTML + ' ' + objCells.item(j).innerHTML;
-		// 		}
-		// 		info.innerHTML = info.innerHTML + '<br />';     // ADD A BREAK (TAG).
-		// }
-
-		// console.log(info); 
 		var isActive = document.getElementsByClassName('active');
 		var clientName = document.getElementsByClassName('clientName');
 		// var clientName = $(".clientName").val();
@@ -405,11 +384,7 @@ $(document).ready(function() {
 
 		$("#clients tr").each(function() {
 			idArray.push(this.id);
-		});
-
-		// $('.clientName').each(function() {
-		// 	nameArray.push(clientName);
-		// });		
+		});	
 
 		for(var i = 0; i < idArray.length; i++){
 			if(isActive[i].value === 'on')
@@ -417,7 +392,7 @@ $(document).ready(function() {
 			else
 				activeArray.push(false);
 		}
-
+		
 		for(var i = 0; i < idArray.length; i++){
 			nameArray.push(clientName[i].value);
 			companyArray.push(companyName[i].value);
@@ -425,7 +400,6 @@ $(document).ready(function() {
 			numberArray.push(contactNo[i].value);
 		}
 
-		// console.log(clientName);
 		console.log(idArray);
 		console.log(activeArray);
 		console.log(nameArray);

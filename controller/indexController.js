@@ -70,19 +70,6 @@ function createAssessment(skillID, classID, traineeID, date, skillScore) {
 	return tempAssessment;
 }
 
-function createClient(clientID, isActive, clientName, companyName, email, contactNo){
-	var tempClient = {
-		clientID: clientID,
-		isActive: isActive,
-		clientName: clientName,
-		companyName: companyName,
-		email: email,
-		contactNo: contactNo,
-	}
-
-	return tempClient;
-}
-
 Date.prototype.addDays = function(days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
@@ -1216,24 +1203,31 @@ const rendFunctions = {
 		let { clientID, clientName, companyName, email, contactNo, isActive } = req.body;
 
 		// console.log(clientID.length);
-		for(var i = 0; i < clientID.length; i++){
-			// var client = addClient(clientID[i], clientName[i], companyName[i], email[i], contactNo[i], isActive[i])
-			// console.log(client);
+			for(var i = 0; i < clientID.length; i++){
+				// var client = addClient(clientID[i], clientName[i], companyName[i], email[i], contactNo[i], isActive[i])
+				// console.log(client);
 
-			let updateClient = await clientsModel.findOneAndUpdate(
-				{ clientID: clientID[i] },
-				{ $set: {
-					clientName: clientName[i], companyName: companyName[i], email: email[i], contactNo: contactNo[i], isActive: isActive[i] }},
-				{ useFindAndModify: false },
-				function(err, match){
-					if(err) res.send({status: 500, mssg: "Error in updating client details."});
+				clientsModel.findOneAndUpdate(
+					{ clientID: clientID[i] },
+					{ $set: {
+						clientName: clientName[i], companyName: companyName[i], email: email[i], contactNo: contactNo[i], isActive: isActive[i],
+					}},
+					{ useFindAndModify: false },
+					function(err, match) {
+						if(err){
+							console.log(err);
+						}
+						// else{
+						// 	res.send({status: 200, mssg: "Successfully updated client details!"});
+						// }
+					})
+				// console.log(updateClient);
+			}
 
-					else res.send({status: 200, mssg: "Clients updated!"});
-				}
-			)
-
-			console.log(updateClient);
-		}
+			if(i < clientID.length)
+				res.send({status: 500, mssg: "Error in updating client details."})
+			else 
+				res.send({status: 200, mssg:"Client details updated successfully!"});
 		},
 
 	 postAddClient: function(req, res, next) {
