@@ -13,6 +13,7 @@ router.get('/trainee-profile', controller.getProfile);
 router.get('/define-course', controller.getDefineCourse);
 router.get('/clientlist', controller.getClientList);
 router.get('/manage-clientlist', controller.getManageClients);
+router.get('/update-clientlist', controller.getUpdateClients);
 
 // TRAINER
 router.get('/dashboard', controller.getDashboard);
@@ -28,7 +29,8 @@ router.get('/class-detailed/:classid', controller.getDetailedReports);
 router.get('/verification', controller.getVerification);
 router.get('/clientlist', controller.getClientList);
 router.get('/view-grades', controller.getViewGrades);
-//router.get('/contact-clients', controller.getContactClient);
+router.get('/contact-client/:email/:companyName', controller.getContactClient);
+router.get('/deactivate-account', controller.getDeactivateAccount);
 
 /*POST functions*/
 router.post('/logout', controller.postLogout);
@@ -37,7 +39,9 @@ router.post('/register', controller.postRegister);
 
 //admin
 router.post('/define-course', controller.postDefineCourse);
-//router.post('/manage-clientlist', controller.postManageClients);
+router.post('/add-client', controller.postAddClient);
+router.post('/remove-client', controller.postRemoveClient);
+router.post('/update-clientlist', controller.postUpdateClients);
 
 // TRAINER
 router.post('/create-class', middleware.validateCreateClass, controller.postCreateClass);
@@ -48,7 +52,7 @@ router.post('/scoresheets', controller.postScoresheets);
 
 // TRAINEE
 router.post('/verification', controller.postVerification);
-//router.post('/contact-clientslist', controller.postContactClient);
-
+router.post('/contact-client', controller.postContactClient);
+router.post('/deactivate-account', controller.postDeactivateAccount);
 
 module.exports = router;

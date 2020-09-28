@@ -82,6 +82,14 @@ $(document).ready(function() {
 						$('p#pwError').text('Server Error.');
 						break;
 					}
+					case 409: {
+						$('p#pwError').text('Verify account to login.');
+						break;
+					}
+					case 410: {
+						$('p#pwError').text('Account inactive.');
+						break;
+					}
 				}
 			});
 		}
@@ -93,7 +101,7 @@ $(document).ready(function() {
 		var verifyCode = validator.trim($('#verifyCode').val());
 				
 		if((validator.isEmpty(email)) || (validator.isEmpty(verifyCode))){
-			console.log("pls don't be empty !!") 
+			console.log("Missing input credentials.") 
 		}
 		else{
 
@@ -251,21 +259,138 @@ $(document).ready(function() {
 		var courseDesc = $('#courseDesc').val();
 		var courseModules = $("#courseMod").val();
 
-		$.post('/define-course', {courseName: courseName, courseDesc: courseDesc}, function(res) {
-				switch (res.status){
-					case 200: {
-						window.location.href = '/';
-						alert(res.mssg);
-						break;
-					}
-					case 500: { 
-						alert(res.mssg);
-						break;
-					}
-					}
-				});
+		$('p#courseDescError').text('');
+		$('p#fileError').text('');
+
+		if(validator.isEmpty(courseDesc))
+			$('p#courseDescError').text('Please write course description.');
+
+		//insert file error
+
+		if (!(validator.isEmpty(courseDesc))) { 
+			$.post('/define-course', {courseName: courseName, courseDesc: courseDesc}, function(res) {
+				window.location.href = '/';
+				console.log("email sent");
+			});
+		}
 	});
 
+	// SEND EMAILS 
+	$('button#sendEmailBTN').click(function() {
+		var email = $("#email").text()
+		var emailText = $("#emailText").val();
+
+		$('p#eEmail').text('');
+
+		if(validator.isEmpty(emailText))
+			$('p#eEmail').text('Please write message.');
+		
+		if (!(validator.isEmpty(emailText))) { 
+			$.post('/contact-client', { email: email, emailText: emailText}, function(res) {
+					switch (res.status){
+						case 200: {
+							window.location.href = '/clientlist';
+							alert(res.mssg);
+							break;
+						}
+						case 500: { 
+							$('p#eEmail').text(res.mssg);
+							break;
+						}
+						}
+					});
+		}
+	});
+
+	// ADD NEW CLIENTS 
+	$('button#addClientBTN').click(function() {
+		var clientName = $("#clientName").val()
+		var companyName = $("#companyName").val()
+		var email = $("#email").val()
+		var contactNo = $("#contactNo").val();
+
+		$('p#eAddClient').text('');
+
+		if(validator.isEmpty(clientName))
+			$('p#eAddClient').text('Please input client name.');
+		
+		else if(validator.isEmpty(companyName))
+			$('p#eAddClient').text('Please input company name.');
+
+		else if(validator.isEmpty(email))
+			$('p#eAddClient').text('Please input client email.');
+
+		else if(validator.isEmpty(contactNo))
+			$('p#eAddClient').text('Please input client contact number.');
+		
+		else { 
+			$.post('/add-client', { clientName: clientName, companyName: companyName, email: email, contactNo: contactNo}, function(res) {
+					switch (res.status){
+						case 200: {
+							alert(res.mssg);
+							window.location.href = '/manage-clientlist';
+							break;
+						}
+						case 500: { 
+							$('p#eAddClient').text(res.mssg);
+							break;
+						}
+						}
+					});
+		}
+	});
+
+	// DELETE CLIENT
+	$('button#deleteBTN').click(function() {
+		var row = $(this).parent().parent(); //get row of clicked button
+		var clientID = row.attr("id"); //get clientID from row
+		var deleteConfirm = confirm("Remove client from list?");
+		
+		$('p#eDeleteClient').text('');
+
+		if(deleteConfirm) {
+			$.post('/remove-client', {clientID: clientID}, function(result) {
+				switch(result.status) {
+					case 200: {
+						alert(result.mssg);
+						row.remove();
+						break;
+					}
+					case 500: {
+						$('p#eDeleteClient').text(res.mssg);
+						break;
+					}
+				}
+			});
+		}			
+	});
+
+	// COLLECT DATA FROM TABLE
+	$('button#saveCLBTN').click(function() {
+		console.log("hi there");
+		// $('#clientTable').find('input[type=text]').each(function() {
+		// 	console.log(this.value)			
+		// });
+
+		// var tableData = document.getElementById('clientTable');
+		// var info = "";
+
+		// 	// LOOP THROUGH EACH ROW OF THE TABLE AFTER HEADER.
+		// 	for (i = 1; i < tableData.rows.length; i++) {
+
+		// 		// GET THE CELLS COLLECTION OF THE CURRENT ROW.
+		// 		var objCells = tableData.rows.item(i).cells;
+
+		// 		// LOOP THROUGH EACH CELL OF THE CURENT ROW TO READ CELL VALUES.
+		// 		for (var j = 0; j < objCells.length; j++) {
+		// 				info.innerHTML = info.innerHTML + ' ' + objCells.item(j).innerHTML;
+		// 		}
+		// 		info.innerHTML = info.innerHTML + '<br />';     // ADD A BREAK (TAG).
+		// }
+
+		// console.log(info);
+
+	});
 
 	// ADD TRAINEES VALIDATION
 	$('button#add-trainee').click(function() {
@@ -463,5 +588,36 @@ $(document).ready(function() {
                     + "<strong>+</strong></button></div></div>"
 	
 		$('#questionlist').append(qDiv);					
+	});
+
+	// DEACTIVATE ACCOUNT
+	$('button#finalDA').click(function() {
+		// var userID = $("#userID").text()
+		var password = $("#password").val()
+		
+		$('p#ePass').text('');
+
+		if(validator.isEmpty(password))
+			$('p#ePass').text('Please input password to proceed.');
+		
+		else{
+			$.post('/deactivate-account', { password: password}, function(result) {
+				switch(result.status) {
+					case 200: {
+						window.location.href = '/login';
+						alert(result.mssg);
+						break;
+					}
+					case 401: {
+						$('p#ePass').text(result.mssg);
+						break;
+					}				
+					case 500: {
+						alert(result.mssg);
+						break;
+					}
+				}
+			});
+		}			
 	});
 });

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+{{>sidebar-trainee}}
+
+<div class="contact-clean" id="deactivateDiv">
+    <form method="post">
+        <h2 class="text-center">Gone so soon?</h2>
+        <label style="text-align: center;">Would you like to cancel your training sessions? This will remove you from any classes you've enrolled and deactivate your account after 24 hours.</label>
+        <br> <br>
+        <input class="form-control" type="password" id="password" name="password" placeholder="Input password to deactivate">
+        <p id="ePass" class="error"> {{ePass}} </p>
+        <div id="buttons">
+        <a href="/trainee-profile"><button class="btn btn-primary" id="cancelDA" type="button">CANCEL</button></a>        
+        <button class="btn btn-primary" id="finalDA" type="button">DEACTIVATE</button> 
+        </div>
+    </form>
+</div>

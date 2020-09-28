@@ -19,15 +19,7 @@ const traineelistsModel = require('../models/traineelistsdb');
 const usersModel = require('../models/usersdb');
 const verificationModel = require('../models/verificationdb');
 const db = require('../models/db');
-
-/* EMAIL */
-// let transport = nodemailer.createTransport(options[, defaults]);
-let transport = nodemailer.createTransport({
-	auth: {
-		 user: 'put_your_username_here',
-		 pass: 'put_your_password_here'
-	}
-});
+const { countDocuments } = require('../models/classesdb');
 
 // constructor for class
 function createClass(classID, courseID, trainerID, section, startDate, endDate, sTime, eTime) {
@@ -99,6 +91,19 @@ function getDateSelected(startDate, endDate, day) {
  //   console.log(dateArray);
 
     return dateArray[ind-1];
+}
+
+function addClient(clientID, clientName, companyName, email, contactNo, isActive) {
+	var newClient = {
+		clientID: clientID,
+		clientName: clientName,
+		companyName: companyName,
+		email: email,
+		contactNo: contactNo,
+		isActive: isActive
+	};
+
+	return newClient;
 }
 
 // two digits
@@ -209,19 +214,27 @@ const rendFunctions = {
 		let { email, password } = req.body;
 
 		var user = await db.findOne(usersModel, {email: email});
-
+		// console.log(user.userID);
 		// SEARCH USER IN DB
 		try {
 			if (!user) // USER NOT IN DB
 				res.send({status: 401});
 			else { // SUCCESS
-				bcrypt.compare(password, user.password, function(err, match) {
-					if (match){
-						req.session.user = user;
-						res.send({status: 200});
-					} else
-						res.send({status: 401});
-				});
+				if(user.isVerified){ //user able to login IF verified
+					if(!user.deactivated){ //user able to login IF NOT deactivated
+						bcrypt.compare(password, user.password, function(err, match) {
+								if (match){
+									req.session.user = user;
+									res.send({status: 200});
+								} else
+									res.send({status: 401});
+						}); //hanggang d2
+					}
+					else res.send({status: 410});
+				}
+				else{
+					res.send({status: 409});
+				}
 			}		
 		} catch(e) {
 			console.log(e);
@@ -253,6 +266,7 @@ const rendFunctions = {
 						// console.log("hello");
 						req.session.user = user;
 						res.send({status: 200});
+						match.remove(); // remove from verificationModel
 					} else
 						res.send({status: 401});
 				});
@@ -945,10 +959,10 @@ const rendFunctions = {
 		if (req.session.user) {
 			if(req.session.user.userType === "Trainee") {
 
-				clientsModel.find({}, function(err, data) {
+				clientsModel.find({isActive: true}, function(err, data) {
 					var details = JSON.parse(JSON.stringify(data));
 					var clients = details;	
-					console.log(clients);
+					// console.log(clients);
 					
 					res.render('clientlist', {
 					 clients: clients,
@@ -960,10 +974,83 @@ const rendFunctions = {
 		else res.redirect('login');
 	 },
 
+	getContactClient: function(req, res, next) {
+		if (req.session.user) {
+			if(req.session.user.userType === "Trainee") {
+
+				clientsModel.find({}, function(err, data) {
+					var details = JSON.parse(JSON.stringify(data));
+					var clients = details;	
+					// console.log(clients);
+					
+					res.render('contact-client', {
+					 email: req.params.email,
+					 companyName: req.params.companyName,
+					 fullName: req.session.user.lastName + ", " + req.session.user.firstName
+				 });
+				});
+
+		 } else res.redirect('login');
+		}
+		else res.redirect('login');
+	 },
+
+	postContactClient: function(req, res, next) {
+		let { email, emailText } = req.body; // pass client email, email subject, and message
+		
+		//var userID = req.session.user.userID;
+		var fullName = req.session.user.lastName + ", " + req.session.user.firstName;
+
+			console.log("for : " + email,);
+			console.log("messsage : " + emailText);
+
+			// send email
+			var smtpTransport = nodemailer.createTransport({
+				service: 'Gmail',
+				auth: {
+					user: 'training.tvh@gmail.com',
+					pass: 'tvhtraining'
+				}
+			});
+
+			// content
+			var mailOptions = {
+				from: 'training.tvh@gmail.com',
+				to: email,
+				subject: '[REQUEST FOR INTERVIEW] ' + fullName,
+				// text: emailText,
+				html: `<p>${emailText}</p> <br> <br> <img src="cid:signature"/>`,
+				attachments: [{
+						filename: 'TVH.png',
+						path: __dirname+'/TVH.png',
+						cid: 'signature' //same cid value as in the html img src
+				}]
+				// attachments: [
+				// 	{   // filename of CV
+				// 			filename: '\assets\img\TVH.png'
+				// 	},]
+			};
+
+			smtpTransport.sendMail(mailOptions, function(error) {
+				if (error){
+					res.send({status: 500, mssg: "There has been an error in sending the email."});
+					console.log(error);
+				}
+				else{
+					res.send({status: 200, mssg: "Email sent succesfully!"});
+					console.log("sent");
+				} 
+
+				smtpTransport.close();
+			});
+	 },
+
 	getViewGrades: async function(req, res, next) {
 		if (req.session.user){
 			if(req.session.user.userType === "Trainee") {
 				var userID = req.session.user.userID;
+				// console.log(userID);
+
 				var classVar = await traineelistsModel.aggregate([
 					{$match: {traineeID: userID}},
 					{$lookup: {
@@ -979,12 +1066,42 @@ const rendFunctions = {
 						 foreignField: "courseID",
 						 as: "course"
 					 }},
-					 {$unwind: "$course"}
+					 {$unwind: "$course"},
 			 ]);
+			//  console.log(classVar);
 
-			 // compute skills
+			var skills = await skilltypesModel.find({});
+			var skillTypes = JSON.parse(JSON.stringify(skills));
+			// console.log(skillTypes);
 
-			 //compute quizzes
+			var skillScores = [];
+			for (var i = 0; i < skillTypes.length; i++) {
+				var data = await skillassessmentsModel.find({skillID: skillTypes[i].skillID, traineeID: userID});
+				var dumpScores = JSON.parse(JSON.stringify(data));
+				var scores = [];
+
+				for(var x = 0; x < 8; x++)
+					scores[x] = dumpScores[x].skillScore;
+					
+				skillTypes[i].skillScores = scores;
+			}
+			console.log(skillTypes);
+
+			// get skills
+			//  var skillVar = await skillassessmentsModel.aggregate([
+			// 	{$match: {traineeID: userID}},
+			// 	{$lookup: {
+			// 		from: "skilltypes",
+			// 		localField: "skillID",
+			// 		foreignField: "skillID",
+			// 		as: "skills"
+			// 	}},
+			// 	{$unwind: "$skills"},
+			// ]);			
+			// console.log(skillVar);
+
+			// compute quizzes
+			// match trainee answers to real answers and counter for the score
 
 				res.render('view-grades', {
 					fullName: req.session.user.lastName + ", " + req.session.user.firstName,
@@ -992,6 +1109,7 @@ const rendFunctions = {
 					course: classVar[0].course.courseName,
 
 					//SKILLS
+					skills: skillTypes,
 
 					//QUIZZES
 				});
@@ -1050,7 +1168,7 @@ const rendFunctions = {
 				clientsModel.find({}, function(err, data) {
 					var details = JSON.parse(JSON.stringify(data));
 					var clients = details;	
-					console.log(clients);
+					// console.log(clients);
 
 					res.render('manage-clientlist', {
 					 clients: clients,
@@ -1061,6 +1179,136 @@ const rendFunctions = {
 		}
 		else res.redirect('login');
 	 },
+
+	 getUpdateClients: function(req, res, next) {
+		if (req.session.user) {
+			if(req.session.user.userType === "Admin") {
+
+				clientsModel.find({}, function(err, data) {
+					var details = JSON.parse(JSON.stringify(data));
+					var clients = details;	
+					// console.log(clients);
+
+					res.render('update-clientlist', {
+					 clients: clients,
+				 });
+				});
+
+		 } else res.redirect('login');
+		}
+		else res.redirect('login');
+	 },
+
+	 postUpdateClients: function(req, res, next) {
+		let { clientID, clientName, companyName, email, contactNo, isActive } = req.body;
+
+		// console.log(clientName, companyName, email, contactNo);
+		var clientCount = clientsModel.countDocuments();
+		console.log(clientCount);
+
+		clientsModel.update(client, function(err){		
+			if (err) {
+				res.send({status: 500, mssg: "Error in adding new client."});
+				console.log("Error in updating course");
+			}
+			else{
+				res.send({status: 200, mssg: "Client added!"});
+			}
+		})
+		},
+
+	 postAddClient: function(req, res, next) {
+		let { clientName, companyName, email, contactNo } = req.body;
+
+		// console.log(clientName, companyName, email, contactNo);
+
+		var clientID = generateClientID();		
+		// console.log("clientID: " + clientID);
+		var isActive = true;
+		var client = addClient(clientID, clientName, companyName, email, contactNo, isActive)
+
+		clientsModel.create(client, function(err){		
+			if (err) {
+				res.send({status: 500, mssg: "Error in adding new client."});
+			}
+			else{
+				res.send({status: 200, mssg: "Client added!"});
+			}
+		})
+	},
+
+	postRemoveClient: function(req, res) {
+		let { clientID } = req.body;
+		
+			clientsModel.findOne({clientID: clientID}, function(err, match) {
+			 if (err) {
+				 res.send({status: 500, mssg:'Error in removing client.'});
+			 }			
+			 else {
+				 match.remove();
+				 res.send({status: 200, mssg:'Client removed.'});
+			 }
+		 });
+	},
+
+	getDeactivateAccount: function(req, res, next) {
+		if (req.session.user) {
+			if(req.session.user.userType === "Trainee")
+				res.render('deactivate-account', {
+					userID: req.params.userID,
+				});
+			
+			else res.redirect('login');
+		}
+		else res.redirect('login');
+	 },
+	 
+	postDeactivateAccount: function(req, res) {
+		let { password } = req.body;
+
+		var userIDtemp = req.session.user.userID;
+
+		bcrypt.compare(password, req.session.user.password, function(err, match) {
+			if (!match)
+				res.send({status: 401, mssg: 'Incorrect password.'});
+			
+			else{ //password matches
+				usersModel.findOneAndUpdate(
+						{userID: userIDtemp},
+						{ $set: { deactivated: true }},
+						{ useFindAndModify: false},
+						function(err, match) {
+							if (err) {
+								res.send({status: 500, mssg:'There has been an error in deactivating your account.'});
+							}
+							else {
+								traineelistsModel.findOne({traineeID: userIDtemp}, function(err, match) {
+										if (err) {
+											console.log(err);
+										}
+										else {
+											match.remove();		
+											console.log("Removed from class.")
+										}
+									});
+
+									clientlistsModel.findOne({traineeID: userIDtemp}, function(err, match) {
+										if (err) {
+											console.log(err);
+										}
+										else {
+											match.remove();		
+											console.log("Removed from client.")
+										}
+									});
+
+							// match.remove();
+							res.send({status: 200, mssg:'Account deactivated succesfully.'});
+					}
+				});	
+			}
+		});
+	},
 
 }
 

@@ -4,9 +4,10 @@
 
 <div style="padding-left: 100px;">
 <label style="color: #006739;font-size: 25px;font-weight: bold;margin-top: 20px;">Define Course</label>
+<p style="margin: 2px;">Update description and the corresponding modules per specified course.</p>
 <hr> <br>
 <div style="padding:20px;max-width: 95%;background-color:#f0f0f2">
-    <form method="post" id="define-course" name="defineCourse">
+    <form method="post" id="define-course" name="defineCourse" enctype="multipart/form-data">
     <div id="courseDiv" style="margin-top: 30px;width: 800px;">
         <label style="color: #006739;font-size: 15px;font-weight: bold">Course Name</label>
             <select style="margin-left: 48px; height: 32px;padding: 2px;border-radius: 5px;width: 150px;" id="courseName">
@@ -16,6 +17,7 @@
             </select> <br>
         <label style="color: #006739;font-size: 15px;font-weight: bold">Course Description</label>
         <textarea id="courseDesc" style="margin-top:15px;width: 400px;margin-left:8px;border-radius: 5px;padding:2px;"></textarea>
+        <p id="courseDescError" class="error" style="margin-left:145px;margin-top:-15px; max-height: 32px;">{{courseDescError}}</p>
     </div> <br>
     <div id="modulesDiv" style="width: 800px;margin-top: 30px;">
         <label style="color: #006739;font-size: 20px;font-weight: bold;margin-top: 20;">Modules</label>
