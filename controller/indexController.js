@@ -70,6 +70,19 @@ function createAssessment(skillID, classID, traineeID, date, skillScore) {
 	return tempAssessment;
 }
 
+function createClient(clientID, isActive, clientName, companyName, email, contactNo){
+	var tempClient = {
+		clientID: clientID,
+		isActive: isActive,
+		clientName: clientName,
+		companyName: companyName,
+		email: email,
+		contactNo: contactNo,
+	}
+
+	return tempClient;
+}
+
 Date.prototype.addDays = function(days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
@@ -1199,22 +1212,28 @@ const rendFunctions = {
 		else res.redirect('login');
 	 },
 
-	 postUpdateClients: function(req, res, next) {
+	 postUpdateClients: async function(req, res, next) {
 		let { clientID, clientName, companyName, email, contactNo, isActive } = req.body;
 
-		// console.log(clientName, companyName, email, contactNo);
-		var clientCount = clientsModel.countDocuments();
-		console.log(clientCount);
+		// console.log(clientID.length);
+		for(var i = 0; i < clientID.length; i++){
+			// var client = addClient(clientID[i], clientName[i], companyName[i], email[i], contactNo[i], isActive[i])
+			// console.log(client);
 
-		clientsModel.update(client, function(err){		
-			if (err) {
-				res.send({status: 500, mssg: "Error in adding new client."});
-				console.log("Error in updating course");
-			}
-			else{
-				res.send({status: 200, mssg: "Client added!"});
-			}
-		})
+			let updateClient = await clientsModel.findOneAndUpdate(
+				{ clientID: clientID[i] },
+				{ $set: {
+					clientName: clientName[i], companyName: companyName[i], email: email[i], contactNo: contactNo[i], isActive: isActive[i] }},
+				{ useFindAndModify: false },
+				function(err, match){
+					if(err) res.send({status: 500, mssg: "Error in updating client details."});
+
+					else res.send({status: 200, mssg: "Clients updated!"});
+				}
+			)
+
+			console.log(updateClient);
+		}
 		},
 
 	 postAddClient: function(req, res, next) {

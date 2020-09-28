@@ -367,7 +367,6 @@ $(document).ready(function() {
 
 	// COLLECT DATA FROM TABLE
 	$('button#saveCLBTN').click(function() {
-		console.log("hi there");
 		// $('#clientTable').find('input[type=text]').each(function() {
 		// 	console.log(this.value)			
 		// });
@@ -388,8 +387,64 @@ $(document).ready(function() {
 		// 		info.innerHTML = info.innerHTML + '<br />';     // ADD A BREAK (TAG).
 		// }
 
-		// console.log(info);
+		// console.log(info); 
+		var isActive = document.getElementsByClassName('active');
+		var clientName = document.getElementsByClassName('clientName');
+		// var clientName = $(".clientName").val();
+		var companyName = document.getElementsByClassName('companyName');
+		var email = document.getElementsByClassName('email');
+		var contactNo = document.getElementsByClassName('contactNo');
 
+		var activeArray = [];
+		var idArray = [];
+		var nameArray = [];
+		var companyArray = [];
+		var emailArray = [];
+		var numberArray = [];
+		$('p#eUpdateClients').text('');
+
+		$("#clients tr").each(function() {
+			idArray.push(this.id);
+		});
+
+		// $('.clientName').each(function() {
+		// 	nameArray.push(clientName);
+		// });		
+
+		for(var i = 0; i < idArray.length; i++){
+			if(isActive[i].value === 'on')
+				activeArray.push(true);
+			else
+				activeArray.push(false);
+		}
+
+		for(var i = 0; i < idArray.length; i++){
+			nameArray.push(clientName[i].value);
+			companyArray.push(companyName[i].value);
+			emailArray.push(email[i].value);
+			numberArray.push(contactNo[i].value);
+		}
+
+		// console.log(clientName);
+		console.log(idArray);
+		console.log(activeArray);
+		console.log(nameArray);
+		console.log(companyArray);
+		console.log(emailArray);
+		console.log(numberArray);
+
+		$.post('/update-clientlist', {clientID: idArray, isActive: activeArray, clientName: nameArray, companyName: companyArray, email: emailArray, contactNo: numberArray}, function(res){
+			switch(res.status) {
+				case 200: {
+					alert(res.mssg);
+					window.location.href = '/manage-clientlist';
+				}
+				case 500: {
+					$('p#eUpdateClients').text(res.mssg);
+					break;
+				}
+			}
+		})
 	});
 
 	// ADD TRAINEES VALIDATION

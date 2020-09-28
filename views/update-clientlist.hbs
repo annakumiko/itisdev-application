@@ -21,18 +21,18 @@
                     <th style="width: 5%;">Remove</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="clients">
                 {{#each clients}}
                 <tr id="{{{clientID}}}">
                     {{#if isActive }}
-                    <td><label class="switch"><input checked type="checkbox"><span id="isActive" class="slider round"></span></label></td>
+                    <td><label class="switch"><input class="active" checked type="checkbox"><span class="slider round"></span></label></td>
                     {{else}}
-                    <td><label class="switch"><input type="checkbox"><span id="isActive" class="slider round"></span></label></td>
+                    <td><label class="switch"><input class="active" type="checkbox"><span class="slider round"></span></label></td>
                     {{/if}}
-                    <td><input type="text" style="width: 90%;" value="{{clientName}}"></td>
-                    <td><input type="text" style="width: 90%;" value="{{companyName}}"></td>
-                    <td><input type="text" style="width: 90%;" value="{{email}}"></td>
-                    <td><input type="text" style="width: 90%;" value="{{contactNo}}"></td>
+                    <td><input type="text" class="clientName" style="width: 90%;" value="{{clientName}}"></td>
+                    <td><input type="text" class="companyName" style="width: 90%;" value="{{companyName}}"></td>
+                    <td><input type="email" class="email" style="width: 90%;" value="{{email}}"></td>
+                    <td><input type="text" class="contactNo" style="width: 90%;" value="{{contactNo}}"></td>
                     <td align="center"><button id="xdeleteBTN" class="delete" title="Remove Client"><i class="fa fa-remove"></i></button></td> 
                 </tr>
                 {{/each}}
