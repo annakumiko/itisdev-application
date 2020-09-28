@@ -17,18 +17,6 @@ const verificationModel = require('../models/verificationdb');
 const db = require('../models/db');
 
 function isOverlap (startDate1, endDate1, startDate2, endDate2, startTime1, endTime1, startTime2, endTime2) {
-	
-/*
-	TEST CASES
-	1. same date same time = overlap - if (dateOverlap && timeOverlap) return true;
-	2. same date different time 
-		a. overlapping time = overlap if (dateOverlap && timeOverlap) return true;
-		b. not overlapping if (dateOverlap && !timeOverlap) return false;
-	3. different date different time = nop if (!dateOverlap && !timeOverlap) return false;
-	4. different date same time = nop if (!dateOverlap && timeOverlap) return false;
-	5. overlapping dates same time = overlap // #2
-*/
-	
 	var sTime1 = new Date("Jan 01 2020 " + startTime1 + ":00"),
 		eTime1 = new Date("Jan 01 2020 " + endTime1 + ":00"),
 		sDate1 = new Date(startDate1),
@@ -79,19 +67,9 @@ function isOngoing(eDate) {
 const vahubMiddleware = {
 
 	validateCreateClass: async function (req, res, next) {
-		// things
 		var trainerID = JSON.parse(JSON.stringify(req.session.user.userID));
 
 		let { startDate, endDate, startTime, endTime } = req.body; 
-
-		/*
-			STEPS
-			1. go through classes of trainer (assign to object, get numClass?)
-			2. for each class, compare dates and timez (isOverlap(put everythin here))
-			3. conditions
-				a. if overlap = res.send({status: 401, mssg: 'This class schedule overlaps with one of your classes.'});
-				b. else... return next(); ???
-		*/
 
 		let trainerClasses = await classesModel.find({trainerID: trainerID});
 		var numClass = trainerClasses.length;
@@ -163,7 +141,12 @@ const vahubMiddleware = {
 		else return next();
         
 		
+	},
+
+	validateCreateQuiz: async function(req, res, next) {
+
 	}	
 }
+
 
 module.exports = vahubMiddleware;

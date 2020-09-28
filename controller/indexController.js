@@ -70,6 +70,33 @@ function createAssessment(skillID, classID, traineeID, date, skillScore) {
 	return tempAssessment;
 }
 
+// constructor for quiz
+function createQuiz(quizid, classid, date, stime, etime, nTakes, nItems) {
+	var tempQuiz = {
+		quizID: quizid,
+		classID: classid,
+		quizDate: date,
+		startTime: stime,
+		endTime: etime,
+		numTakes: nTakes,
+		numItems: nItems
+	}
+
+	return tempQuiz;
+}
+
+// constructor for items
+function createItems(itemNo, quizid, q, a) {
+	var tempItem = {
+		itemNo: itemNo,
+		quizID: quizid,
+		question: q,
+		answer: a
+	}
+
+	return tempItem;
+}
+
 Date.prototype.addDays = function(days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
@@ -723,6 +750,35 @@ const rendFunctions = {
  		} else res.redirect('/login');
  	},
 
+ 	postCreateQuiz: async function(req, res, next) {
+ 		let { section, quizDate, startTime, endTime, numTakes, numItems, qArr, ansArr } = req.body;
+
+ 		// generate quizid
+ 		var quizID = generateQuizID;
+
+ 		// get classid
+ 		var classSelected = await db.findOne(classesModel, {section: section});
+ 		var classID = classSelected.classID;
+
+ 		var sTime = new Date(startTime);
+ 		var eTime = new Date(endTime);
+
+ 		var quiz = createQuiz(quizID, classID, quizDate, sTime, eTime, numTakes, numItems);
+
+ 		// insert to quizzesdb
+ 		let qInsert = await quizzesModel.create(quiz, function(err) {
+ 			if(err) {
+ 				res.send({status: 500, mssg: "Server Error: Cannot create quiz."})
+ 			}
+ 			else {
+ 				/// insert items
+ 			}
+ 		});
+
+ 		console.log(qInsert);
+
+ 	},
+
  	getScoresheets: async function(req, res, next) {
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {
@@ -863,7 +919,7 @@ const rendFunctions = {
  		else res.send({status: 500, mssg: "Error."});
  	},
 
- 	getSummaryReports: async function(req, res, next) {
+ 	getClassSummary: async function(req, res, next) {
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {
  				var userID = req.session.user.userID;
@@ -916,7 +972,7 @@ const rendFunctions = {
  		} else res.redirect('/login');
  	},
 
- 	getDetailedReports: async function(req, res, next) {
+ 	getClassDetailed: async function(req, res, next) {
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {
  				var classID = req.params.classid;

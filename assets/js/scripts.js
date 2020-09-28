@@ -467,6 +467,8 @@ $(document).ready(function() {
 		}
 	});
 
+	// SCORESHEET
+
 	$('#class-day').change(function() {
 		var daySelected = $(this).val();
 		var sectionSelected = $('#scoresheet-section').val();
@@ -578,16 +580,103 @@ $(document).ready(function() {
 			
 	});
 
-
 	// add empty question
 	$('button#addQuestion').click(function() {
 		var qDiv = "<div class='form-row quizquestion'> <div class='col'> <label>Question</label>"
-					+ "<input type='text' style='margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0); width: 100%;border-radius: 5px;'>"
-					+ "<label>Answer</label> <input type='text' style='margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0); width: 100%; border-radius: 5px;'>"
+					+ "<input type='text' class='quizQuestion' style='margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0); width: 100%;border-radius: 5px;'>"
+					+ "<label>Answer</label> <input type='text' class='quizAnswer' style='margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0); width: 100%; border-radius: 5px;'>"
                     + "</div> <div class='col' style='visibility: hidden; max-width: 10%;'><button id='addQuestion'class='btn btn-primary' type='button' style='background-color: #3e914d;margin: 30px;'>"
                     + "<strong>+</strong></button></div></div>"
 	
 		$('#questionlist').append(qDiv);					
+	});
+
+	// QUIZ VALIDATIONS
+	$('button#createQuiz').click(function() {
+		var quizDate = new Date($('#quizDate').val()); 
+		var quizClass = $('#quizClass').val();
+		var qstartTime = $('#qstartTime').val();
+		var qendTime = $('#qendTime').val();
+		var numTakes = $('#numTakes').val();
+
+		// 
+		var questionArr = [];
+		$('#questionlist .quizQuestion').each(function() {
+			var value = $(this).val();
+			questionArr.push(value);		
+		});
+
+		var answerArr = [];
+		$('#questionlist .quizAnswer').each(function() {
+			var value = $(this).val();
+			answerArr.push(value);		
+		});
+
+		console.log(questionArr);
+		console.log(answerArr);
+		var numHours = (calculateHours(qstartTime, qendTime) * 0.0001);
+		//console.log("quiz hours " + numHours);
+		console.log("quiz minutes " + numHours);
+		var dateToday = new Date();
+		var dateErrors = true,
+			timeErrors = true,
+			qaErrors = true;
+
+		$('p#qDate').text('');
+		$('p#qsTime').text('');
+		$('p#qeTime').text('');
+		$('p#qListError').text('');
+
+		// date ; empty, earlier than today
+		if(quizDate == "Invalid Date" || !quizDate) {
+			$('p#qDate').text('Set date.');
+		}
+		else if(quizDate < dateToday) {
+			$('p#qDate').text('Date should not be earlier than today.');
+		}
+		else dateErrors = false;
+
+		// time ; min 30 mins max 1 hr 30 mins
+		if(!qstartTime || !qendTime) {
+			if(!qstartTime) $('p#qsTime').text('Set time.');
+			if(!qendTime) $('p#qeTime').text('Set time.');
+		}
+		else if(numHours > 1.3 || numHours < 0.3) {
+			if(numHours > 1.3) $('p#qeTime').text('Time should not exceed 90 minutes.');
+			if(numHours < 0.3) $('p#qeTime').text('Time should at least be 30 minutes.');
+		}
+		else timeErrors = false;
+
+		// question answer ; empty
+		var numItems = questionArr.length;
+		for(var i = 0; i < numItems; i++) {
+			if(questionArr[i] === "" || answerArr[i] === "")
+				$('p#qListError').text('Some fields are empty.');
+			else qaErrors = false;
+		}
+
+		// pass quizid*, classid, quizDate, startTime, endTime, numTakes, numItems, qArr, aArr
+		if(!timeErrors && !dateErrors && !qaErrors) {
+			$post('/create-quiz', { section: quizClass, quizDate: quizDate, startTime: qstartTime, endTime: qendTime, numTakes: numTakes, numItems: numItems.
+				qArr: questionArr, ansArr: answerArr}, function(res) {
+				switch(res.status) {
+					case 200: {
+						alert(res.mssg);
+						window.location.href = '/quiz-list';
+						break;
+					}
+					case 401: {
+						alert(res.mssg);
+						break;
+					}
+					case 500: {
+						alert(res.mssg);
+						break;
+					}
+				}
+			});
+		}
+
 	});
 
 	// DEACTIVATE ACCOUNT

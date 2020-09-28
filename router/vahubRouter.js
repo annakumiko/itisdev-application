@@ -22,8 +22,8 @@ router.get('/add-trainees/:section/:course', controller.getAddTrainees);
 router.get('/quiz-list', controller.getQuizList);
 router.get('/create-quiz', controller.getCreateQuiz);
 router.get('/scoresheets/:section/:day', controller.getScoresheets);
-router.get('/classes-summary', controller.getSummaryReports);
-router.get('/class-detailed/:classid', controller.getDetailedReports);
+router.get('/classes-summary', controller.getClassSummary);
+router.get('/class-detailed/:classid', controller.getClassDetailed);
 
 // TRAINEE
 router.get('/verification', controller.getVerification);
@@ -49,6 +49,7 @@ router.post('/add-trainees', middleware.validateAddTrainees, controller.postAddT
 router.post('/delete-class', controller.postDeleteClass);
 router.post('/remove-trainee', controller.postRemoveTrainee);
 router.post('/scoresheets', controller.postScoresheets);
+router.post('/create-quiz', middleware.validateCreateQuiz, controller.postCreateQuiz);
 
 // TRAINEE
 router.post('/verification', controller.postVerification);
