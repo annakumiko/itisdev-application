@@ -86,7 +86,7 @@ function createQuiz(quizid, classid, date, stime, etime, nTakes, nItems) {
 }
 
 // constructor for items
-function createItems(itemNo, quizid, q, a) {
+function createItem(itemNo, quizid, q, a) {
 	var tempItem = {
 		itemNo: itemNo,
 		quizID: quizid,
@@ -139,7 +139,7 @@ function n(n) {
 }
 
 // format date
-function getDate(date) {
+function formatDate(date) {
 	var newDate = new Date(date);
 
 	var mm = newDate.getMonth() + 1;
@@ -164,8 +164,22 @@ function getDate(date) {
 	return mm + " " + dd + ", " + yy;
 }
 
+function formatNiceDate(date) {
+	var newDate = new Date(date);
+	// adjust 0 before single digit date
+	let day = ("0" + newDate.getDate()).slice(-2);
+
+	// current month
+	let month = ("0" + (newDate.getMonth() + 1)).slice(-2);
+
+	// current year
+	let year = newDate.getFullYear();
+
+	return year + "-" + month + "-" + day;
+}
+
 //format time
-function getTime(time) {
+function formatTime(time) {
 	var time = new Date(time);
 
 	// console.log("time: " + time)
@@ -364,8 +378,8 @@ const rendFunctions = {
 
 
 				for(let i = 0; i < classVar.length; i++) {
-					sDate = getDate(classVar[i].classList.startDate);
-					eDate = getDate(classVar[i].classList.endDate);
+					sDate = formatDate(classVar[i].classList.startDate);
+					eDate = formatDate(classVar[i].classList.endDate);
 
 					classVar[i].classList.startDate = sDate;
 					classVar[i].classList.endDate = eDate;
@@ -456,10 +470,10 @@ const rendFunctions = {
  			// console.log("numclasses: " + classVar.length);
  			
 			for(let i = 0; i < classVar.length; i++) {
-				sDate = getDate(classVar[i].classList.startDate);
-				eDate = getDate(classVar[i].classList.endDate);
-				sTime = getTime(classVar[i].classList.startTime);
-				eTime = getTime(classVar[i].classList.endTime);
+				sDate = formatDate(classVar[i].classList.startDate);
+				eDate = formatDate(classVar[i].classList.endDate);
+				sTime = formatTime(classVar[i].classList.startTime);
+				eTime = formatTime(classVar[i].classList.endTime);
 
 				classVar[i].classList.startDate = sDate;
 				classVar[i].classList.endDate = eDate;
@@ -595,8 +609,6 @@ const rendFunctions = {
 							});
 						}
 					});
-
-
 				}
 			});
  		}
@@ -607,7 +619,7 @@ const rendFunctions = {
  	},
 
  	getAddTrainees: async function(req, res, next) {
- 		console.log(req.params.course);
+ 		// console.log(req.params.course);
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {	
  				var classSelected = await classesModel.findOne({section: req.params.section});
@@ -699,7 +711,7 @@ const rendFunctions = {
 				res.send({status: 200, mssg: JSON.stringify(trainee)});
 			}
 		});
- 	}, 
+ 	},
 
  	getQuizList: async function(req, res, next) {
  		if(req.session.user) {
@@ -716,9 +728,12 @@ const rendFunctions = {
 				]);		
 
  				for(var i = 0; i < quizzes.length; i++) {
- 					quizzes[i].quizDate = getDate(quizzes[i].quizDate);
+ 					quizzes[i].quizDate = formatDate(quizzes[i].quizDate);
+ 					quizzes[i].startTime = formatTime(quizzes[i].startTime);
+ 					quizzes[i].endTime = formatTime(quizzes[i].endTime);
  				}
-				// console.log(quizzes);
+				
+				// get the items
 
  				res.render('quizlist', {
  					quizzes: quizzes
@@ -736,15 +751,27 @@ const rendFunctions = {
 
  				// date today
  				var date = new Date();
- 				var dateToday = getDate(date);
+ 				var dateToday = formatDate(date);
 
  				// classes
  				var classes = await classesModel.find({trainerID: userID});
  				var trainerClasses = JSON.parse(JSON.stringify(classes));
 
+ 				// items
+ 				var items = [{
+ 					question: "",
+ 					answer: ""
+ 				}];
+
+ 				var qItems = JSON.parse(JSON.stringify(items));
+ 			//	console.log(qItems);
+
  				res.render('create-quiz', {
- 					date: dateToday,
- 					classes: trainerClasses
+ 					//date: dateToday,
+ 					classes: trainerClasses,
+ 					secSelected: trainerClasses[0].section,
+ 					items: qItems,
+ 					pageName: "Create"
  				});		
  			} else res.redirect('/');
  		} else res.redirect('/login');
@@ -754,29 +781,119 @@ const rendFunctions = {
  		let { section, quizDate, startTime, endTime, numTakes, numItems, qArr, ansArr } = req.body;
 
  		// generate quizid
- 		var quizID = generateQuizID;
+ 		var quizID = generateQuizID();
 
  		// get classid
  		var classSelected = await db.findOne(classesModel, {section: section});
  		var classID = classSelected.classID;
 
- 		var sTime = new Date(startTime);
- 		var eTime = new Date(endTime);
+ 		var sTime = new Date("Jan 01 2020 " + startTime + ":00"),
+ 			eTime = new Date("Jan 01 2020 " + endTime + ":00");
 
  		var quiz = createQuiz(quizID, classID, quizDate, sTime, eTime, numTakes, numItems);
 
- 		// insert to quizzesdb
- 		let qInsert = await quizzesModel.create(quiz, function(err) {
+ 		//insert to quizzesdb
+ 		var qInsert = quizzesModel.create(quiz, function(err) {
  			if(err) {
- 				res.send({status: 500, mssg: "Server Error: Cannot create quiz."})
- 			}
+ 				console.log(err);
+ 				res.send({status: 500, mssg: "Server Error: Cannot create quiz."});
+ 			}	
  			else {
- 				/// insert items
+ 				for(var i = 0; i < numItems; i++) {
+		 			var itemNo = "ITEM" + (i+1);
+		 			var item = createItem(itemNo, quizID, qArr[i], ansArr[i]);
+					var itemInsert = itemsModel.create(item, function(err) {
+						if(err) 
+							console.log(err);
+					});
+				}
+
+				res.send({status: 200, mssg: "Quiz created!"});
  			}
  		});
+ 	},
 
- 		console.log(qInsert);
+ 	getUpdateQuiz: async function(req, res, next) {
+ 		if(req.session.user) {
+ 			if(req.session.user.userType === "Trainer") {
+ 				var userID = req.session.user.userID;
 
+ 				// classes
+ 				var classes = await classesModel.find({trainerID: userID});
+ 				var trainerClasses = JSON.parse(JSON.stringify(classes));
+
+ 				// date
+ 				var qDate = formatNiceDate(req.params.qDate);
+
+ 				// get items
+ 				var qID = req.params.quizID;
+ 				var items = await itemsModel.find({quizID: qID});
+ 				var quizItems = JSON.parse(JSON.stringify(items));
+
+ 				res.render('create-quiz', {
+ 						qID: qID,
+ 						quizDate: qDate,
+ 						secSelected: req.params.section,
+ 						sTime: req.params.sTime,
+ 						eTime: req.params.eTime,
+ 						nTakes: req.params.nTakes,
+ 						classes: trainerClasses,
+ 						items: quizItems,
+ 						pageName: "Update"
+ 				});
+ 			} else res.redirect('/');
+ 		} else res.redirect('/login');
+ 	},
+
+ 	postUpdateQuiz: async function(req, res, next) {
+ 		let { qID, section, quizDate, startTime, endTime, numTakes, numItems, qArr, ansArr } = req.body;
+
+ 		// get classid
+ 		var classSelected = await db.findOne(classesModel, {section: section});
+ 		var classID = classSelected.classID;
+
+ 		var sTime = new Date("Jan 01 2020 " + startTime + ":00"),
+ 			eTime = new Date("Jan 01 2020 " + endTime + ":00");
+
+ 		//var quiz = createQuiz(quizID, classID, quizDate, sTime, eTime, numTakes, numItems);
+
+ 		//update
+ 		let qmodel = await quizzesModel.findOneAndUpdate(
+			{ quizID: qID },
+			{ $set: {
+				classID: classID,
+				quizDate: quizDate,
+				startTime: sTime,
+				endTime: eTime,
+				numTakes: numTakes,
+				numItems: numItems
+			}},
+			{ useFindAndModify: false },
+				function(err, match) {
+					if(err) {
+						console.log(err);
+						res.send({status: 500, mssg: "Server Error: Cannot update quiz."});
+					}
+
+				});
+ 		console.log(qmodel);
+ 		
+ 		for(var i = 0; i < numItems; i++) {
+			var itemNo = "ITEM" + (i+1);
+			
+			itemsModel.findOneAndUpdate(
+				{ itemNo: itemNo, quizID: qID },
+				{ $set: {
+					question: qArr[i],
+					answer: ansArr[i]
+				}},
+				{ useFindAndModify: false },
+					function(err, match) {
+						if(err) console.log(err);
+				});
+		}
+		
+		res.send({status: 200, mssg: "Quiz updated!"});
  	},
 
  	getScoresheets: async function(req, res, next) {
@@ -785,9 +902,6 @@ const rendFunctions = {
  				// req.params
  				var sectionSelected = req.params.section;
  				var daySelected = req.params.day;
-
- 				//console.log("section: " + sectionSelected);
- 				//console.log("day: " + daySelected);
 
  				// get skills
  				var skills = await skilltypesModel.find({});
@@ -808,7 +922,6 @@ const rendFunctions = {
  				var trainerClasses = JSON.parse(JSON.stringify(classes));
  				var classSelected = await classesModel.findOne({section: sectionSelected}); // section selected
  				var classID = classSelected.classID;
- 				// var startDate = classSelected.startDate;
 
 				// get trainees class Selected
 				var trainees = await traineelistsModel.aggregate([
@@ -900,8 +1013,7 @@ const rendFunctions = {
 					}},
 					{ useFindAndModify: false },
 					function(err, match) {
-						if(err) 
-						console.log(err);
+						if(err) console.log(err);
 					});
 					console.log("update");
 					console.log(tsUpdate);
@@ -916,7 +1028,7 @@ const rendFunctions = {
 
  		if(traineeInd === trainees.length) 
  			res.send({status:200, mssg:"Scores updated!"});
- 		else res.send({status: 500, mssg: "Error."});
+ 		else res.send({status: 500, mssg: "Server Error: Cannot update scores."});
  	},
 
  	getClassSummary: async function(req, res, next) {
@@ -945,10 +1057,10 @@ const rendFunctions = {
  				var numStudents = [];
  				for(var i = 0; i < classVar.length; i++) {
  					// format date and time
-					sDate = getDate(classVar[i].classList.startDate);
-					eDate = getDate(classVar[i].classList.endDate);
-					sTime = getTime(classVar[i].classList.startTime);
-					eTime = getTime(classVar[i].classList.endTime);
+					sDate = formatDate(classVar[i].classList.startDate);
+					eDate = formatDate(classVar[i].classList.endDate);
+					sTime = formatTime(classVar[i].classList.startTime);
+					eTime = formatTime(classVar[i].classList.endTime);
 
 					classVar[i].classList.startDate = sDate;
 					classVar[i].classList.endDate = eDate;

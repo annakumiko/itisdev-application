@@ -200,9 +200,6 @@ $(document).ready(function() {
 		}
 		else timeErrors = false;
 
-		// console.log(dateErrors);
-		// console.log(timeErrors);
-
 		// if no errors submit to backend
 		if (!dateErrors && !timeErrors) {
 			$.post('/create-class', {course: course, startDate: startDate, endDate: endDate,
@@ -496,10 +493,10 @@ $(document).ready(function() {
 		console.log(compareDate);
 		console.log(compareDate < today);
 
-	//	if(compareDate < today) {
-	//		alert("This class ended in " + getDate(compareDate) + ". You cannot edit the scores for this class anymore.");
-	//	}
-	//	else {
+		if(compareDate < today) {
+			alert("This class ended in " + getDate(compareDate) + ". You cannot edit the scores for this class anymore.");
+		}
+		else {
 			//hide text, show editor
 			for(var i = 0; i < theScore.length; i++) 
 				theScore[i].style.display = 'none';
@@ -508,7 +505,7 @@ $(document).ready(function() {
 				scoresheetEditor[i].style.display = 'inline';
 			
 			updateScoresheet.style.display = 'inline';
-	//	}
+		}
 	});
 
 	// update scores in db
@@ -598,8 +595,10 @@ $(document).ready(function() {
 		var qstartTime = $('#qstartTime').val();
 		var qendTime = $('#qendTime').val();
 		var numTakes = $('#numTakes').val();
-
+		var qID = $('#qID').text();
 		// 
+
+		console.log(qID);
 		var questionArr = [];
 		$('#questionlist .quizQuestion').each(function() {
 			var value = $(this).val();
@@ -612,11 +611,8 @@ $(document).ready(function() {
 			answerArr.push(value);		
 		});
 
-		console.log(questionArr);
-		console.log(answerArr);
 		var numHours = (calculateHours(qstartTime, qendTime) * 0.0001);
-		//console.log("quiz hours " + numHours);
-		console.log("quiz minutes " + numHours);
+
 		var dateToday = new Date();
 		var dateErrors = true,
 			timeErrors = true,
@@ -642,9 +638,12 @@ $(document).ready(function() {
 			if(!qendTime) $('p#qeTime').text('Set time.');
 		}
 		else if(numHours > 1.3 || numHours < 0.3) {
-			if(numHours > 1.3) $('p#qeTime').text('Time should not exceed 90 minutes.');
-			if(numHours < 0.3) $('p#qeTime').text('Time should at least be 30 minutes.');
-		}
+			if(!(numHours == 0.001)) {
+				if(numHours > 1.3) $('p#qeTime').text('Time should not exceed 90 minutes.');
+				if(numHours < 0.3) $('p#qeTime').text('Time should at least be 30 minutes.');
+			}
+			else timeErrors = false;
+		}		
 		else timeErrors = false;
 
 		// question answer ; empty
@@ -655,28 +654,48 @@ $(document).ready(function() {
 			else qaErrors = false;
 		}
 
-		// pass quizid*, classid, quizDate, startTime, endTime, numTakes, numItems, qArr, aArr
 		if(!timeErrors && !dateErrors && !qaErrors) {
-			$post('/create-quiz', { section: quizClass, quizDate: quizDate, startTime: qstartTime, endTime: qendTime, numTakes: numTakes, numItems: numItems.
-				qArr: questionArr, ansArr: answerArr}, function(res) {
-				switch(res.status) {
-					case 200: {
-						alert(res.mssg);
-						window.location.href = '/quiz-list';
-						break;
+			if($(this).text() === "Create") {
+				$.post('/create-quiz', { section: quizClass, quizDate: quizDate, startTime: qstartTime, endTime: qendTime, numTakes: numTakes, numItems: numItems,
+					qArr: questionArr, ansArr: answerArr}, function(res) {
+					switch(res.status) {
+						case 200: {
+							alert(res.mssg);
+							window.location.href = '/quiz-list';
+							break;
+						}
+						case 401: {
+							alert(res.mssg);
+							break;
+						}
+						case 500: {
+							alert(res.mssg);
+							break;
+						}
 					}
-					case 401: {
-						alert(res.mssg);
-						break;
+				});
+			}
+			else {
+				$.post('/update-quiz', { qID: qID, section: quizClass, quizDate: quizDate, startTime: qstartTime, endTime: qendTime, numTakes: numTakes, numItems: numItems,
+					qArr: questionArr, ansArr: answerArr}, function(res) {
+					switch(res.status) {
+						case 200: {
+							alert(res.mssg);
+							window.location.href = '/quiz-list';
+							break;
+						}
+						case 401: {
+							alert(res.mssg);
+							break;
+						}
+						case 500: {
+							alert(res.mssg);
+							break;
+						}
 					}
-					case 500: {
-						alert(res.mssg);
-						break;
-					}
-				}
-			});
+				});
+			}
 		}
-
 	});
 
 	// DEACTIVATE ACCOUNT
