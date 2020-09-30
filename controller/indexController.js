@@ -1119,6 +1119,92 @@ const rendFunctions = {
 		}
 	 },
 
+ 	getTraineeSummary: async function(req, res, next) {
+		if(req.session.user) {
+			if(req.session.user.userType === "Admin") {
+			
+				var details = await usersModel.find({userType: "Trainee"})
+				var trainees = JSON.parse(JSON.stringify(details));
+				// var trainees = details;	
+
+				// console.log(trainees);
+	
+				var clients = [];
+				var numClients = 0;
+				// var finalGrade = 0;
+				for(var i = 0; i < trainees.length; i++){
+					// finding clients
+					trainees[i].clients = await clientlistsModel.find({traineeID: trainees[i].userID});
+					trainees[i].numClients = trainees[i].clients.length;
+
+					// setting class status
+
+					// getting final grade
+				}
+				console.log(trainees);
+				
+				res.render('trainee-summary', {
+					trainees: trainees,
+				});
+			} else res.redirect('/');
+		} else res.redirect('/login');
+	},
+
+	getTraineeDetailed: async function(req, res, next) {
+		if(req.session.user) {
+			if(req.session.user.userType === "Admin") {
+				var userID = req.params.userID;
+				console.log(userID);
+				
+				var details = await usersModel.find({userID: userID});
+				var user = JSON.parse(JSON.stringify(details));
+				// console.log(user[0].userID);
+
+				//classes
+
+				//quizzes
+
+				//skills
+				var skills = await skilltypesModel.find({});
+				var skillTypes = JSON.parse(JSON.stringify(skills));
+				// console.log(skillTypes);
+	
+				var skillScores = [];
+				for (var i = 0; i < skillTypes.length; i++) {
+					var data = await skillassessmentsModel.find({skillID: skillTypes[i].skillID, traineeID: userID});
+					var dumpScores = JSON.parse(JSON.stringify(data));
+					var scores = [];
+	
+					for(var x = 0; x < 8; x++)
+						scores[x] = dumpScores[x].skillScore;
+						
+					skillTypes[i].skillScores = scores;
+				}
+				// console.log(skillTypes);
+
+				//clients
+				var clientsVar = await clientlistsModel.aggregate([
+					{$match: {traineeID: userID}},
+					{$lookup: {
+						 from: "clients",
+						 localField: "clientID",
+						 foreignField: "clientID",
+						 as: "clientList" // SLICE
+					}},
+					{$unwind: "$clientList"}
+				]);
+				// console.log(clientsVar);
+
+				res.render('trainee-detailed', {
+					userID: userID,
+					fullName: user[0].lastName + ", " + user[0].firstName,
+					skills: skillTypes,
+					clients: clientsVar,
+				});		
+			} else res.redirect('/');
+		} else res.redirect('/login');
+	},
+
 	 getDefineCourse: function(req, res, next) {
 		if (req.session.user) {
 			if(req.session.user.userType === "Admin") {
@@ -1126,6 +1212,8 @@ const rendFunctions = {
 				coursesModel.find({}, function(err, data) {
 					var details = JSON.parse(JSON.stringify(data));
 					var courseDet = details;	
+
+					console.log(courseDet);
 
 					res.render('define-course', {
 					 courseList: courseDet
@@ -1202,10 +1290,7 @@ const rendFunctions = {
 	 postUpdateClients: async function(req, res, next) {
 		let { clientID, clientName, companyName, email, contactNo, isActive } = req.body;
 
-		// console.log(clientID.length);
 			for(var i = 0; i < clientID.length; i++){
-				// var client = addClient(clientID[i], clientName[i], companyName[i], email[i], contactNo[i], isActive[i])
-				// console.log(client);
 
 				clientsModel.findOneAndUpdate(
 					{ clientID: clientID[i] },
@@ -1217,11 +1302,7 @@ const rendFunctions = {
 						if(err){
 							console.log(err);
 						}
-						// else{
-						// 	res.send({status: 200, mssg: "Successfully updated client details!"});
-						// }
 					})
-				// console.log(updateClient);
 			}
 
 			if(i < clientID.length)
