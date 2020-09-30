@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+{{>sidebar-admin}}
+
+<div style="padding-left: 100px">
+<div style="padding-top: 20px" class="report-header">
+  <div> <label style="font-size: 30px;color: #006739;"><strong>Trainee Summary Report</strong></label>
+        <p>something</p>
+        <hr style="width: 97%;">
+  </div>
+
+  <div>
+    <table class="reports" style="width: 95%;">
+        <thead style="background-color: #f6f6f6; padding:5px; height: 35px;">
+            <tr class="row-reports" style="text-align: left;">
+                <th class="col-reports" style="20%">Trainee ID</th>
+                <th class="col-reports" style="40%">Full Name</th>
+                <th class="col-reports" style="10%">No. of Clients</th>
+                <th class="col-reports" style="20%">Training Status</th>
+                <th class="col-reports" style="10%">Final Grade</th>
+            </tr>
+        </thead>
+        <tbody style="background-color: #fff;">
+            {{#each trainees}}
+            <tr  class="row-reports row-item" onclick="window.location.href = '/trainee-detailed/{{{userID}}}'">
+                <td class="col-reports" style="text-align: center;">{{userID}}</td>
+                <td class="col-reports" style="text-align: left;">{{firstName}} {{lastName}}</td>
+                <td class="col-reports" style="text-align: right;">{{numClients}}</td>
+                <td class="col-reports" style="text-align: center;">{{status}}</td>
+                <td class="col-reports" style="text-align: right;">{{finalGrade}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+  </div>
+
+    <div style="padding-top: 10px;"class="report-footer">
+        <p>END OF REPORT</p>
+    </div>
+</div>
+</div>

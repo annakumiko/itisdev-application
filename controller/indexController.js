@@ -1300,6 +1300,119 @@ const rendFunctions = {
 		}
 	 },
 
+ 	getTraineeSummary: async function(req, res, next) {
+		if(req.session.user) {
+			if(req.session.user.userType === "Admin") {
+			
+				var details = await usersModel.find({userType: "Trainee"})
+				var trainees = JSON.parse(JSON.stringify(details));
+				// var trainees = details;	
+
+				// console.log(trainees);
+	
+				var clients = [];
+				var numClients = 0;
+				// var finalGrade = 0;
+				for(var i = 0; i < trainees.length; i++){
+					// finding clients
+					trainees[i].clients = await clientlistsModel.find({traineeID: trainees[i].userID});
+					trainees[i].numClients = trainees[i].clients.length;
+
+					// setting class status
+
+					// getting final grade
+				}
+				// console.log(trainees);
+				
+				res.render('trainee-summary', {
+					trainees: trainees,
+				});
+			} else res.redirect('/');
+		} else res.redirect('/login');
+	},
+
+	getTraineeDetailed: async function(req, res, next) {
+		if(req.session.user) {
+			if(req.session.user.userType === "Admin") {
+				var userID = req.params.userID;
+				console.log(userID);
+				
+				var details = await usersModel.find({userID: userID});
+				var user = JSON.parse(JSON.stringify(details));
+				// console.log(user[0].userID);
+
+				//classes
+ 				var classVar = await traineelistsModel.aggregate([
+					{$match: {traineeID: userID}},
+					{$lookup: {
+						 from: "classes",
+						 localField: "classID",
+						 foreignField: "classID",
+						 as: "classList" // SLICE
+					}},
+					{$unwind: "$classList"},
+					{$lookup: {
+						 from: "courses",
+						 localField: "classList.courseID",
+						 foreignField: "courseID",
+						 as: "course"
+					 }},
+					 {$unwind: "$course"}
+			 ]);
+			 console.log(classVar);
+
+			 // woPS
+			 var trainer = '';
+			 for(var x = 0; x < classVar.length; x++)
+			 	classVar[x].trainer = await classesModel.find({trainerID: classVar[x].classList.trainerID});
+
+				 console.log(classVar);
+
+				//quizzes
+
+				//skills
+				var skills = await skilltypesModel.find({});
+				var skillTypes = JSON.parse(JSON.stringify(skills));
+				// console.log(skillTypes);
+	
+				var skillScores = [];
+				for (var i = 0; i < skillTypes.length; i++) {
+					var data = await skillassessmentsModel.find({skillID: skillTypes[i].skillID, traineeID: userID});
+					var dumpScores = JSON.parse(JSON.stringify(data));
+					var scores = [];
+	
+					for(var x = 0; x < 8; x++)
+						scores[x] = dumpScores[x].skillScore;
+						
+					skillTypes[i].skillScores = scores;
+				}
+				// console.log(skillTypes);
+
+				//clients
+				var clientsVar = await clientlistsModel.aggregate([
+					{$match: {traineeID: userID}},
+					{$lookup: {
+						 from: "clients",
+						 localField: "clientID",
+						 foreignField: "clientID",
+						 as: "clientList" // SLICE
+					}},
+					{$unwind: "$clientList"}
+				]);
+				// console.log(clientsVar);
+
+				res.render('trainee-detailed', {
+					userID: userID,
+					fullName: user[0].lastName + ", " + user[0].firstName,
+					classes: classVar,
+					//quiz
+					skills: skillTypes,
+					clients: clientsVar,
+				});		
+			} else res.redirect('/');
+		} else res.redirect('/login');
+	},
+
 	 getDefineCourse: function(req, res, next) {
 		if (req.session.user) {
 			if(req.session.user.userType === "Admin") {
@@ -1307,6 +1420,8 @@ const rendFunctions = {
 				coursesModel.find({}, function(err, data) {
 					var details = JSON.parse(JSON.stringify(data));
 					var courseDet = details;	
+
+					console.log(courseDet);
 
 					res.render('define-course', {
 					 courseList: courseDet
@@ -1380,22 +1495,28 @@ const rendFunctions = {
 		else res.redirect('login');
 	 },
 
-	 postUpdateClients: function(req, res, next) {
+	 postUpdateClients: async function(req, res, next) {
 		let { clientID, clientName, companyName, email, contactNo, isActive } = req.body;
 
-		// console.log(clientName, companyName, email, contactNo);
-		var clientCount = clientsModel.countDocuments();
-		console.log(clientCount);
+			for(var i = 0; i < clientID.length; i++){
 
-		clientsModel.update(client, function(err){		
-			if (err) {
-				res.send({status: 500, mssg: "Error in adding new client."});
-				console.log("Error in updating course");
+				clientsModel.findOneAndUpdate(
+					{ clientID: clientID[i] },
+					{ $set: {
+						clientName: clientName[i], companyName: companyName[i], email: email[i], contactNo: contactNo[i], isActive: isActive[i],
+					}},
+					{ useFindAndModify: false },
+					function(err, match) {
+						if(err){
+							console.log(err);
+						}
+					})
 			}
-			else{
-				res.send({status: 200, mssg: "Client added!"});
-			}
-		})
+
+			if(i < clientID.length)
+				res.send({status: 500, mssg: "Error in updating client details."})
+			else 
+				res.send({status: 200, mssg:"Client details updated successfully!"});
 		},
 
 	 postAddClient: function(req, res, next) {

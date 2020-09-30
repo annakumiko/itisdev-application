@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+
+{{>sidebar-admin}}
+
+<div style="padding: 20px; padding-left: 100px" class="report-header">
+  <div><label style="font-size: 30px;color: #006739;"><strong>Detailed Trainee Report: </strong></label>
+        <label style="font-size: 30px;color: #006739;" id="classid-detailed"> <strong> {{fullName}} </strong> </label>
+        <p>something</p>
+        <hr style="width: 97%;">
+  </div>
+   
+   <div class="detailed-classes">
+        <label style="font-size: 25px;color: #006739;"><strong>Quiz Grades</strong></label>
+        <table class="reports">
+            <thead style="background-color: #f6f6f6; padding:5px; height: 35px;">
+                <tr class="row-reports">
+                    <th class="col-reports">ClassID</th>
+                    <th class="col-reports">Section</th>
+                    <th class="col-reports">Course</th>
+                    <th class="col-reports">Trainer</th>
+
+                </tr>
+            </thead>
+            <tbody style="background-color: #fff;">
+                {{#each classes}}
+                <tr  class="row-reports">
+                    <td class="col-reports" style="text-align: center;">{{classID}}</td>
+                    <td class="col-reports" style="text-align: center;">{{classList.section}}</td>
+                    <td class="col-reports" style="text-align: left;">{{course.courseName}}</td>
+                    <td class="col-reports" style="text-align: left;">{{classList.trainer}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <div class="detailed-quizzes">
+        <label style="font-size: 25px;color: #006739;"><strong>Quiz Grades</strong></label>
+        <table class="reports">
+            <thead style="background-color: #f6f6f6; padding:5px; height: 35px;">
+                <tr class="row-reports">
+                    <th class="col-reports">Quiz Name</th>
+                    <th class="col-reports">Score</th>
+                    <th class="col-reports">Out of</th>
+                </tr>
+            </thead>
+            <tbody style="background-color: #fff;">
+                {{#each quizzes}}
+                <tr  class="row-reports">
+                    <td class="col-reports" style="text-align: left;">{{Quiz Name}}</td>
+                    <td class="col-reports" style="text-align: right;">{{score}}</td>
+                    <td class="col-reports" style="text-align: right;">{{outOf}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <div class="detailed-skills">
+        <label style="font-size: 25px;color: #006739;"><strong>Skill Grades</strong></label>
+               <table class="reports">
+            <thead style="background-color: #f6f6f6; padding:5px; height: 35px;">
+                <tr class="row-reports">
+                    <th class="col-reports">Skill Name</th>
+                    <th class="col-reports">Day 1</th>
+                    <th class="col-reports">Day 2</th>
+                    <th class="col-reports">Day 3</th>
+                    <th class="col-reports">Day 4</th>
+                    <th class="col-reports">Day 5</th>
+                    <th class="col-reports">Day 6</th>
+                    <th class="col-reports">Day 7</th>
+                    <th class="col-reports">Day 8</th>
+                </tr>
+            </thead>
+            <tbody style="background-color: #fff;">
+                {{#each skills}}
+                <tr  class="row-reports">
+                    <td class="col-reports" style="text-align: left;">{{skillName}}</td>
+                    <td class="col-reports" style="text-align: right;">{{skillScores.[0]}}</td>
+                    <td class="col-reports" style="text-align: right;">{{skillScores.[1]}}</td>
+                    <td class="col-reports" style="text-align: right;">{{skillScores.[2]}}</td>
+                    <td class="col-reports" style="text-align: right;">{{skillScores.[3]}}</td>
+                    <td class="col-reports" style="text-align: right;">{{skillScores.[4]}}</td>
+                    <td class="col-reports" style="text-align: right;">{{skillScores.[5]}}</td>
+                    <td class="col-reports" style="text-align: right;">{{skillScores.[6]}}</td>
+                    <td class="col-reports" style="text-align: right;">{{skillScores.[7]}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <div class="detailed-clients">
+        <label style="font-size: 25px;color: #006739;"><strong>Contacted Clients</strong></label>
+        <table class="reports">
+            <thead style="background-color: #f6f6f6; padding:5px; height: 35px;">
+                <tr class="row-reports">
+                    <th class="col-reports">Client Name</th>
+                    <th class="col-reports">Company Name</th>
+                    <th class="col-reports">Email</th>
+                    <th class="col-reports">Contact Number</th>
+                </tr>
+            </thead>
+            <tbody style="background-color: #fff;">
+                {{#each clients}}
+                <tr  class="row-reports">
+                    <td class="col-reports" style="text-align: left;">{{clientList.clientName}}</td>
+                    <td class="col-reports" style="text-align: left;">{{clientList.companyName}}</td>
+                    <td class="col-reports" style="text-align: left;">{{clientList.email}}</td>
+                    <td class="col-reports" style="text-align: left;">{{clientList.contactNo}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="padding-top: 10px;"class="report-footer">
+        <p>END OF REPORT</p>
+    </div>
+</div>

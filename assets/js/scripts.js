@@ -441,31 +441,60 @@ $(document).ready(function() {
 		}			
 	});
 
-	// COLLECT DATA FROM TABLE
+	// UPDATE CLIENT DETAILS
 	$('button#saveCLBTN').click(function() {
-		console.log("hi there");
-		// $('#clientTable').find('input[type=text]').each(function() {
-		// 	console.log(this.value)			
-		// });
+		var isActive = document.getElementsByClassName('active');
+		var clientName = document.getElementsByClassName('clientName');
+		// var clientName = $(".clientName").val();
+		var companyName = document.getElementsByClassName('companyName');
+		var email = document.getElementsByClassName('email');
+		var contactNo = document.getElementsByClassName('contactNo');
 
-		// var tableData = document.getElementById('clientTable');
-		// var info = "";
+		var activeArray = [];
+		var idArray = [];
+		var nameArray = [];
+		var companyArray = [];
+		var emailArray = [];
+		var numberArray = [];
+		$('p#eUpdateClients').text('');
 
-		// 	// LOOP THROUGH EACH ROW OF THE TABLE AFTER HEADER.
-		// 	for (i = 1; i < tableData.rows.length; i++) {
+		$("#clients tr").each(function() {
+			idArray.push(this.id);
+		});	
 
-		// 		// GET THE CELLS COLLECTION OF THE CURRENT ROW.
-		// 		var objCells = tableData.rows.item(i).cells;
+		for(var i = 0; i < idArray.length; i++){
+			if(isActive[i].value === 'on')
+				activeArray.push(true);
+			else
+				activeArray.push(false);
+		}
+		
+		for(var i = 0; i < idArray.length; i++){
+			nameArray.push(clientName[i].value);
+			companyArray.push(companyName[i].value);
+			emailArray.push(email[i].value);
+			numberArray.push(contactNo[i].value);
+		}
 
-		// 		// LOOP THROUGH EACH CELL OF THE CURENT ROW TO READ CELL VALUES.
-		// 		for (var j = 0; j < objCells.length; j++) {
-		// 				info.innerHTML = info.innerHTML + ' ' + objCells.item(j).innerHTML;
-		// 		}
-		// 		info.innerHTML = info.innerHTML + '<br />';     // ADD A BREAK (TAG).
-		// }
+		// console.log(idArray);
+		// console.log(activeArray);
+		// console.log(nameArray);
+		// console.log(companyArray);
+		// console.log(emailArray);
+		// console.log(numberArray);
 
-		// console.log(info);
-
+		$.post('/update-clientlist', {clientID: idArray, clientName: nameArray, companyName: companyArray, email: emailArray, contactNo: numberArray, isActive: activeArray }, function(result){
+			switch(result.status) {
+				case 200: {
+					alert(result.mssg);
+					window.location.href = '/manage-clientlist';
+				}
+				case 500: {
+					$('p#eUpdateClients').text(res.mssg);
+					break;
+				}
+			}
+		})
 	});
 
 	// ADD TRAINEES VALIDATION

@@ -43,6 +43,8 @@ router.post('/define-course', controller.postDefineCourse);
 router.post('/add-client', controller.postAddClient);
 router.post('/remove-client', controller.postRemoveClient);
 router.post('/update-clientlist', controller.postUpdateClients);
+router.get('/trainee-summary', controller.getTraineeSummary);
+router.get('/trainee-detailed/:userID', controller.getTraineeDetailed);
 
 // TRAINER
 router.post('/create-class', middleware.validateCreateClass, controller.postCreateClass);
