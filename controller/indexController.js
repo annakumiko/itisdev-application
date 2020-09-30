@@ -239,6 +239,12 @@ function generateClientID() {
 	return clientID;
 }
 
+// computations
+
+function computeGrades(s, q) {
+	return "P";
+}
+
 // main functions for getting and posting data
 const rendFunctions = {
 
@@ -1071,14 +1077,39 @@ const rendFunctions = {
 					var trainees = await traineelistsModel.find({classID: classVar[i].classID});
 					classVar[i].numStudents = trainees.length;
 
+					// passed/failed
+					var passed = 0, failed = 0;
+					for(var j = 0; j < trainees.length; j++) {
+						// get skill scores
+						var tScores = [];
+						var scores = await skillassessmentsModel.find({traineeID: trainees[j].traineeID});
+						var strScores = JSON.parse(JSON.stringify(scores));
+
+						for(var k = 0; k < scores.length; k++) {
+							tScores[k] = (strScores[k].skillScore);
+						}
+
+						// get quiz scores
+						var qScores = ['100', '100', '100'];
+
+						// compute
+						var remarks = computeGrades(tScores, qScores);
+						
+						if(remarks === "P") passed++;
+						else failed++;
+					}
+
+					classVar[i].ttlPass = passed;
+					classVar[i].ttlFail = failed;
+
 					// total quizzes
 					var quizzes = await quizzesModel.find({classID: classVar[i].classID});
 					classVar[i].numQuizzes = quizzes.length;
 				}
 
 				
-				console.log(numStudents);
-				console.log(classVar);
+				// console.log(numStudents);
+				// console.log(classVar);
  				res.render('classes-summary', {
  					classes: classVar,
  					//numStudents: numStudents
