@@ -7,8 +7,33 @@
         <label style="font-size: 30px;color: #006739;" id="classid-detailed"> <strong> {{fullName}} </strong> </label>
         <p>something</p>
         <hr style="width: 97%;">
-</div>
+  </div>
+   
+   <div class="detailed-classes">
+        <label style="font-size: 25px;color: #006739;"><strong>Quiz Grades</strong></label>
+        <table class="reports">
+            <thead style="background-color: #f6f6f6; padding:5px; height: 35px;">
+                <tr class="row-reports">
+                    <th class="col-reports">ClassID</th>
+                    <th class="col-reports">Section</th>
+                    <th class="col-reports">Course</th>
+                    <th class="col-reports">Trainer</th>
 
+                </tr>
+            </thead>
+            <tbody style="background-color: #fff;">
+                {{#each classes}}
+                <tr  class="row-reports">
+                    <td class="col-reports" style="text-align: center;">{{classID}}</td>
+                    <td class="col-reports" style="text-align: center;">{{classList.section}}</td>
+                    <td class="col-reports" style="text-align: left;">{{course.courseName}}</td>
+                    <td class="col-reports" style="text-align: left;">{{classList.trainer}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    <br>
     <div class="detailed-quizzes">
         <label style="font-size: 25px;color: #006739;"><strong>Quiz Grades</strong></label>
         <table class="reports">

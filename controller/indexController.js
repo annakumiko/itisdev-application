@@ -1141,7 +1141,7 @@ const rendFunctions = {
 
 					// getting final grade
 				}
-				console.log(trainees);
+				// console.log(trainees);
 				
 				res.render('trainee-summary', {
 					trainees: trainees,
@@ -1161,6 +1161,31 @@ const rendFunctions = {
 				// console.log(user[0].userID);
 
 				//classes
+ 				var classVar = await traineelistsModel.aggregate([
+					{$match: {traineeID: userID}},
+					{$lookup: {
+						 from: "classes",
+						 localField: "classID",
+						 foreignField: "classID",
+						 as: "classList" // SLICE
+					}},
+					{$unwind: "$classList"},
+					{$lookup: {
+						 from: "courses",
+						 localField: "classList.courseID",
+						 foreignField: "courseID",
+						 as: "course"
+					 }},
+					 {$unwind: "$course"}
+			 ]);
+			 console.log(classVar);
+
+			 // woPS
+			 var trainer = '';
+			 for(var x = 0; x < classVar.length; x++)
+			 	classVar[x].trainer = await classesModel.find({trainerID: classVar[x].classList.trainerID});
+
+				 console.log(classVar);
 
 				//quizzes
 
@@ -1198,6 +1223,8 @@ const rendFunctions = {
 				res.render('trainee-detailed', {
 					userID: userID,
 					fullName: user[0].lastName + ", " + user[0].firstName,
+					classes: classVar,
+					//quiz
 					skills: skillTypes,
 					clients: clientsVar,
 				});		
