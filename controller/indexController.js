@@ -877,7 +877,7 @@ const rendFunctions = {
 
 				});
  		console.log(qmodel);
- 		
+
  		for(var i = 0; i < numItems; i++) {
 			var itemNo = "ITEM" + (i+1);
 			
@@ -1070,6 +1070,10 @@ const rendFunctions = {
 					// num students
 					var trainees = await traineelistsModel.find({classID: classVar[i].classID});
 					classVar[i].numStudents = trainees.length;
+
+					// total quizzes
+					var quizzes = await quizzesModel.find({classID: classVar[i].classID});
+					classVar[i].numQuizzes = quizzes.length;
 				}
 
 				
@@ -1099,15 +1103,24 @@ const rendFunctions = {
  				}
 
  				var classTrainees = JSON.parse(JSON.stringify(traineeDet));
+
  				// get quizzes
+ 				var q = await quizzesModel.find({classID: classID});
+ 				var quizzes = JSON.parse(JSON.stringify(q));
+
+ 				for(var i = 0; i < quizzes.length; i++) {
+ 					q[i].quizDate = formatDate(q[i].quizDate);
+ 				}
+
+
  				res.render('class-detailed', {
  					classID: classID,
- 					trainees: classTrainees
+ 					trainees: classTrainees,
+ 					quizzes: quizzes
  				});		
  			} else res.redirect('/');
  		} else res.redirect('/login');
  	},
-
 
 	// for encrypting / mimic register
 	postRegister: async function(req, res, next) {

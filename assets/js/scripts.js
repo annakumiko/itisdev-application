@@ -40,6 +40,85 @@ function getDate(date) {
 	return mm + " " + dd + ", " + yy;
 }
 
+function n(n) {
+    return n > 9 ? "" + n: "0" + n;
+}
+
+function reverseDate(date) {
+	var strDate = date.toString();
+	var res = strDate.split(" ");
+	
+	if(res.length == 3) {
+		var mm = res[0];
+		var day = n(res[1].slice("", -1));
+		var year = res[2];
+	} else {
+		var mm = res[1];
+		var day = n(res[2].slice("", -1));
+		var year = res[3];
+	}
+	
+	console.log(res);
+
+	switch(mm) {
+		case "January": mm = "01"; break;
+		case "February": mm = "02"; break;
+		case "March": mm = "03"; break;
+		case "April": mm = "04"; break;
+		case "May": mm = "05"; break;
+		case "June": mm = "06"; break;
+		case "July": mm = "07"; break;
+		case "August": mm = "08"; break;
+		case "September": mm = "09"; break;
+		case "October": mm = "10"; break;
+		case "November": mm = "11"; break;
+		case "December": mm = "12"; break;
+	}
+
+	var rev = year + "-" + mm + "-" + day;
+
+	return rev;
+}
+
+function classOver() {
+	var today = new Date();
+	// manage trainees & delete btns
+
+	$('.manageTrainees').each(function() {
+		var e = $(this).closest('tr').children('td.eDate').text();
+
+		var reverse = reverseDate(e);
+		var newDate = new Date(reverse);
+
+		console.log(e);
+		console.log(reverse);
+		console.log(newDate);
+
+		if(newDate.valueOf() < today.valueOf())
+			$(this).prop('disabled', true);
+	}); 
+	
+	// quizlist updates
+	$('.updatebtn').each(function() {
+		var e = $(this).closest('tr').children('td.eDate').text();
+
+		var reverse = reverseDate(e);
+		var newDate = new Date(reverse);
+
+		console.log(e);
+		console.log(reverse);
+		console.log(newDate);
+
+		if(newDate.valueOf() < today.valueOf())
+			$(this).prop('disabled', true);
+
+	}); 
+
+	// update quiz + button
+	var pageName = $('#pageName').text();
+	if(pageName == "Update a quiz") $('.addQuestion').prop('disabled', true);
+}
+
 $(document).ready(function() {
 	// LOG-IN VALIDATION
 	$('button#login-btn').click(function() {
@@ -585,7 +664,7 @@ $(document).ready(function() {
                     + "</div> <div class='col' style='visibility: hidden; max-width: 10%;'><button id='addQuestion'class='btn btn-primary' type='button' style='background-color: #3e914d;margin: 30px;'>"
                     + "<strong>+</strong></button></div></div>"
 	
-		$('#questionlist').append(qDiv);					
+		$('#questionlist').append(qDiv);		
 	});
 
 	// QUIZ VALIDATIONS
@@ -596,13 +675,15 @@ $(document).ready(function() {
 		var qendTime = $('#qendTime').val();
 		var numTakes = $('#numTakes').val();
 		var qID = $('#qID').text();
-		// 
+		var isRandomized = $('#randomize').checked();
+
+		console.log("randomized: " + isRandomized); 
 
 		console.log(qID);
 		var questionArr = [];
 		$('#questionlist .quizQuestion').each(function() {
 			var value = $(this).val();
-			questionArr.push(value);		
+			questionArr.push(value);
 		});
 
 		var answerArr = [];

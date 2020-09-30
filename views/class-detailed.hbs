@@ -43,17 +43,18 @@
                 <thead style="background-color: #f6f6f6; padding:5px; height: 35px;">
                     <tr class="row-reports">
                         <th class="col-reports" style="width: 15%">Quiz ID</th>
-                        <th class="col-reports"  style="width: 25%;">Date Given</th>
+                        <th class="col-reports"  style="width: 25%;">Date</th>
                         <th class="col-reports"  style="width: 10%;">Number of Items</th>
                     </tr>
                 </thead>
                 <tbody style="background-color: #fff;" id="endorsedtrainees">
-
+                    {{#each quizzes}}
                     <tr  class="row-reports" onclick="window.location.href = '/class-detailed'">
-                        <td class="col-reports" >hello</td>
-                        <td class="col-reports" >hello</td>
-                        <td class="col-reports" >hello</td>
+                        <td class="col-reports" >{{quizID}}</td>
+                        <td class="col-reports" >{{quizDate}}</td>
+                        <td class="col-reports" >{{numItems}}</td>
                     </tr>
+                    {{/each}}
                 </tbody>
             </table>
         </div>

@@ -26,12 +26,12 @@
                     <tr>
                         <td>{{quizID}}</td>
                         <td>{{quizList.section}}</td>
-                        <td>{{quizDate}}</td>
+                        <td class="eDate">{{quizDate}}</td>
                         <td>{{startTime}} - {{endTime}}</td>
                         <td>{{numItems}}</td>
                         <td>{{numTakes}}</td>
                         <td>
-                            <button onclick="window.location.href = '/update-quiz/{{{quizID}}}/{{{quizDate}}}/{{{quizList.section}}}/{{{startTime}}}/{{{endTime}}}/{{{numTakes}}}'" class="btn btn-primary" type="button" style="background-color: #006739;margin-left: 5px;">Update</button>
+                            <button onclick="window.location.href = '/update-quiz/{{{quizID}}}/{{{quizDate}}}/{{{quizList.section}}}/{{{startTime}}}/{{{endTime}}}/{{{numTakes}}}'" class="btn btn-primary updatebtn" type="button" style="background-color: #006739;margin-left: 5px;">Update</button>
                         </td>
                     </tr>
                     {{/each}}

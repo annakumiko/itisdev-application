@@ -3,7 +3,7 @@
 {{>sidebar-trainer}}
 
 <div style="padding: 20px;padding-left: 100px;">
-    <div><label style="font-size: 24px;color: #006739;"><strong>{{pageName}} a quiz</strong></label>
+    <div><label style="font-size: 24px;color: #006739;" id="pageName"><strong>{{pageName}} a quiz</strong></label>
         <p style="margin: 2px;"> Choose the date, class, and start and end time for the quiz - it should only last for a minimum of 30 minutes and a maximum of 1 hour and 30 minutes. Limit the items to a maximum of 10.</p>
         <p id="qID" style="display: none; margin-left: 5px; max-height: 32px;" val="{{qID}}" >{{qID}}</p>
         <hr>
@@ -81,14 +81,14 @@
                             <input type="text" value="{{{answer}}}"class="quizAnswer" style="margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0); width: 100%; border-radius: 5px;">
                             </div>
                             
-                            <div class="col" style="max-width: 10%;"><button id="addQuestion"class="btn btn-primary" type="button" style="background-color: #3e914d;margin: 30px;"><strong>+</strong></button></div>
+                            <div class="col" style="max-width: 10%;"><button class="btn btn-primary addQuestion" type="button" style="background-color: #3e914d;margin: 30px;"><strong>+</strong></button></div>
 
                         </div>
                         {{/each}}
                     </div>
                     <p class="error" id="qListError"style="margin-left: 5px; max-height: 32px;">{{qListError}}</p>
                     <hr>
-                    <div class="form-check"><input class="form-check-input" type="checkbox" id="randomize"><label class="form-check-label" for="formCheck-1">Randomize quiz items for each trainee</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" id="randomize"><label class="form-check-label" for="formCheck-1">Randomize questions for each trainee</label></div>
                 </div>
             </div><button class="btn btn-primary" id="createQuiz" type="button" style="background-color: #006739;margin: 0px 10px;">{{pageName}}</button>
             <a href="/quiz-list"><button class="btn btn-primary" type="button" style="background-color: #da6b59;margin: 10px 0px;">Cancel</button></a></div>
