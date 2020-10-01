@@ -70,6 +70,33 @@ function createAssessment(skillID, classID, traineeID, date, skillScore) {
 	return tempAssessment;
 }
 
+// constructor for quiz
+function createQuiz(quizid, classid, date, stime, etime, nTakes, nItems) {
+	var tempQuiz = {
+		quizID: quizid,
+		classID: classid,
+		quizDate: date,
+		startTime: stime,
+		endTime: etime,
+		numTakes: nTakes,
+		numItems: nItems
+	}
+
+	return tempQuiz;
+}
+
+// constructor for items
+function createItem(itemNo, quizid, q, a) {
+	var tempItem = {
+		itemNo: itemNo,
+		quizID: quizid,
+		question: q,
+		answer: a
+	}
+
+	return tempItem;
+}
+
 Date.prototype.addDays = function(days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
@@ -121,7 +148,7 @@ function n(n) {
 }
 
 // format date
-function getDate(date) {
+function formatDate(date) {
 	var newDate = new Date(date);
 
 	var mm = newDate.getMonth() + 1;
@@ -146,8 +173,22 @@ function getDate(date) {
 	return mm + " " + dd + ", " + yy;
 }
 
+function formatNiceDate(date) {
+	var newDate = new Date(date);
+	// adjust 0 before single digit date
+	let day = ("0" + newDate.getDate()).slice(-2);
+
+	// current month
+	let month = ("0" + (newDate.getMonth() + 1)).slice(-2);
+
+	// current year
+	let year = newDate.getFullYear();
+
+	return year + "-" + month + "-" + day;
+}
+
 //format time
-function getTime(time) {
+function formatTime(time) {
 	var time = new Date(time);
 
 	// console.log("time: " + time)
@@ -216,6 +257,41 @@ function generateVerificationCode() {
 	return verifyCode;
 }
 
+// computations
+function computeSkill(s) {
+	// compute skills
+	var skillSum = 0;
+	for(var i = 0; i < s.length; i++) {
+		skillSum += parseInt(s[i]);
+	}
+
+					// average/total * 100
+	var skillAve = Number(Math.round((skillSum/s.length) + "e2") + "e-2");
+	
+	console.log(skillAve);
+	return skillAve;
+}
+
+function computeFinal(s, q) {
+
+	var skillFinal = computeSkill(s)/10 * 100 * 0.6;
+
+	// compute quizzes
+	var qSum = 0;
+	for(var i = 0; i < q.length; i++) {
+		qSum += Number(q[i]);
+	}
+
+	var quizFinal = (qSum/q.length) * 0.4;
+
+	//console.log(skillFinal);
+	//console.log(quizFinal);
+
+	var finalGrade = skillFinal + quizFinal;
+	//console.log(finalGrade)
+
+	return finalGrade;
+}
 
 // main functions for getting and posting data
 const rendFunctions = {
@@ -447,8 +523,8 @@ const rendFunctions = {
 
 
 				for(let i = 0; i < classVar.length; i++) {
-					sDate = getDate(classVar[i].classList.startDate);
-					eDate = getDate(classVar[i].classList.endDate);
+					sDate = formatDate(classVar[i].classList.startDate);
+					eDate = formatDate(classVar[i].classList.endDate);
 
 					classVar[i].classList.startDate = sDate;
 					classVar[i].classList.endDate = eDate;
@@ -539,10 +615,10 @@ const rendFunctions = {
  			// console.log("numclasses: " + classVar.length);
  			
 			for(let i = 0; i < classVar.length; i++) {
-				sDate = getDate(classVar[i].classList.startDate);
-				eDate = getDate(classVar[i].classList.endDate);
-				sTime = getTime(classVar[i].classList.startTime);
-				eTime = getTime(classVar[i].classList.endTime);
+				sDate = formatDate(classVar[i].classList.startDate);
+				eDate = formatDate(classVar[i].classList.endDate);
+				sTime = formatTime(classVar[i].classList.startTime);
+				eTime = formatTime(classVar[i].classList.endTime);
 
 				classVar[i].classList.startDate = sDate;
 				classVar[i].classList.endDate = eDate;
@@ -672,14 +748,12 @@ const rendFunctions = {
 							trmatch.remove();	
 
 							// remove from trainee "array"
-							traineelistsMode.find({classID: classNum}, function(err, tematch) {
+							traineelistsModel.find({classID: classNum}, function(err, tematch) {
 								tematch.remove();
 								res.send({status: 200, mssg: 'Deleted Class Successfully!'});
 							});
 						}
 					});
-
-
 				}
 			});
  		}
@@ -690,7 +764,7 @@ const rendFunctions = {
  	},
 
  	getAddTrainees: async function(req, res, next) {
- 		console.log(req.params.course);
+ 		// console.log(req.params.course);
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {	
  				var classSelected = await classesModel.findOne({section: req.params.section});
@@ -782,7 +856,7 @@ const rendFunctions = {
 				res.send({status: 200, mssg: JSON.stringify(trainee)});
 			}
 		});
- 	}, 
+ 	},
 
  	getQuizList: async function(req, res, next) {
  		if(req.session.user) {
@@ -799,9 +873,12 @@ const rendFunctions = {
 				]);		
 
  				for(var i = 0; i < quizzes.length; i++) {
- 					quizzes[i].quizDate = getDate(quizzes[i].quizDate);
+ 					quizzes[i].quizDate = formatDate(quizzes[i].quizDate);
+ 					quizzes[i].startTime = formatTime(quizzes[i].startTime);
+ 					quizzes[i].endTime = formatTime(quizzes[i].endTime);
  				}
-				// console.log(quizzes);
+				
+				// get the items
 
  				res.render('quizlist', {
  					quizzes: quizzes
@@ -819,18 +896,149 @@ const rendFunctions = {
 
  				// date today
  				var date = new Date();
- 				var dateToday = getDate(date);
+ 				var dateToday = formatDate(date);
 
  				// classes
  				var classes = await classesModel.find({trainerID: userID});
  				var trainerClasses = JSON.parse(JSON.stringify(classes));
 
+ 				// items
+ 				var items = [{
+ 					question: "",
+ 					answer: ""
+ 				}];
+
+ 				var qItems = JSON.parse(JSON.stringify(items));
+ 			//	console.log(qItems);
+
  				res.render('create-quiz', {
- 					date: dateToday,
- 					classes: trainerClasses
+ 					//date: dateToday,
+ 					classes: trainerClasses,
+ 					secSelected: trainerClasses[0].section,
+ 					items: qItems,
+ 					pageName: "Create"
  				});		
  			} else res.redirect('/');
  		} else res.redirect('/login');
+ 	},
+
+ 	postCreateQuiz: async function(req, res, next) {
+ 		let { section, quizDate, startTime, endTime, numTakes, numItems, qArr, ansArr } = req.body;
+
+ 		// generate quizid
+ 		var quizID = generateQuizID();
+
+ 		// get classid
+ 		var classSelected = await db.findOne(classesModel, {section: section});
+ 		var classID = classSelected.classID;
+
+ 		var sTime = new Date("Jan 01 2020 " + startTime + ":00"),
+ 			eTime = new Date("Jan 01 2020 " + endTime + ":00");
+
+ 		var quiz = createQuiz(quizID, classID, quizDate, sTime, eTime, numTakes, numItems);
+
+ 		//insert to quizzesdb
+ 		var qInsert = quizzesModel.create(quiz, function(err) {
+ 			if(err) {
+ 				console.log(err);
+ 				res.send({status: 500, mssg: "Server Error: Cannot create quiz."});
+ 			}	
+ 			else {
+ 				for(var i = 0; i < numItems; i++) {
+		 			var itemNo = "ITEM" + (i+1);
+		 			var item = createItem(itemNo, quizID, qArr[i], ansArr[i]);
+					var itemInsert = itemsModel.create(item, function(err) {
+						if(err) 
+							console.log(err);
+					});
+				}
+
+				res.send({status: 200, mssg: "Quiz created!"});
+ 			}
+ 		});
+ 	},
+
+ 	getUpdateQuiz: async function(req, res, next) {
+ 		if(req.session.user) {
+ 			if(req.session.user.userType === "Trainer") {
+ 				var userID = req.session.user.userID;
+
+ 				// classes
+ 				var classes = await classesModel.find({trainerID: userID});
+ 				var trainerClasses = JSON.parse(JSON.stringify(classes));
+
+ 				// date
+ 				var qDate = formatNiceDate(req.params.qDate);
+
+ 				// get items
+ 				var qID = req.params.quizID;
+ 				var items = await itemsModel.find({quizID: qID});
+ 				var quizItems = JSON.parse(JSON.stringify(items));
+
+ 				res.render('create-quiz', {
+ 						qID: qID,
+ 						quizDate: qDate,
+ 						secSelected: req.params.section,
+ 						sTime: req.params.sTime,
+ 						eTime: req.params.eTime,
+ 						nTakes: req.params.nTakes,
+ 						classes: trainerClasses,
+ 						items: quizItems,
+ 						pageName: "Update"
+ 				});
+ 			} else res.redirect('/');
+ 		} else res.redirect('/login');
+ 	},
+
+ 	postUpdateQuiz: async function(req, res, next) {
+ 		let { qID, section, quizDate, startTime, endTime, numTakes, numItems, qArr, ansArr } = req.body;
+
+ 		// get classid
+ 		var classSelected = await db.findOne(classesModel, {section: section});
+ 		var classID = classSelected.classID;
+
+ 		var sTime = new Date("Jan 01 2020 " + startTime + ":00"),
+ 			eTime = new Date("Jan 01 2020 " + endTime + ":00");
+
+ 		//var quiz = createQuiz(quizID, classID, quizDate, sTime, eTime, numTakes, numItems);
+
+ 		//update
+ 		let qmodel = await quizzesModel.findOneAndUpdate(
+			{ quizID: qID },
+			{ $set: {
+				classID: classID,
+				quizDate: quizDate,
+				startTime: sTime,
+				endTime: eTime,
+				numTakes: numTakes,
+				numItems: numItems
+			}},
+			{ useFindAndModify: false },
+				function(err, match) {
+					if(err) {
+						console.log(err);
+						res.send({status: 500, mssg: "Server Error: Cannot update quiz."});
+					}
+
+				});
+ 		console.log(qmodel);
+
+ 		for(var i = 0; i < numItems; i++) {
+			var itemNo = "ITEM" + (i+1);
+			
+			itemsModel.findOneAndUpdate(
+				{ itemNo: itemNo, quizID: qID },
+				{ $set: {
+					question: qArr[i],
+					answer: ansArr[i]
+				}},
+				{ useFindAndModify: false },
+					function(err, match) {
+						if(err) console.log(err);
+				});
+		}
+		
+		res.send({status: 200, mssg: "Quiz updated!"});
  	},
 
  	getScoresheets: async function(req, res, next) {
@@ -839,9 +1047,6 @@ const rendFunctions = {
  				// req.params
  				var sectionSelected = req.params.section;
  				var daySelected = req.params.day;
-
- 				//console.log("section: " + sectionSelected);
- 				//console.log("day: " + daySelected);
 
  				// get skills
  				var skills = await skilltypesModel.find({});
@@ -862,7 +1067,6 @@ const rendFunctions = {
  				var trainerClasses = JSON.parse(JSON.stringify(classes));
  				var classSelected = await classesModel.findOne({section: sectionSelected}); // section selected
  				var classID = classSelected.classID;
- 				// var startDate = classSelected.startDate;
 
 				// get trainees class Selected
 				var trainees = await traineelistsModel.aggregate([
@@ -954,8 +1158,7 @@ const rendFunctions = {
 					}},
 					{ useFindAndModify: false },
 					function(err, match) {
-						if(err) 
-						console.log(err);
+						if(err) console.log(err);
 					});
 					console.log("update");
 					console.log(tsUpdate);
@@ -970,10 +1173,10 @@ const rendFunctions = {
 
  		if(traineeInd === trainees.length) 
  			res.send({status:200, mssg:"Scores updated!"});
- 		else res.send({status: 500, mssg: "Error."});
+ 		else res.send({status: 500, mssg: "Server Error: Cannot update scores."});
  	},
 
- 	getSummaryReports: async function(req, res, next) {
+ 	getClassSummary: async function(req, res, next) {
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {
  				var userID = req.session.user.userID;
@@ -997,59 +1200,127 @@ const rendFunctions = {
 				]);
 
  				var numStudents = [];
+ 				var dateToday = new Date();
  				for(var i = 0; i < classVar.length; i++) {
- 					// format date and time
-					sDate = getDate(classVar[i].classList.startDate);
-					eDate = getDate(classVar[i].classList.endDate);
-					sTime = getTime(classVar[i].classList.startTime);
-					eTime = getTime(classVar[i].classList.endTime);
+ 					
+					// num students
+					var trainees = await traineelistsModel.find({classID: classVar[i].classID});
+					classVar[i].numStudents = trainees.length;
+
+					// passed/failed
+					if(classVar[i].classList.endDate.valueOf() < dateToday.valueOf()) {
+						var passed = 0, failed = 0;
+						for(var j = 0; j < trainees.length; j++) {
+							// get skill scores
+							var tScores = [];
+							var scores = await skillassessmentsModel.find({traineeID: trainees[j].traineeID, classID: classVar[i].classID});
+							var strScores = JSON.parse(JSON.stringify(scores));
+
+							for(var k = 0; k < scores.length; k++) {
+								tScores[k] = (strScores[k].skillScore);
+							}
+
+							// console.log(tScores);
+							// get quiz scores
+							var qScores = ['100', '100', '100'];
+
+							// compute
+							var fg = computeFinal(tScores, qScores);
+							
+							//console.log(fg);
+							if(fg > 80) passed++;
+							else failed++;
+						}
+						classVar[i].ttlPass = passed;
+						classVar[i].ttlFail = failed;
+					}
+					else {
+						classVar[i].ttlPass = "N/A";
+						classVar[i].ttlFail = "N/A";
+					}
+					
+
+					// total quizzes
+					var quizzes = await quizzesModel.find({classID: classVar[i].classID});
+					classVar[i].numQuizzes = quizzes.length;
+
+					// format date and time
+					sDate = formatDate(classVar[i].classList.startDate);
+					eDate = formatDate(classVar[i].classList.endDate);
+					sTime = formatTime(classVar[i].classList.startTime);
+					eTime = formatTime(classVar[i].classList.endTime);
 
 					classVar[i].classList.startDate = sDate;
 					classVar[i].classList.endDate = eDate;
 					classVar[i].classList.startTime = sTime;
 					classVar[i].classList.endTime = eTime;
-
-					// num students
-					var trainees = await traineelistsModel.find({classID: classVar[i].classID});
-					classVar[i].numStudents = trainees.length;
 				}
 
+				var today = formatDate(dateToday);
+				var time = formatTime(dateToday);
 				
-				console.log(numStudents);
-				console.log(classVar);
  				res.render('classes-summary', {
- 					classes: classVar,
- 					//numStudents: numStudents
+ 					dateToday: today,
+ 					currTime: time,
+ 					classes: classVar
  				});
 
  			} else res.redirect('/');
  		} else res.redirect('/login');
  	},
 
- 	getDetailedReports: async function(req, res, next) {
+ 	getClassDetailed: async function(req, res, next) {
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {
  				var classID = req.params.classid;
 
  				// get trainees
- 				var trainees = await traineelistsModel.find({classID: classID});
+ 				var traineesVar = await traineelistsModel.aggregate([
+					 {$match: {classID: classID}},
+					 {$lookup: {
+							from: "users",
+							localField: "traineeID",
+							foreignField: "userID",
+							as: "trainees" // SLICE
+					 }},
+					 {$unwind: "$trainees"},
+				]);
+ 				
 
- 				// get trainee details
- 				var traineeDet = [];
- 				for(var i = 0; i < trainees.length; i++) {
- 					traineeDet[i] = await usersModel.findOne({userID: trainees[i].traineeID});
+ 				for(var i = 0; i < traineesVar.length; i++) {
+ 					var tScores = [];
+ 					var scores = await skillassessmentsModel.find({traineeID: traineesVar[i].traineeID});
+ 					
+ 					for(var k = 0; k < scores.length; k++) {
+ 						tScores[k] = scores[k].skillScore;
+ 					}
+
+ 					var skillAve = computeSkill(tScores);
+ 					
+ 					traineesVar[i].skillAve = skillAve;
  				}
 
- 				var classTrainees = JSON.parse(JSON.stringify(traineeDet));
  				// get quizzes
+ 				var q = await quizzesModel.find({classID: classID});
+ 				var quizzes = JSON.parse(JSON.stringify(q));
+
+ 				for(var i = 0; i < quizzes.length; i++) {
+ 					quizzes[i].quizDate = formatDate(q[i].quizDate);
+ 				}
+
+ 				var today = formatDate(new Date());
+ 				var time = formatTime(new Date());
+
  				res.render('class-detailed', {
  					classID: classID,
- 					trainees: classTrainees
+ 					trainees: traineesVar,
+ 					quizzes: quizzes,
+ 					dateToday: today,
+ 					currTime: time
  				});		
  			} else res.redirect('/');
  		} else res.redirect('/login');
  	},
-
 
 	// for encrypting / mimic register
 	postRegister: async function(req, res, next) {
@@ -1235,21 +1506,46 @@ const rendFunctions = {
 			
 				var details = await usersModel.find({userType: "Trainee"})
 				var trainees = JSON.parse(JSON.stringify(details));
-				// var trainees = details;	
-
-				// console.log(trainees);
 	
 				var clients = [];
 				var numClients = 0;
-				// var finalGrade = 0;
+				
+
 				for(var i = 0; i < trainees.length; i++){
 					// finding clients
 					trainees[i].clients = await clientlistsModel.find({traineeID: trainees[i].userID});
 					trainees[i].numClients = trainees[i].clients.length;
 
 					// setting class status
+						// get classes
+					var tClasses = await traineelistsModel.find({traineeID: trainees[i].userID});
+					
+					//if length 1 class ; graduate = false
+					// else if length 2
+					// if endDates less than 2day graduated = true
+					// else graudated false 
 
 					// getting final grade
+						// get skills
+					// if( graduated) {
+						var tScores = [];
+						var scores = await skillassessmentsModel.find({traineeID: trainees[i].userID});
+	 					
+	 					for(var k = 0; k < scores.length; k++) {
+	 						tScores[k] = scores[k].skillScore;
+	 					}
+
+	 				//	console.log(tScores);
+	 						// get quizzes
+	 					var qScores = ['100', '100'];
+
+	 					var fg = computeFinal(tScores, qScores);
+
+	 					trainees[i].finalGrade = fg;
+	 				// } 
+	 				// else {
+	 				//		trainees[i].finalGrade = "N/A";
+	 				// }
 				}
 				// console.log(trainees);
 				

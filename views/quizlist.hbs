@@ -8,14 +8,16 @@
     </div>
     <div><a href = "/create-quiz"><button class="btn btn-primary" type="button" style="background-color: #006739;margin-top: 20px;margin-bottom: 20px;">Create Quiz</button></a></div>
     <div>
-        <div class="table-responsive" style="background-color: #f6f6f6; width:50%;">
+        <div class="table-responsive" style="background-color: #f6f6f6; width:70%;">
             <table class="table">
                 <thead>
                     <tr>
                         <th style="width: 10%;background-color: #006739;color: rgb(255,255,255);">Quiz ID</th>
                         <th style="width: 5%;background-color: #006739;color: rgb(255,255,255);">Section</th>
                         <th style="width: 15%;background-color: #006739;color: rgb(255,255,255);">Date</th>
+                        <th style="width: 15%;background-color: #006739;color: rgb(255,255,255);">Time</th>
                         <th style="width: 5%; background-color: #006739;color: rgb(255,255,255);">Items</th>
+                        <th style="width: 5%; background-color: #006739;color: rgb(255,255,255);">Takes</th>
                         <th style="width: 10%;background-color: #006739;"></th>
                     </tr>
                 </thead>
@@ -24,9 +26,13 @@
                     <tr>
                         <td>{{quizID}}</td>
                         <td>{{quizList.section}}</td>
-                        <td>{{quizDate}}</td>
+                        <td class="eDate">{{quizDate}}</td>
+                        <td>{{startTime}} - {{endTime}}</td>
                         <td>{{numItems}}</td>
-                        <td><a href=/updatequiz><button class="btn btn-primary" type="button" style="background-color: #006739;margin-left: 5px;">Update</button></a>
+                        <td>{{numTakes}}</td>
+                        <td>
+                            <button onclick="window.location.href = '/update-quiz/{{{quizID}}}/{{{quizDate}}}/{{{quizList.section}}}/{{{startTime}}}/{{{endTime}}}/{{{numTakes}}}'" class="btn btn-primary updatebtn" type="button" style="background-color: #006739;margin-left: 5px;">Update</button>
+                        </td>
                     </tr>
                     {{/each}}
                 </tbody>

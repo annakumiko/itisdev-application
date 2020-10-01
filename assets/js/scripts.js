@@ -40,6 +40,85 @@ function getDate(date) {
 	return mm + " " + dd + ", " + yy;
 }
 
+function n(n) {
+    return n > 9 ? "" + n: "0" + n;
+}
+
+function reverseDate(date) {
+	var strDate = date.toString();
+	var res = strDate.split(" ");
+	
+	if(res.length == 3) {
+		var mm = res[0];
+		var day = n(res[1].slice("", -1));
+		var year = res[2];
+	} else {
+		var mm = res[1];
+		var day = n(res[2].slice("", -1));
+		var year = res[3];
+	}
+	
+	console.log(res);
+
+	switch(mm) {
+		case "January": mm = "01"; break;
+		case "February": mm = "02"; break;
+		case "March": mm = "03"; break;
+		case "April": mm = "04"; break;
+		case "May": mm = "05"; break;
+		case "June": mm = "06"; break;
+		case "July": mm = "07"; break;
+		case "August": mm = "08"; break;
+		case "September": mm = "09"; break;
+		case "October": mm = "10"; break;
+		case "November": mm = "11"; break;
+		case "December": mm = "12"; break;
+	}
+
+	var rev = year + "-" + mm + "-" + day;
+
+	return rev;
+}
+
+function classOver() {
+	var today = new Date();
+	// manage trainees & delete btns
+
+	$('.manageTrainees').each(function() {
+		var e = $(this).closest('tr').children('td.eDate').text();
+
+		var reverse = reverseDate(e);
+		var newDate = new Date(reverse);
+
+		console.log(e);
+		console.log(reverse);
+		console.log(newDate);
+
+		if(newDate.valueOf() < today.valueOf())
+			$(this).prop('disabled', true);
+	}); 
+	
+	// quizlist updates
+	$('.updatebtn').each(function() {
+		var e = $(this).closest('tr').children('td.eDate').text();
+
+		var reverse = reverseDate(e);
+		var newDate = new Date(reverse);
+
+		console.log(e);
+		console.log(reverse);
+		console.log(newDate);
+
+		if(newDate.valueOf() < today.valueOf())
+			$(this).prop('disabled', true);
+
+	}); 
+
+	// update quiz + button
+	var pageName = $('#pageName').text();
+	if(pageName == "Update a quiz") $('.addQuestion').prop('disabled', true);
+}
+
 $(document).ready(function() {
 	// LOG-IN VALIDATION
 	$('button#login-btn').click(function() {
@@ -236,9 +315,6 @@ $(document).ready(function() {
 			
 		}
 		else timeErrors = false;
-
-		// console.log(dateErrors);
-		// console.log(timeErrors);
 
 		// if no errors submit to backend
 		if (!dateErrors && !timeErrors) {
@@ -533,6 +609,8 @@ $(document).ready(function() {
 		}
 	});
 
+	// SCORESHEET
+
 	$('#class-day').change(function() {
 		var daySelected = $(this).val();
 		var sectionSelected = $('#scoresheet-section').val();
@@ -560,10 +638,10 @@ $(document).ready(function() {
 		console.log(compareDate);
 		console.log(compareDate < today);
 
-	//	if(compareDate < today) {
-	//		alert("This class ended in " + getDate(compareDate) + ". You cannot edit the scores for this class anymore.");
-	//	}
-	//	else {
+		if(compareDate < today) {
+			alert("This class ended in " + getDate(compareDate) + ". You cannot edit the scores for this class anymore.");
+		}
+		else {
 			//hide text, show editor
 			for(var i = 0; i < theScore.length; i++) 
 				theScore[i].style.display = 'none';
@@ -572,7 +650,7 @@ $(document).ready(function() {
 				scoresheetEditor[i].style.display = 'inline';
 			
 			updateScoresheet.style.display = 'inline';
-	//	}
+		}
 	});
 
 	// update scores in db
@@ -644,16 +722,127 @@ $(document).ready(function() {
 			
 	});
 
-
 	// add empty question
 	$('button#addQuestion').click(function() {
 		var qDiv = "<div class='form-row quizquestion'> <div class='col'> <label>Question</label>"
-					+ "<input type='text' style='margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0); width: 100%;border-radius: 5px;'>"
-					+ "<label>Answer</label> <input type='text' style='margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0); width: 100%; border-radius: 5px;'>"
+					+ "<input type='text' class='quizQuestion' style='margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0); width: 100%;border-radius: 5px;'>"
+					+ "<label>Answer</label> <input type='text' class='quizAnswer' style='margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0); width: 100%; border-radius: 5px;'>"
                     + "</div> <div class='col' style='visibility: hidden; max-width: 10%;'><button id='addQuestion'class='btn btn-primary' type='button' style='background-color: #3e914d;margin: 30px;'>"
                     + "<strong>+</strong></button></div></div>"
 	
-		$('#questionlist').append(qDiv);					
+		$('#questionlist').append(qDiv);		
+	});
+
+	// QUIZ VALIDATIONS
+	$('button#createQuiz').click(function() {
+		var quizDate = new Date($('#quizDate').val()); 
+		var quizClass = $('#quizClass').val();
+		var qstartTime = $('#qstartTime').val();
+		var qendTime = $('#qendTime').val();
+		var numTakes = $('#numTakes').val();
+		var qID = $('#qID').text();
+		var isRandomized = $('#randomize').checked();
+
+		console.log("randomized: " + isRandomized); 
+
+		console.log(qID);
+		var questionArr = [];
+		$('#questionlist .quizQuestion').each(function() {
+			var value = $(this).val();
+			questionArr.push(value);
+		});
+
+		var answerArr = [];
+		$('#questionlist .quizAnswer').each(function() {
+			var value = $(this).val();
+			answerArr.push(value);		
+		});
+
+		var numHours = (calculateHours(qstartTime, qendTime) * 0.0001);
+
+		var dateToday = new Date();
+		var dateErrors = true,
+			timeErrors = true,
+			qaErrors = true;
+
+		$('p#qDate').text('');
+		$('p#qsTime').text('');
+		$('p#qeTime').text('');
+		$('p#qListError').text('');
+
+		// date ; empty, earlier than today
+		if(quizDate == "Invalid Date" || !quizDate) {
+			$('p#qDate').text('Set date.');
+		}
+		else if(quizDate < dateToday) {
+			$('p#qDate').text('Date should not be earlier than today.');
+		}
+		else dateErrors = false;
+
+		// time ; min 30 mins max 1 hr 30 mins
+		if(!qstartTime || !qendTime) {
+			if(!qstartTime) $('p#qsTime').text('Set time.');
+			if(!qendTime) $('p#qeTime').text('Set time.');
+		}
+		else if(numHours > 1.3 || numHours < 0.3) {
+			if(!(numHours == 0.001)) {
+				if(numHours > 1.3) $('p#qeTime').text('Time should not exceed 90 minutes.');
+				if(numHours < 0.3) $('p#qeTime').text('Time should at least be 30 minutes.');
+			}
+			else timeErrors = false;
+		}		
+		else timeErrors = false;
+
+		// question answer ; empty
+		var numItems = questionArr.length;
+		for(var i = 0; i < numItems; i++) {
+			if(questionArr[i] === "" || answerArr[i] === "")
+				$('p#qListError').text('Some fields are empty.');
+			else qaErrors = false;
+		}
+
+		if(!timeErrors && !dateErrors && !qaErrors) {
+			if($(this).text() === "Create") {
+				$.post('/create-quiz', { section: quizClass, quizDate: quizDate, startTime: qstartTime, endTime: qendTime, numTakes: numTakes, numItems: numItems,
+					qArr: questionArr, ansArr: answerArr}, function(res) {
+					switch(res.status) {
+						case 200: {
+							alert(res.mssg);
+							window.location.href = '/quiz-list';
+							break;
+						}
+						case 401: {
+							alert(res.mssg);
+							break;
+						}
+						case 500: {
+							alert(res.mssg);
+							break;
+						}
+					}
+				});
+			}
+			else {
+				$.post('/update-quiz', { qID: qID, section: quizClass, quizDate: quizDate, startTime: qstartTime, endTime: qendTime, numTakes: numTakes, numItems: numItems,
+					qArr: questionArr, ansArr: answerArr}, function(res) {
+					switch(res.status) {
+						case 200: {
+							alert(res.mssg);
+							window.location.href = '/quiz-list';
+							break;
+						}
+						case 401: {
+							alert(res.mssg);
+							break;
+						}
+						case 500: {
+							alert(res.mssg);
+							break;
+						}
+					}
+				});
+			}
+		}
 	});
 
 	// DEACTIVATE ACCOUNT

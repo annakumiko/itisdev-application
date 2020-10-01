@@ -5,7 +5,7 @@
 <div style="padding-left: 100px">
 		<div style="padding: 20px" class="report-header">
 			<div><label style="font-size: 30px;color: #006739;"><strong>Classes Summary Report</strong></label>
-			<p>Date stamp thign idk</p>
+			<p>As of {{dateToday}} at {{currTime}}</p>
             <hr>
 		</div>
 		<div>
@@ -32,9 +32,9 @@
                         <td class="col-reports" >{{classList.startDate}} - {{classList.endDate}}</td>
                         <td class="col-reports" style="text-align: center;">{{classList.startTime}} - {{classList.endTime}}</td>
                         <td class="col-reports" style="text-align: right;">{{numStudents}}</td>
-                        <td class="col-reports" >secret</td>
-                        <td class="col-reports" >secret</td>
-                        <td class="col-reports" >secret</td>
+                        <td class="col-reports" style="text-align: right;">{{ttlPass}}</td>
+                        <td class="col-reports" style="text-align: right;">{{ttlFail}}</td>
+                        <td class="col-reports" style="text-align: right;">{{numQuizzes}}</td>
                     </tr>
                     {{/each}}
                 </tbody>

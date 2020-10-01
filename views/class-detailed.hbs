@@ -6,7 +6,7 @@
 		<div style="padding: 20px" class="report-header">
 			<div><label style="font-size: 30px;color: #006739;"><strong>Class Detailed Report: </strong></label></strong></label>
             <label style="font-size: 30px;color: #006739;" id="classid-detailed"> <strong> {{classID}} </strong> </label>
-			<p>Date stamp thign idk</p>
+			<p>As of {{dateToday}}  at {{currTime}} </p>
             <hr>
 		</div>
         <div class="traineereport">
@@ -25,11 +25,11 @@
                 <tbody style="background-color: #fff;" id="endorsedtrainees">
                     {{#each trainees}}
                     <tr  class="row-reports">
-                        <td class="col-reports" style="text-align: center;">{{userID}}</td>
-                        <td class="col-reports" >{{lastName}}, {{firstName}}</td>
-                        <td class="col-reports" >{{email}}</td>
+                        <td class="col-reports" style="text-align: center;">{{trainees.userID}}</td>
+                        <td class="col-reports" >{{trainees.lastName}}, {{trainees.firstName}}</td>
+                        <td class="col-reports" >{{trainees.email}}</td>
                         <td class="col-reports" style="text-align: right;">secret</td>
-                        <td class="col-reports" style="text-align: right;">secret</td>
+                        <td class="col-reports" style="text-align: right;">{{skillAve}}</td>
                         <td class="col-reports" >secret</td>
                     </tr>
                     {{/each}}
@@ -43,17 +43,18 @@
                 <thead style="background-color: #f6f6f6; padding:5px; height: 35px;">
                     <tr class="row-reports">
                         <th class="col-reports" style="width: 15%">Quiz ID</th>
-                        <th class="col-reports"  style="width: 25%;">Date Given</th>
+                        <th class="col-reports"  style="width: 25%;">Date</th>
                         <th class="col-reports"  style="width: 10%;">Number of Items</th>
                     </tr>
                 </thead>
                 <tbody style="background-color: #fff;" id="endorsedtrainees">
-
+                    {{#each quizzes}}
                     <tr  class="row-reports" onclick="window.location.href = '/class-detailed'">
-                        <td class="col-reports" >hello</td>
-                        <td class="col-reports" >hello</td>
-                        <td class="col-reports" >hello</td>
+                        <td class="col-reports" >{{quizID}}</td>
+                        <td class="col-reports" >{{quizDate}}</td>
+                        <td class="col-reports" >{{numItems}}</td>
                     </tr>
+                    {{/each}}
                 </tbody>
             </table>
         </div>

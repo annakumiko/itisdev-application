@@ -23,9 +23,10 @@ router.get('/create-class', controller.getCreateClass);
 router.get('/add-trainees/:section/:course', controller.getAddTrainees);
 router.get('/quiz-list', controller.getQuizList);
 router.get('/create-quiz', controller.getCreateQuiz);
+router.get('/update-quiz/:quizID/:qDate/:section/:sTime/:eTime/:nTakes', controller.getUpdateQuiz);
 router.get('/scoresheets/:section/:day', controller.getScoresheets);
-router.get('/classes-summary', controller.getSummaryReports);
-router.get('/class-detailed/:classid', controller.getDetailedReports);
+router.get('/classes-summary', controller.getClassSummary);
+router.get('/class-detailed/:classid', controller.getClassDetailed);
 
 // TRAINEE
 router.get('/verification', controller.getVerification);
@@ -46,11 +47,13 @@ router.post('/add-client', controller.postAddClient);
 router.post('/remove-client', controller.postRemoveClient);
 router.post('/update-clientlist', controller.postUpdateClients);
 // TRAINER
-router.post('/create-class', middleware.validateCreateClass, controller.postCreateClass);
+router.post('/create-class',/* middleware.validateCreateClass, */controller.postCreateClass);
 router.post('/add-trainees', middleware.validateAddTrainees, controller.postAddTrainees);
 router.post('/delete-class', controller.postDeleteClass);
 router.post('/remove-trainee', controller.postRemoveTrainee);
 router.post('/scoresheets', controller.postScoresheets);
+router.post('/create-quiz', middleware.validateCreateQuiz, controller.postCreateQuiz);
+router.post('/update-quiz', controller.postUpdateQuiz)
 
 // TRAINEE
 router.post('/verification', controller.postVerification);

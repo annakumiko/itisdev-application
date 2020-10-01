@@ -3,72 +3,94 @@
 {{>sidebar-trainer}}
 
 <div style="padding: 20px;padding-left: 100px;">
-    <div><label style="font-size: 24px;color: #006739;"><strong>Create a quiz</strong></label>
-        <p style="margin: 2px;"> Create a quiz for a class. Choose the start and end time for the quiz. Limit the items to a maximum of 10.</p>
+    <div><label style="font-size: 24px;color: #006739;" id="pageName"><strong>{{pageName}} a quiz</strong></label>
+        <p style="margin: 2px;"> Choose the date, class, and start and end time for the quiz - it should only last for a minimum of 30 minutes and a maximum of 1 hour and 30 minutes. Limit the items to a maximum of 10.</p>
+        <p id="qID" style="display: none; margin-left: 5px; max-height: 32px;" val="{{qID}}" >{{qID}}</p>
         <hr>
     </div>
     <div style="background-color: #f6f6f6;">
         <form style="background-color: #f6f6f6;padding: 5px;">
             <div class="form-row" style="margin: 5px;">
-            <div class="col" style="max-width: 15%; margin: 5px;"><label class="col-form-label flex-nowrap" for="name-input-field"><strong>Date</strong><br></label></div>
-            <div class="d-flex" style="margin: 5px; padding-top: 5px;"><input type="date" id="endDate" min="2018-01-01" max="2024-12-31" style="max-height: 32px;"></div>
+            <div class="col" style="z-index: 1;max-width: 15%; margin: 5px;"><label class="col-form-label flex-nowrap" for="name-input-field">
+                <strong>Date</strong><br></label>
+            </div>
+            <div class="d-flex" style="margin: 5px; padding-top: 5px;">
+
+                <input type="date" id="quizDate" min="2018-01-01" max="2024-12-31" style="max-height: 32px;" value="{{{quizDate}}}">
+                <p id="qDate" class="error" style="margin-left: 5px; max-height: 32px;">{{qDate}}</p>
+            </div>
             </div>
             <div class="form-row" style="margin: 5px;">
-                <div class="col" style="max-width: 15%;margin: 5px;"><label class="col-form-label"><strong>Class</strong></label></div>
+                <div class="col" style="max-width: 15%;margin: 5px;"><label class="col-form-label">
+                    <strong>Class</strong></label>
+                </div>
                 <div class="d-flex" style="margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;">
-                        <select style="width: 150px;" id="course">
+                        <select style="width: 150px;" id="quizClass" value="{{{secSelected}}}">
+                            <option class="dropdown-item" href="#">{{secSelected}}</option>
                             {{#each classes}}
                             <option class="dropdown-item" href="#">{{section}}</option>
                             {{/each}}
                         </select>
-                        <p id="courseError" class="error" style="margin-left: 5px; max-height: 32px;">{{courseError}}</p>
                 </div>
             </div>
             <div class="form-row form-group" style="margin:5px;">
-                <div class="col" style="max-width: 15%;margin: 5px;"><label class="col-form-label"><strong>Start Time</strong></label></div>
+                <div class="col" style="max-width: 15%;margin: 5px;"><label class="col-form-label">
+                    <strong>Start Time</strong></label>
+                </div>
                 <div class="d-flex" style="margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;">
-                    <input type="time" id="qendTime" min="08:00" max="22:00">
-                   <p id="eTime" class="error" style="margin-left: 5px; max-height: 32px;">{{sTime}}</p>
+                    <input type="time" id="qstartTime" min="08:00" max="22:00" value="{{{sTime}}}">
+                   <p id="qsTime" class="error" style="margin-left: 5px; max-height: 32px;">{{qsTime}}</p>
 
                 </div>
              
             </div>
             <div class="form-row form-group" style="margin:5px;">
-                <div class="col" style="max-width: 15%;margin: 5px;"><label class="col-form-label"><strong>End Time</strong></label></div>
+                <div class="col" style="max-width: 15%;margin: 5px;"><label class="col-form-label">
+                    <strong>End Time</strong></label>
+                </div>
                 <div class="d-flex" style="margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;">
-                    <input type="time" id="qendTime" min="08:00" max="22:00">
-                   <p id="eTime" class="error" style="margin-left: 5px; max-height: 32px;">{{eTime}}</p>
+                    <input type="time" id="qendTime" min="08:00" max="22:00" value="{{{eTime}}}">
+                   <p id="qeTime" class="error" style="margin-left: 5px; max-height: 32px;">{{qeTime}}</p>
 
                 </div>
              
             </div>
             <div class="form-row" style="margin: 5px;">
-                <div class="col" style="max-width: 15%;margin: 5px;"><label class="col-form-label"><strong>Number of Takes</strong></label></div>
-                <div class="col" style="margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;"><input type="text" name="numtakes" placeholder="ex. 1" style="max-width: 5%;"></div>
+                <div class="col" style="max-width: 15%;margin: 5px;"><label class="col-form-label">
+                    <strong>Number of Takes</strong></label>
+                </div>
+                <div class="col" style="margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0);border-radius: 5px;"><input type="text" name="numtakes" id="numTakes" placeholder="ex. 1" value="{{{nTakes}}}" style="max-width: 5%;"></div>
             </div>
             <hr/>
             <div class="form-row" style="margin: 5px;">
-                <div class="col" style="max-width: 15%;margin: 5px;"><label class="col-form-label"><strong>Questions</strong></label></div>
+                <div class="col" style="max-width: 15%;margin: 5px;">
+                    <label class="col-form-label"><strong>Questions</strong></label>
+                </div>
                 <div class="col" id="quizlist">
                     <div  id="questionlist">
-                    <div class="form-row quizquestion">
-                        <div class="col">
+                        {{#each items}}
+                        <div class="form-row quizquestion">
 
-                        <label>Question</label>
+                            <div class="col">
 
-                        <input type="text" style="margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0); width: 100%;border-radius: 5px;">
+                            <label>Question</label>
 
-                        <label>Answer</label>
+                            <input type="text" value="{{{question}}}" class="quizQuestion"style="margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0); width: 100%;border-radius: 5px;">
+                            <label>Answer</label>
 
-                        <input type="text" style="margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0); width: 100%; border-radius: 5px;">
+                            <input type="text" value="{{{answer}}}"class="quizAnswer" style="margin: 5px; height: 32px;padding: 2px;border-color: rgb(0,0,0); width: 100%; border-radius: 5px;">
+                            </div>
+                            
+                            <div class="col" style="max-width: 10%;"><button class="btn btn-primary addQuestion" type="button" style="background-color: #3e914d;margin: 30px;"><strong>+</strong></button></div>
+
                         </div>
-
-                        <div class="col" style="max-width: 10%;"><button id="addQuestion"class="btn btn-primary" type="button" style="background-color: #3e914d;margin: 30px;"><strong>+</strong></button></div>
+                        {{/each}}
                     </div>
-                </div>
+                    <p class="error" id="qListError"style="margin-left: 5px; max-height: 32px;">{{qListError}}</p>
                     <hr>
-                    <div class="form-check"><input class="form-check-input" type="checkbox" id="formCheck-2"><label class="form-check-label" for="formCheck-1">Randomize quiz items for each trainee</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" id="randomize"><label class="form-check-label" for="formCheck-1">Randomize questions for each trainee</label></div>
                 </div>
-            </div><button class="btn btn-primary" type="submit" style="background-color: #006739;margin: 0px 10px;">Create</button><button class="btn btn-primary" type="submit" style="background-color: #da6b59;margin: 10px 0px;">Cancel</button></form>
+            </div><button class="btn btn-primary" id="createQuiz" type="button" style="background-color: #006739;margin: 0px 10px;">{{pageName}}</button>
+            <a href="/quiz-list"><button class="btn btn-primary" type="button" style="background-color: #da6b59;margin: 10px 0px;">Cancel</button></a></div>
     </div>
 </div>
