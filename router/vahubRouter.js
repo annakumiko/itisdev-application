@@ -47,7 +47,7 @@ router.get('/trainee-summary', controller.getTraineeSummary);
 router.get('/trainee-detailed/:userID', controller.getTraineeDetailed);
 
 // TRAINER
-router.post('/create-class', middleware.validateCreateClass, controller.postCreateClass);
+router.post('/create-class',/* middleware.validateCreateClass, */controller.postCreateClass);
 router.post('/add-trainees', middleware.validateAddTrainees, controller.postAddTrainees);
 router.post('/delete-class', controller.postDeleteClass);
 router.post('/remove-trainee', controller.postRemoveTrainee);

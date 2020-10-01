@@ -249,14 +249,14 @@ function computeSkill(s) {
 
 					// average/total * 100
 	var skillAve = Number(Math.round((skillSum/s.length) + "e2") + "e-2");
-	console.log(skillAve.toString());
 	
-	return skillAve.toString();
+	console.log(skillAve);
+	return skillAve;
 }
 
 function computeFinal(s, q) {
 
-	var skillFinal = Number(computeSkill(s)/10 * 100 * 0.6);
+	var skillFinal = computeSkill(s)/10 * 100 * 0.6;
 
 	// compute quizzes
 	var qSum = 0;
@@ -264,10 +264,13 @@ function computeFinal(s, q) {
 		qSum += Number(q[i]);
 	}
 
-
 	var quizFinal = (qSum/q.length) * 0.4;
 
+	//console.log(skillFinal);
+	//console.log(quizFinal);
+
 	var finalGrade = skillFinal + quizFinal;
+	//console.log(finalGrade)
 
 	return finalGrade;
 }
@@ -636,7 +639,7 @@ const rendFunctions = {
 							trmatch.remove();	
 
 							// remove from trainee "array"
-							traineelistsMode.find({classID: classNum}, function(err, tematch) {
+							traineelistsModel.find({classID: classNum}, function(err, tematch) {
 								tematch.remove();
 								res.send({status: 200, mssg: 'Deleted Class Successfully!'});
 							});
@@ -1088,8 +1091,51 @@ const rendFunctions = {
 				]);
 
  				var numStudents = [];
+ 				var dateToday = new Date();
  				for(var i = 0; i < classVar.length; i++) {
- 					// format date and time
+ 					
+					// num students
+					var trainees = await traineelistsModel.find({classID: classVar[i].classID});
+					classVar[i].numStudents = trainees.length;
+
+					// passed/failed
+					if(classVar[i].classList.endDate.valueOf() < dateToday.valueOf()) {
+						var passed = 0, failed = 0;
+						for(var j = 0; j < trainees.length; j++) {
+							// get skill scores
+							var tScores = [];
+							var scores = await skillassessmentsModel.find({traineeID: trainees[j].traineeID, classID: classVar[i].classID});
+							var strScores = JSON.parse(JSON.stringify(scores));
+
+							for(var k = 0; k < scores.length; k++) {
+								tScores[k] = (strScores[k].skillScore);
+							}
+
+							// console.log(tScores);
+							// get quiz scores
+							var qScores = ['100', '100', '100'];
+
+							// compute
+							var fg = computeFinal(tScores, qScores);
+							
+							//console.log(fg);
+							if(fg > 80) passed++;
+							else failed++;
+						}
+						classVar[i].ttlPass = passed;
+						classVar[i].ttlFail = failed;
+					}
+					else {
+						classVar[i].ttlPass = "N/A";
+						classVar[i].ttlFail = "N/A";
+					}
+					
+
+					// total quizzes
+					var quizzes = await quizzesModel.find({classID: classVar[i].classID});
+					classVar[i].numQuizzes = quizzes.length;
+
+					// format date and time
 					sDate = formatDate(classVar[i].classList.startDate);
 					eDate = formatDate(classVar[i].classList.endDate);
 					sTime = formatTime(classVar[i].classList.startTime);
@@ -1099,49 +1145,15 @@ const rendFunctions = {
 					classVar[i].classList.endDate = eDate;
 					classVar[i].classList.startTime = sTime;
 					classVar[i].classList.endTime = eTime;
-
-					// num students
-					var trainees = await traineelistsModel.find({classID: classVar[i].classID});
-					classVar[i].numStudents = trainees.length;
-
-					// passed/failed
-					var passed = 0, failed = 0;
-					for(var j = 0; j < trainees.length; j++) {
-						// get skill scores
-						var tScores = [];
-						var scores = await skillassessmentsModel.find({traineeID: trainees[j].traineeID, classID: classVar[i].classID});
-						var strScores = JSON.parse(JSON.stringify(scores));
-
-						for(var k = 0; k < scores.length; k++) {
-							tScores[k] = (strScores[k].skillScore);
-						}
-
-						// console.log(tScores);
-						// get quiz scores
-						var qScores = ['100', '100', '100'];
-
-						// compute
-						var fg = computeFinal(tScores, qScores);
-						
-						//console.log(fg);
-						if(fg < 80) passed++;
-						else failed++;
-					}
-
-					classVar[i].ttlPass = passed;
-					classVar[i].ttlFail = failed;
-
-					// total quizzes
-					var quizzes = await quizzesModel.find({classID: classVar[i].classID});
-					classVar[i].numQuizzes = quizzes.length;
 				}
 
+				var today = formatDate(dateToday);
+				var time = formatTime(dateToday);
 				
-				// console.log(numStudents);
-				// console.log(classVar);
  				res.render('classes-summary', {
- 					classes: classVar,
- 					//numStudents: numStudents
+ 					dateToday: today,
+ 					currTime: time,
+ 					classes: classVar
  				});
 
  			} else res.redirect('/');
@@ -1187,11 +1199,15 @@ const rendFunctions = {
  					quizzes[i].quizDate = formatDate(q[i].quizDate);
  				}
 
+ 				var today = formatDate(new Date());
+ 				var time = formatTime(new Date());
 
  				res.render('class-detailed', {
  					classID: classID,
  					trainees: traineesVar,
- 					quizzes: quizzes
+ 					quizzes: quizzes,
+ 					dateToday: today,
+ 					currTime: time
  				});		
  			} else res.redirect('/');
  		} else res.redirect('/login');
@@ -1381,21 +1397,46 @@ const rendFunctions = {
 			
 				var details = await usersModel.find({userType: "Trainee"})
 				var trainees = JSON.parse(JSON.stringify(details));
-				// var trainees = details;	
-
-				// console.log(trainees);
 	
 				var clients = [];
 				var numClients = 0;
-				// var finalGrade = 0;
+				
+
 				for(var i = 0; i < trainees.length; i++){
 					// finding clients
 					trainees[i].clients = await clientlistsModel.find({traineeID: trainees[i].userID});
 					trainees[i].numClients = trainees[i].clients.length;
 
 					// setting class status
+						// get classes
+					var tClasses = await traineelistsModel.find({traineeID: trainees[i].userID});
+					
+					//if length 1 class ; graduate = false
+					// else if length 2
+					// if endDates less than 2day graduated = true
+					// else graudated false 
 
 					// getting final grade
+						// get skills
+					// if( graduated) {
+						var tScores = [];
+						var scores = await skillassessmentsModel.find({traineeID: trainees[i].userID});
+	 					
+	 					for(var k = 0; k < scores.length; k++) {
+	 						tScores[k] = scores[k].skillScore;
+	 					}
+
+	 				//	console.log(tScores);
+	 						// get quizzes
+	 					var qScores = ['100', '100'];
+
+	 					var fg = computeFinal(tScores, qScores);
+
+	 					trainees[i].finalGrade = fg;
+	 				// } 
+	 				// else {
+	 				//		trainees[i].finalGrade = "N/A";
+	 				// }
 				}
 				// console.log(trainees);
 				
