@@ -240,9 +240,36 @@ function generateClientID() {
 }
 
 // computations
+function computeSkill(s) {
+	// compute skills
+	var skillSum = 0;
+	for(var i = 0; i < s.length; i++) {
+		skillSum += parseInt(s[i]);
+	}
 
-function computeGrades(s, q) {
-	return "P";
+					// average/total * 100
+	var skillAve = Number(Math.round((skillSum/s.length) + "e2") + "e-2");
+	console.log(skillAve.toString());
+	
+	return skillAve.toString();
+}
+
+function computeFinal(s, q) {
+
+	var skillFinal = Number(computeSkill(s)/10 * 100 * 0.6);
+
+	// compute quizzes
+	var qSum = 0;
+	for(var i = 0; i < q.length; i++) {
+		qSum += Number(q[i]);
+	}
+
+
+	var quizFinal = (qSum/q.length) * 0.4;
+
+	var finalGrade = skillFinal + quizFinal;
+
+	return finalGrade;
 }
 
 // main functions for getting and posting data
@@ -1082,20 +1109,22 @@ const rendFunctions = {
 					for(var j = 0; j < trainees.length; j++) {
 						// get skill scores
 						var tScores = [];
-						var scores = await skillassessmentsModel.find({traineeID: trainees[j].traineeID});
+						var scores = await skillassessmentsModel.find({traineeID: trainees[j].traineeID, classID: classVar[i].classID});
 						var strScores = JSON.parse(JSON.stringify(scores));
 
 						for(var k = 0; k < scores.length; k++) {
 							tScores[k] = (strScores[k].skillScore);
 						}
 
+						// console.log(tScores);
 						// get quiz scores
 						var qScores = ['100', '100', '100'];
 
 						// compute
-						var remarks = computeGrades(tScores, qScores);
+						var fg = computeFinal(tScores, qScores);
 						
-						if(remarks === "P") passed++;
+						//console.log(fg);
+						if(fg < 80) passed++;
 						else failed++;
 					}
 
@@ -1125,28 +1154,43 @@ const rendFunctions = {
  				var classID = req.params.classid;
 
  				// get trainees
- 				var trainees = await traineelistsModel.find({classID: classID});
+ 				var traineesVar = await traineelistsModel.aggregate([
+					 {$match: {classID: classID}},
+					 {$lookup: {
+							from: "users",
+							localField: "traineeID",
+							foreignField: "userID",
+							as: "trainees" // SLICE
+					 }},
+					 {$unwind: "$trainees"},
+				]);
+ 				
 
- 				// get trainee details
- 				var traineeDet = [];
- 				for(var i = 0; i < trainees.length; i++) {
- 					traineeDet[i] = await usersModel.findOne({userID: trainees[i].traineeID});
+ 				for(var i = 0; i < traineesVar.length; i++) {
+ 					var tScores = [];
+ 					var scores = await skillassessmentsModel.find({traineeID: traineesVar[i].traineeID});
+ 					
+ 					for(var k = 0; k < scores.length; k++) {
+ 						tScores[k] = scores[k].skillScore;
+ 					}
+
+ 					var skillAve = computeSkill(tScores);
+ 					
+ 					traineesVar[i].skillAve = skillAve;
  				}
-
- 				var classTrainees = JSON.parse(JSON.stringify(traineeDet));
 
  				// get quizzes
  				var q = await quizzesModel.find({classID: classID});
  				var quizzes = JSON.parse(JSON.stringify(q));
 
  				for(var i = 0; i < quizzes.length; i++) {
- 					q[i].quizDate = formatDate(q[i].quizDate);
+ 					quizzes[i].quizDate = formatDate(q[i].quizDate);
  				}
 
 
  				res.render('class-detailed', {
  					classID: classID,
- 					trainees: classTrainees,
+ 					trainees: traineesVar,
  					quizzes: quizzes
  				});		
  			} else res.redirect('/');
