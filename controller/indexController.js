@@ -106,6 +106,15 @@ function addClient(clientID, clientName, companyName, email, contactNo, isActive
 	return newClient;
 }
 
+function addCode(verifyCode, email) {
+	var newCode = {
+		verifyCode: verifyCode,
+		email: email,
+	};
+
+	return newCode;
+}
+
 // two digits
 function n(n) {
     return n > 9 ? "" + n: "0" + n;
@@ -198,6 +207,16 @@ function generateClientID() {
 	return clientID;
 }
 
+function generateVerificationCode() {
+	var verifyCode = "";
+
+	for (var i = 0; i < 6; i++)
+		verifyCode += (Math.round(Math.random() * 10)).toString();
+
+	return verifyCode;
+}
+
+
 // main functions for getting and posting data
 const rendFunctions = {
 
@@ -247,28 +266,119 @@ const rendFunctions = {
 	},
 	 
 	getVerification: function(req, res, next) {
-		// if user not verified..
 		res.render('verification', {
 			});
 	},
 
-	postVerification: async function(req, res, next) { // nde pumamasok d2 wat
+	postVerification: async function(req, res, next) {
+		let { email } = req.body;
+		
+		var user = await db.findOne(usersModel, {email: email, isVerified: false});
+
+		if(!user){ // account already verified
+			res.send({status: 409});
+		}
+		else{ // not verified
+			// generate code
+			var verifyCode = generateVerificationCode();
+			var code = await db.findOne(verificationModel, { email: email });
+			
+			if(code){ // user has code (will be updated)
+				verificationModel.findOneAndUpdate(
+					{email: email},
+					{ $set: { verifyCode: verifyCode }},
+					{ useFindAndModify: false},
+					function(err, match) {
+						if (err) {
+							res.send({status: 500});
+						}
+				});
+			}
+			else { // does not have code yet (will add to db)
+				var data = addCode(verifyCode, email);
+
+				verificationModel.create(data, function(error) {
+					if (error) {
+						res.send({status: 500});
+					}
+				})
+			}				
+			
+			// var dump = await db.findOne(verificationModel, {email: email });
+			// console.log(dump);
+
+			// send email
+			var smtpTransport = nodemailer.createTransport({
+				service: 'Gmail',
+				auth: {
+					user: 'training.tvh@gmail.com',
+					pass: 'tvhtraining'
+				}
+			});
+
+			// content
+			var mailOptions = {
+				from: 'training.tvh@gmail.com',
+				to: email,
+				subject: 'Verification Code',
+				// text: emailText,
+				html: `<p>Greetings! Here is your code: ${verifyCode}</p> <br> <br> <img src="cid:signature"/>`,
+				attachments: [{
+						filename: 'TVH.png',
+						path: __dirname+'/TVH.png',
+						cid: 'signature' //same cid value as in the html img src
+				}]
+			};
+
+			smtpTransport.sendMail(mailOptions, function(error) {
+				if (error){
+					res.send({status: 500});
+					console.log(error);
+				}
+				else{
+					res.send({status: 200});
+				} 
+
+				smtpTransport.close();
+			});
+		}
+	},
+
+	getVerifyAccount: function(req, res, next) {
+		// if user not verified..
+		
+		res.render('verify-account', {
+			});
+	},
+
+	postVerifyAccount: async function(req, res, next) { // nde pumamasok d2 wat
 		let { email, verifyCode } = req.body;
 		var vCode = await db.findOne(verificationModel, {verifyCode: verifyCode});
+		console.log(vCode);
 
 		try {
 			if (!vCode) { 
 				res.send({status: 401}) 
 			}
 			else {
-				bcrypt.compare(email, vcode.email, function(err, match) {
+				// bcrypt.compare(email, vCode.email, function(err, match) {
+				verificationModel.findOne({email: vCode.email, verifyCode: vCode.verifyCode}, function(err, match){
 					if (match) {
 						// console.log("hello");
-						req.session.user = user;
-						res.send({status: 200});
 						match.remove(); // remove from verificationModel
-					} else
-						res.send({status: 401});
+
+						usersModel.findOneAndUpdate( // update verified status
+							{email: email},
+							{ $set: { isVerified: true }},
+							{ useFindAndModify: false},
+							function(err, match) {
+								if (err) {
+									res.send({status: 500});
+								}
+							});
+
+						console.log("User verified!");
+					}
 				});
 			}		
 				if (email === vCode.email) 

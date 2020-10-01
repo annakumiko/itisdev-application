@@ -95,17 +95,55 @@ $(document).ready(function() {
 		}
 	});
 
-	// VERIFICATION
+	// GET CODE
+	$('button#getCodeBTN').click(function() {
+		var email = validator.trim($('#email').val());
+					
+		var emailEmpty = validator.isEmpty(email);
+		var emailFormat = validator.isEmail(email);
+		
+		$('p#emailError').text('');
+
+		if (emailEmpty) $('p#emailError').text('Please enter your email.');
+		
+		else if (!emailFormat) $('p#emailError').text('Invalid email format.');
+								
+		if (!emailEmpty && emailFormat){
+
+			$.post('/verification', { email: email }, function(res) {
+				switch (res.status){
+					case 200: {
+						window.location.href = '/verify-account/' + email;
+						break;
+					}
+					case 401: {
+						$('p#emailError').text('Incorrect email.');
+						break;								
+					}
+					case 409: {
+						$('p#emailError').text('Account already verified.');
+						break;								
+					}
+					case 410: {
+						$('p#emailError').text('Account code already sent.');
+						break;								
+					}
+					case 500: {
+						$('p#emailError').text('Server Error.');
+						break;
+					}
+				}
+			});
+		}
+	});
+
+	// VERIFY ACCOUNT
 	$('button#verifyBTN').click(function() {
 		var email = validator.trim($('#email').val());
 		var verifyCode = validator.trim($('#verifyCode').val());
 				
-		if((validator.isEmpty(email)) || (validator.isEmpty(verifyCode))){
-			console.log("Missing input credentials.") 
-		}
-		else{
-
-		var verifyCode = validator.trim($('#code').val());
+		console.log(email);
+		console.log(verifyCode);
 		
 		var emailEmpty = validator.isEmpty(email);
 		var codeEmpty = validator.isEmpty(verifyCode);
@@ -122,7 +160,7 @@ $(document).ready(function() {
 				
 		if ((!emailEmpty && emailFormat) && !codeEmpty){
 
-			$.post('/verification', {email: email, verifyCode: verifyCode}, function(res) {
+			$.post('/verify-account', {email: email, verifyCode: verifyCode}, function(res) {
 				switch (res.status){
 					case 200: {
 						window.location.href = '/login';
@@ -138,7 +176,6 @@ $(document).ready(function() {
 					}
 				}
 			});
-		}
 		}
 	});
 
