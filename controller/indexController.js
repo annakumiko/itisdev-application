@@ -1002,7 +1002,8 @@ const rendFunctions = {
 	 					daySelected: daySelected,
 	 					secSelected: sectionSelected,
 	 					classSelected: classID,
-	 					date: dateSelected
+	 					date: dateSelected,
+	 					endDate: classSelected.endDate
  				});		
  			} else res.redirect('/');
  		} else res.redirect('/login');
@@ -1220,7 +1221,7 @@ const rendFunctions = {
 			let hash = await bcrypt.hash(req.body.password, saltRounds);
 			console.log(hash);
 			let insert = await db.insertOne(usersModel,
-				{userType: req.body.userType, firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, password: hash, deactivated: false});
+				{userID: req.body.userID, userType: req.body.userType, firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, password: hash, deactivated: false, isVerified: true});
 			console.log(insert);
 		} catch(e) {
 			console.log(e);
@@ -1400,25 +1401,47 @@ const rendFunctions = {
 	
 				var clients = [];
 				var numClients = 0;
-				
+				var dateToday = new Date();
 
 				for(var i = 0; i < trainees.length; i++){
 					// finding clients
 					trainees[i].clients = await clientlistsModel.find({traineeID: trainees[i].userID});
 					trainees[i].numClients = trainees[i].clients.length;
 
+					var graduated = false;
 					// setting class status
 						// get classes
 					var tClasses = await traineelistsModel.find({traineeID: trainees[i].userID});
-					
-					//if length 1 class ; graduate = false
-					// else if length 2
-					// if endDates less than 2day graduated = true
-					// else graudated false 
+
+					if(tClasses.length == 0)
+						trainees[i].status = "Not started";
+					else if(tClasses.length == 1) {
+						trainees[i].status = "Ongoing";
+						graduated = false;
+					}
+					else if(tClasses.length == 2) {
+						for(var j = 0; j < tClasses.length; j++) {
+						var classDet = await classesModel.find({classID: tClasses[j].classID});
+
+							for(var k = 0; k < classDet; k++) {
+								if(classDet[k].endDate.valueOf() > dateToday.valueOf()) {
+									trainees[i].status = "Graduated";
+									graudated = true;
+								}
+								else {
+									trainees[i].status = "Ongoing";
+									graduated = false;
+								}
+							}
+						}					
+					}
+					else trainees[i].status = "Error";
 
 					// getting final grade
 						// get skills
-					// if( graduated) {
+					 if( graduated) {
+
+						// final grade computation
 						var tScores = [];
 						var scores = await skillassessmentsModel.find({traineeID: trainees[i].userID});
 	 					
@@ -1433,15 +1456,18 @@ const rendFunctions = {
 	 					var fg = computeFinal(tScores, qScores);
 
 	 					trainees[i].finalGrade = fg;
-	 				// } 
-	 				// else {
-	 				//		trainees[i].finalGrade = "N/A";
-	 				// }
+	 				 } 
+	 				 else {
+	 						trainees[i].finalGrade = "N/A";
+	 				 }
 				}
-				// console.log(trainees);
 				
+				var today = formatDate(new Date());
+ 				var time = formatTime(new Date());
 				res.render('trainee-summary', {
 					trainees: trainees,
+					dateToday: today,
+					currTime: time
 				});
 			} else res.redirect('/');
 		} else res.redirect('/login');
@@ -1455,7 +1481,6 @@ const rendFunctions = {
 				
 				var details = await usersModel.find({userID: userID});
 				var user = JSON.parse(JSON.stringify(details));
-				// console.log(user[0].userID);
 
 				//classes
  				var classVar = await traineelistsModel.aggregate([
@@ -1502,7 +1527,6 @@ const rendFunctions = {
 						
 					skillTypes[i].skillScores = scores;
 				}
-				// console.log(skillTypes);
 
 				//clients
 				var clientsVar = await clientlistsModel.aggregate([
@@ -1517,6 +1541,9 @@ const rendFunctions = {
 				]);
 				// console.log(clientsVar);
 
+				var today = formatDate(new Date());
+ 				var time = formatTime(new Date());
+
 				res.render('trainee-detailed', {
 					userID: userID,
 					fullName: user[0].lastName + ", " + user[0].firstName,
@@ -1524,6 +1551,8 @@ const rendFunctions = {
 					//quiz
 					skills: skillTypes,
 					clients: clientsVar,
+					dateToday: today,
+					currTime: time
 				});		
 			} else res.redirect('/');
 		} else res.redirect('/login');

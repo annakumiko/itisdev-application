@@ -97,6 +97,20 @@ function classOver() {
 		if(newDate.valueOf() < today.valueOf())
 			$(this).prop('disabled', true);
 	}); 
+
+	$('.deleteClassBtn').each(function() {
+		var e = $(this).closest('tr').children('td.eDate').text();
+
+		var reverse = reverseDate(e);
+		var newDate = new Date(reverse);
+
+		console.log(e);
+		console.log(reverse);
+		console.log(newDate);
+
+		if(newDate.valueOf() < today.valueOf())
+			$(this).prop('disabled', true);
+	}); 
 	
 	// quizlist updates
 	$('.updatebtn').each(function() {
@@ -594,12 +608,10 @@ $(document).ready(function() {
 		var scoresheetEditor = document.getElementsByClassName('scoresheetEditor');
 		var updatebtn = document.getElementById('updateScoresheet');
 		var today = new Date();
-		var date = $('#idhide').text();
-		var compareDate = new Date(date);
-
-		console.log(today);
-		console.log(compareDate);
-		console.log(compareDate < today);
+		// var date = $('#idhide').text();
+		// var compareDate = new Date(date);
+		var endDate = $('endhide').text()
+		var compareDate = new Date(endDate);
 
 		if(compareDate < today) {
 			alert("This class ended in " + getDate(compareDate) + ". You cannot edit the scores for this class anymore.");
