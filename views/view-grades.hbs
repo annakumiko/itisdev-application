@@ -64,8 +64,8 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th style="background-color: #006739;color: rgb(255,255,255);">Quiz</th>
-                            {{!-- <th style="background-color: #006739;color: rgb(255,255,255);">Date</th> --}}
+                            <th style="background-color: #006739;color: rgb(255,255,255);">Date of Quiz</th>
+                            <th style="background-color: #006739;color: rgb(255,255,255);">Time</th>
                             <th style="background-color: #006739;color: rgb(255,255,255);">Score</th>
                             <th style="background-color: #006739;color: rgb(255,255,255);">Out of</th>
                         </tr>
@@ -73,10 +73,10 @@
                     <tbody>
                         {{#each quizzes}}
                         <tr>
-                            <td style="width: 75%;">{{quizName}}</td>
-                            {{!-- <td>{{quizDate}}</td> --}}
-                            <td>{{score}}</td>
-                            <td>{{outOf}}</td>
+                            <td style="width: 40%;">{{quizDate}}</td>
+                            <td style="width: 30%;">{{quizTime}}</td>
+                            <td>{{quizScore}}</td>
+                            <td>{{numItems}}</td>
                         </tr>
                         {{/each}}
                     </tbody>
