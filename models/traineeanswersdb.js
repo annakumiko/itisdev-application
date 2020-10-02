@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 var traineeanswersSchema = new mongoose.Schema({
 	traineeID: String,
-	itemNo: Number,
+	itemNo: String,
 	tAnswer: String
 }, {collection: "traineeanswers"});
 

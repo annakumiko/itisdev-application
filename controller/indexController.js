@@ -97,6 +97,22 @@ function createItem(itemNo, quizid, q, a) {
 	return tempItem;
 }
 
+function quizTemp(traineeID, quizID, classID, quizDate, startTime, endDate, numTakes, numItems, quizScore){
+	var temp = {
+		traineeID: traineeID,
+		quizID: quizID,
+		classID: classID,
+		quizDate: quizDate,
+		startTime: startTime,
+		endDate: endDate, 
+		numItems: numItems,
+		numTakes: numTakes,
+		quizScore: quizScore,
+	}
+
+	return temp;
+}
+
 Date.prototype.addDays = function(days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
@@ -131,6 +147,15 @@ function addClient(clientID, clientName, companyName, email, contactNo, isActive
 	};
 
 	return newClient;
+}
+
+function addCode(verifyCode, email) {
+	var newCode = {
+		verifyCode: verifyCode,
+		email: email,
+	};
+
+	return newCode;
 }
 
 // two digits
@@ -239,6 +264,15 @@ function generateClientID() {
 	return clientID;
 }
 
+function generateVerificationCode() {
+	var verifyCode = "";
+
+	for (var i = 0; i < 6; i++)
+		verifyCode += (Math.round(Math.random() * 10)).toString();
+
+	return verifyCode;
+}
+
 // computations
 function computeSkill(s) {
 	// compute skills
@@ -324,28 +358,119 @@ const rendFunctions = {
 	},
 	 
 	getVerification: function(req, res, next) {
-		// if user not verified..
 		res.render('verification', {
 			});
 	},
 
-	postVerification: async function(req, res, next) { // nde pumamasok d2 wat
+	postVerification: async function(req, res, next) {
+		let { email } = req.body;
+		
+		var user = await db.findOne(usersModel, {email: email, isVerified: false});
+
+		if(!user){ // account already verified
+			res.send({status: 409});
+		}
+		else{ // not verified
+			// generate code
+			var verifyCode = generateVerificationCode();
+			var code = await db.findOne(verificationModel, { email: email });
+			
+			if(code){ // user has code (will be updated)
+				verificationModel.findOneAndUpdate(
+					{email: email},
+					{ $set: { verifyCode: verifyCode }},
+					{ useFindAndModify: false},
+					function(err, match) {
+						if (err) {
+							res.send({status: 500});
+						}
+				});
+			}
+			else { // does not have code yet (will add to db)
+				var data = addCode(verifyCode, email);
+
+				verificationModel.create(data, function(error) {
+					if (error) {
+						res.send({status: 500});
+					}
+				})
+			}				
+			
+			// var dump = await db.findOne(verificationModel, {email: email });
+			// console.log(dump);
+
+			// send email
+			var smtpTransport = nodemailer.createTransport({
+				service: 'Gmail',
+				auth: {
+					user: 'training.tvh@gmail.com',
+					pass: 'tvhtraining'
+				}
+			});
+
+			// content
+			var mailOptions = {
+				from: 'training.tvh@gmail.com',
+				to: email,
+				subject: 'Verification Code',
+				// text: emailText,
+				html: `<p>Greetings! Here is your code: ${verifyCode}</p> <br> <br> <img src="cid:signature"/>`,
+				attachments: [{
+						filename: 'TVH.png',
+						path: __dirname+'/TVH.png',
+						cid: 'signature' //same cid value as in the html img src
+				}]
+			};
+
+			smtpTransport.sendMail(mailOptions, function(error) {
+				if (error){
+					res.send({status: 500});
+					console.log(error);
+				}
+				else{
+					res.send({status: 200});
+				} 
+
+				smtpTransport.close();
+			});
+		}
+	},
+
+	getVerifyAccount: function(req, res, next) {
+		// if user not verified..
+		
+		res.render('verify-account', {
+			});
+	},
+
+	postVerifyAccount: async function(req, res, next) { // nde pumamasok d2 wat
 		let { email, verifyCode } = req.body;
 		var vCode = await db.findOne(verificationModel, {verifyCode: verifyCode});
+		console.log(vCode);
 
 		try {
 			if (!vCode) { 
 				res.send({status: 401}) 
 			}
 			else {
-				bcrypt.compare(email, vcode.email, function(err, match) {
+				// bcrypt.compare(email, vCode.email, function(err, match) {
+				verificationModel.findOne({email: vCode.email, verifyCode: vCode.verifyCode}, function(err, match){
 					if (match) {
 						// console.log("hello");
-						req.session.user = user;
-						res.send({status: 200});
 						match.remove(); // remove from verificationModel
-					} else
-						res.send({status: 401});
+
+						usersModel.findOneAndUpdate( // update verified status
+							{email: email},
+							{ $set: { isVerified: true }},
+							{ useFindAndModify: false},
+							function(err, match) {
+								if (err) {
+									res.send({status: 500});
+								}
+							});
+
+						console.log("User verified!");
+					}
 				});
 			}		
 				if (email === vCode.email) 
@@ -1358,23 +1483,79 @@ const rendFunctions = {
 					
 				skillTypes[i].skillScores = scores;
 			}
-			console.log(skillTypes);
-
-			// get skills
-			//  var skillVar = await skillassessmentsModel.aggregate([
-			// 	{$match: {traineeID: userID}},
-			// 	{$lookup: {
-			// 		from: "skilltypes",
-			// 		localField: "skillID",
-			// 		foreignField: "skillID",
-			// 		as: "skills"
-			// 	}},
-			// 	{$unwind: "$skills"},
-			// ]);			
-			// console.log(skillVar);
+			// console.log(skillTypes);
 
 			// compute quizzes
-			// match trainee answers to real answers and counter for the score
+			var quizList = [];
+			
+			// current trainee answers
+			var TAdata = await traineeanswersModel.find({traineeID: userID});
+			var tAnswers = JSON.parse(JSON.stringify(TAdata));
+			
+			// console.log(tAnswers[0].quizID);
+
+			// getting only the quizIDs from the traineeanswers
+			var arrQuizID = [tAnswers[0].quizID];
+			var arrInd = 0;
+			for(var i = 1; i < tAnswers.length; i++){
+				if(tAnswers[i-1].quizID == tAnswers[i].quizID)
+					arrInd++;
+				else
+					arrQuizID[arrInd] = tAnswers[i].quizID;
+			}
+			// console.log(arrQuizID);
+
+			// removing empty items from array
+			var quizIDs = arrQuizID.filter(function (el) {
+				return el != null;
+			});
+			// console.log(quizIDs);
+
+			// get quizzes that trainees answered
+			for(var q = 0; q < quizIDs.length; q++){
+				var qDump = await quizzesModel.find({quizID: quizIDs[q]});
+				var quizDet = JSON.parse(JSON.stringify(qDump));
+				
+				var quizVar = quizTemp(userID, quizDet[0].quizID, quizDet[0].classID, quizDet[0].quizDate, quizDet[0].startTime, quizDet[0].endTime, quizDet[0].numTakes, quizDet[0].numItems)
+				quizList[q] = quizVar;
+				
+			}
+			// console.log(quizList);
+
+			// comparing items to traineeAnswers
+			for(var x = 0; x < quizList.length; x++){
+				var quizScore = 0;
+				var i = 0;
+
+				var iTemp = await itemsModel.find({quizID: quizList[x].quizID});
+				var numItems = JSON.parse(JSON.stringify(iTemp));
+				// try{
+					for(var y = 0; y < numItems.length; y++){
+						var itemNo = "ITEM" + (i+1);
+
+						var itTemp = await itemsModel.find({quizID: quizList[x].quizID, itemNo: itemNo});
+						var item = JSON.parse(JSON.stringify(itTemp));
+
+						var trTemp = await traineeanswersModel.find({traineeID: userID, quizID: quizList[x].quizID, itemNo: itemNo});
+						var trAns = JSON.parse(JSON.stringify(trTemp));
+
+						// console.log(item[0].answer)
+						// console.log(trAns[0].tAnswer)
+						for(var z = 0; z < trAns.length; z++){
+							if(item[z].answer == trAns[z].tAnswer)
+								quizScore++;
+						}
+
+						i++;
+					}
+				// } catch(e) {
+				// console.log(e);}
+
+				// console.log(quizScore);
+					quizList[x].quizScore = quizScore;
+			}
+
+			console.log(quizList);
 
 				res.render('view-grades', {
 					fullName: req.session.user.lastName + ", " + req.session.user.firstName,
@@ -1385,6 +1566,7 @@ const rendFunctions = {
 					skills: skillTypes,
 
 					//QUIZZES
+					quizzes: quizList,
 				});
 			}
 		} else {
