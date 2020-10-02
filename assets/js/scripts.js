@@ -527,13 +527,6 @@ $(document).ready(function() {
 			numberArray.push(contactNo[i].value);
 		}
 
-		// console.log(idArray);
-		// console.log(activeArray);
-		// console.log(nameArray);
-		// console.log(companyArray);
-		// console.log(emailArray);
-		// console.log(numberArray);
-
 		$.post('/update-clientlist', {clientID: idArray, clientName: nameArray, companyName: companyArray, email: emailArray, contactNo: numberArray, isActive: activeArray }, function(result){
 			switch(result.status) {
 				case 200: {

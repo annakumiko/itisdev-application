@@ -747,7 +747,7 @@ const rendFunctions = {
  		let { classNum } = req.body;
 
  		console.log("Deteted " + classNum);
- 		try {
+ 		//try {
  			classesModel.findOne({classID: classNum}, function(err, cmatch) {
 				if (err) {
 					res.send({status: 500, mssg:'Server Error: Query not found.'});
@@ -772,10 +772,10 @@ const rendFunctions = {
 					});
 				}
 			});
- 		}
- 		catch(e) {
- 			console.log(e);
- 		}
+ 		// }
+ 		// catch(e) {
+ 		// 	console.log(e);
+ 		// }
  		
  	},
 

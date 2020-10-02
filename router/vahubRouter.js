@@ -47,7 +47,7 @@ router.post('/add-client', controller.postAddClient);
 router.post('/remove-client', controller.postRemoveClient);
 router.post('/update-clientlist', controller.postUpdateClients);
 // TRAINER
-router.post('/create-class',/* middleware.validateCreateClass, */controller.postCreateClass);
+router.post('/create-class', middleware.validateCreateClass, controller.postCreateClass);
 router.post('/add-trainees', middleware.validateAddTrainees, controller.postAddTrainees);
 router.post('/delete-class', controller.postDeleteClass);
 router.post('/remove-trainee', controller.postRemoveTrainee);
