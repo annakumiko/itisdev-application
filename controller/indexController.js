@@ -765,8 +765,12 @@ const rendFunctions = {
 
 							// remove from trainee "array"
 							traineelistsModel.find({classID: classNum}, function(err, tematch) {
-								tematch.remove();
-								res.send({status: 200, mssg: 'Deleted Class Successfully!'});
+								if(err) {
+									res.send({status: 500, mssg:'SERVER ERROR: Cannot update classlist in DB.'});
+								} else {
+									tematch.remove();
+									res.send({status: 200, mssg: 'Deleted Class Successfully!'});
+								}
 							});
 						}
 					});

@@ -139,7 +139,7 @@ function isOngoing(eDate) {
 const vahubMiddleware = {
 
 	validateCreateClass: async function (req, res, next) {
-		var trainerID = JSON.parse(JSON.stringify(req.session.user.userID));
+		var trainerID = req.session.user.userID;
 
 		let { startDate, endDate, startTime, endTime } = req.body; 
 
