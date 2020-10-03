@@ -19,7 +19,7 @@
   position: fixed;
   background-color: #006739;
   transition: 50ms ease;
-
+  z-index: 2;
 }
 
 .navbar-navv {

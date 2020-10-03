@@ -257,6 +257,7 @@ $(document).ready(function() {
 				switch (res.status){
 					case 200: {
 						window.location.href = '/login';
+						alert("Account verified!");
 						break;
 					}
 					case 401: {
@@ -397,7 +398,7 @@ $(document).ready(function() {
 		if (!(validator.isEmpty(courseDesc))) { 
 			$.post('/define-course', {courseName: courseName, courseDesc: courseDesc}, function(res) {
 				window.location.href = '/';
-				console.log("email sent");
+				alert("Course updated!");
 			});
 		}
 	});
@@ -494,9 +495,8 @@ $(document).ready(function() {
 
 	// UPDATE CLIENT DETAILS
 	$('button#saveCLBTN').click(function() {
-		var isActive = document.getElementsByClassName('active');
+		var isActive = $('.isActive').val()
 		var clientName = document.getElementsByClassName('clientName');
-		// var clientName = $(".clientName").val();
 		var companyName = document.getElementsByClassName('companyName');
 		var email = document.getElementsByClassName('email');
 		var contactNo = document.getElementsByClassName('contactNo');
@@ -513,28 +513,27 @@ $(document).ready(function() {
 			idArray.push(this.id);
 		});	
 
-		for(var i = 0; i < idArray.length; i++){
-			if(isActive[i].value === 'on')
-				activeArray.push(true);
-			else
-				activeArray.push(false);
-		}
-		
+		console.log(isActive);
 		for(var i = 0; i < idArray.length; i++){
 			nameArray.push(clientName[i].value);
 			companyArray.push(companyName[i].value);
 			emailArray.push(email[i].value);
 			numberArray.push(contactNo[i].value);
+
+			if(isActive == 'true')
+				activeArray.push(true);
+			else activeArray.push(false);
 		}
 
 		$.post('/update-clientlist', {clientID: idArray, clientName: nameArray, companyName: companyArray, email: emailArray, contactNo: numberArray, isActive: activeArray }, function(result){
 			switch(result.status) {
 				case 200: {
+					console.log("hello")
 					alert(result.mssg);
 					window.location.href = '/manage-clientlist';
 				}
 				case 500: {
-					$('p#eUpdateClients').text(res.mssg);
+					// $('p#eUpdateClients').text(result.mssg);
 					break;
 				}
 			}

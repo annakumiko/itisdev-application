@@ -288,6 +288,20 @@ function computeSkill(s) {
 	return skillAve;
 }
 
+function computeQuiz(q, t){
+	// compute quizzes
+	var quizSum = 0;
+	for(var i = 0; i < q.length; i++) {
+		quizSum += (q/t)*100;
+	}
+
+	// average/total * 100
+	var quizAve = quizSum/q;
+	
+	console.log(quizAve);
+	return quizAve;
+}
+
 function computeFinal(s, q) {
 
 	var skillFinal = computeSkill(s)/10 * 100 * 0.6;
@@ -753,8 +767,6 @@ const rendFunctions = {
 					res.send({status: 500, mssg:'Server Error: Query not found.'});
 				}			
 				else {
-					cmatch.remove(); // remove from classes
-
 					// remove from trainer "array"
 					classlistsModel.findOne({classID: classNum, trainerID: req.session.user.userID}, function(err, trmatch) {
 						if (err) {
@@ -762,18 +774,20 @@ const rendFunctions = {
 						}
 						else {
 							trmatch.remove();	
-
-							// remove from trainee "array"
-							traineelistsModel.find({classID: classNum}, function(err, tematch) {
-								if(err) {
-									res.send({status: 500, mssg:'SERVER ERROR: Cannot update classlist in DB.'});
-								} else {
-									tematch.remove();
-									res.send({status: 200, mssg: 'Deleted Class Successfully!'});
-								}
-							});
 						}
 					});
+
+					// remove from trainee "array"
+					traineelistsModel.find({classID: classNum}, function(err, tematch) {
+						if(err) {
+							res.send({status: 500, mssg:'SERVER ERROR: Cannot update classlist in DB.'});
+						} else {
+							tematch.remove();
+						}
+					});
+
+					cmatch.remove(); // remove from classes
+					res.send({status: 200, mssg: 'Deleted Class Successfully!'});
 				}
 			});
  		// }
@@ -1327,7 +1341,89 @@ const rendFunctions = {
 
  				for(var i = 0; i < quizzes.length; i++) {
  					quizzes[i].quizDate = formatDate(q[i].quizDate);
- 				}
+				 }
+				 
+				for(var z = 0; z < traineesVar.length; z++) {
+					var quizList = [];
+					var qScores = [];
+
+		 
+					// current trainee answers
+					var TAdata = await traineeanswersModel.find({traineeID: traineesVar[z].traineeID});
+					var tAnswers = JSON.parse(JSON.stringify(TAdata));
+					
+					// console.log(tAnswers[0].quizID);
+		
+					if(tAnswers.length == 0){
+						var quizVar = quizTemp(traineesVar[z].traineeID, '', '', '', '', '', '', '',);
+						quizList[0] = quizVar;
+					}
+					else{
+					// getting only the quizIDs from the traineeanswers
+					var arrQuizID = [tAnswers[0].quizID];
+					var arrInd = 0;
+					for(var i = 1; i < tAnswers.length; i++){
+						if(tAnswers[i-1].quizID == tAnswers[i].quizID)
+							arrInd++;
+						else
+							arrQuizID[arrInd] = tAnswers[i].quizID;
+					}
+					// console.log(arrQuizID);
+		
+					// removing empty items from array
+					var quizIDs = arrQuizID.filter(function (el) {
+						return el != null;
+					});
+					// console.log(quizIDs);
+		
+					// get quizzes that trainees answered
+					for(var q = 0; q < quizIDs.length; q++){
+						var qDump = await quizzesModel.find({quizID: quizIDs[q]});
+						var quizDet = JSON.parse(JSON.stringify(qDump));
+						
+						var quizVar = quizTemp(traineesVar[z].traineeID, quizDet[0].quizID, quizDet[0].classID, quizDet[0].quizDate, quizDet[0].startTime, quizDet[0].endTime, quizDet[0].numTakes, quizDet[0].numItems)
+						quizList[q] = quizVar;
+						
+					}
+					// console.log(quizList);
+		
+					// comparing items to traineeAnswers
+					for(var x = 0; x < quizList.length; x++){
+						var quizScore = 0;
+						var i = 0;
+		
+						var iTemp = await itemsModel.find({quizID: quizList[x].quizID});
+						var numItems = JSON.parse(JSON.stringify(iTemp));
+							for(var y = 0; y < numItems.length; y++){
+								var itemNo = "ITEM" + (i+1);
+		
+								var itTemp = await itemsModel.find({quizID: quizList[x].quizID, itemNo: itemNo});
+								var item = JSON.parse(JSON.stringify(itTemp));
+		
+								var trTemp = await traineeanswersModel.find({traineeID: traineesVar[z].traineeID, quizID: quizList[x].quizID, itemNo: itemNo});
+								var trAns = JSON.parse(JSON.stringify(trTemp));
+	
+								for(var o = 0; o < trAns.length; o++){
+									if(item[o].answer == trAns[o].tAnswer)
+										quizScore++;
+								}
+		
+								i++;
+							}
+							
+							quizList[x].quizScore = quizScore;
+							quizList[x].quizDate = formatDate(quizList[x].quizDate);
+							qScores[x] = quizScore;
+							
+							console.log(quizList[x].quizScore)
+
+							var quizAve = computeQuiz(qScores);
+ 					
+ 							traineesVar[z].quizAve = quizAve;
+					}
+						// console.log(qScores)
+					}
+				}
 
  				var today = formatDate(new Date());
  				var time = formatTime(new Date());
@@ -1475,15 +1571,20 @@ const rendFunctions = {
 			var skills = await skilltypesModel.find({});
 			var skillTypes = JSON.parse(JSON.stringify(skills));
 			// console.log(skillTypes);
-
+			
+			var scores = [];
 			var skillScores = [];
 			for (var i = 0; i < skillTypes.length; i++) {
 				var data = await skillassessmentsModel.find({skillID: skillTypes[i].skillID, traineeID: userID});
 				var dumpScores = JSON.parse(JSON.stringify(data));
-				var scores = [];
 
+				if(dumpScores.length == 0){
+					for(var x = 0; x < 8; x++)
+					scores[x] = '0';
+				}
+				else{
 				for(var x = 0; x < 8; x++)
-					scores[x] = dumpScores[x].skillScore;
+					scores[x] = dumpScores[x].skillScore;}
 					
 				skillTypes[i].skillScores = scores;
 			}
@@ -1498,6 +1599,11 @@ const rendFunctions = {
 			
 			// console.log(tAnswers[0].quizID);
 
+			if(tAnswers.length == 0){
+				var quizVar = quizTemp(userID, '', '', '', '', '', '', '',);
+				quizList[0] = quizVar;
+			}
+			else{
 			// getting only the quizIDs from the traineeanswers
 			var arrQuizID = [tAnswers[0].quizID];
 			var arrInd = 0;
@@ -1557,8 +1663,9 @@ const rendFunctions = {
 
 				// console.log(quizScore);
 					quizList[x].quizScore = quizScore;
+					quizList[x].quizDate = formatDate(quizList[x].quizDate);
 			}
-
+			}
 			console.log(quizList);
 
 				res.render('view-grades', {
@@ -1566,10 +1673,7 @@ const rendFunctions = {
 					section: classVar[0].classList.section,
 					course: classVar[0].course.courseName,
 
-					//SKILLS
 					skills: skillTypes,
-
-					//QUIZZES
 					quizzes: quizList,
 				});
 			}
@@ -1635,10 +1739,89 @@ const rendFunctions = {
 	 						tScores[k] = scores[k].skillScore;
 	 					}
 
-	 				//	console.log(tScores);
-	 						// get quizzes
-	 					var qScores = ['100', '100'];
+					 //	console.log(tScores);
+					 
+					 var quizList = [];
+					 var qScores = [];
 
+			
+					 // current trainee answers
+					 var TAdata = await traineeanswersModel.find({traineeID: userID});
+					 var tAnswers = JSON.parse(JSON.stringify(TAdata));
+					 
+					 // console.log(tAnswers[0].quizID);
+		 
+					 if(tAnswers.length == 0){
+						 var quizVar = quizTemp(userID, '', '', '', '', '', '', '',);
+						 quizList[0] = quizVar;
+					 }
+					 else{
+					 // getting only the quizIDs from the traineeanswers
+					 var arrQuizID = [tAnswers[0].quizID];
+					 var arrInd = 0;
+					 for(var i = 1; i < tAnswers.length; i++){
+						 if(tAnswers[i-1].quizID == tAnswers[i].quizID)
+							 arrInd++;
+						 else
+							 arrQuizID[arrInd] = tAnswers[i].quizID;
+					 }
+					 // console.log(arrQuizID);
+		 
+					 // removing empty items from array
+					 var quizIDs = arrQuizID.filter(function (el) {
+						 return el != null;
+					 });
+					 // console.log(quizIDs);
+		 
+					 // get quizzes that trainees answered
+					 for(var q = 0; q < quizIDs.length; q++){
+						 var qDump = await quizzesModel.find({quizID: quizIDs[q]});
+						 var quizDet = JSON.parse(JSON.stringify(qDump));
+						 
+						 var quizVar = quizTemp(userID, quizDet[0].quizID, quizDet[0].classID, quizDet[0].quizDate, quizDet[0].startTime, quizDet[0].endTime, quizDet[0].numTakes, quizDet[0].numItems)
+						 quizList[q] = quizVar;
+						 
+					 }
+					 // console.log(quizList);
+		 
+					 // comparing items to traineeAnswers
+					 for(var x = 0; x < quizList.length; x++){
+						 var quizScore = 0;
+						 var i = 0;
+		 
+						 var iTemp = await itemsModel.find({quizID: quizList[x].quizID});
+						 var numItems = JSON.parse(JSON.stringify(iTemp));
+						 // try{
+							 for(var y = 0; y < numItems.length; y++){
+								 var itemNo = "ITEM" + (i+1);
+		 
+								 var itTemp = await itemsModel.find({quizID: quizList[x].quizID, itemNo: itemNo});
+								 var item = JSON.parse(JSON.stringify(itTemp));
+		 
+								 var trTemp = await traineeanswersModel.find({traineeID: userID, quizID: quizList[x].quizID, itemNo: itemNo});
+								 var trAns = JSON.parse(JSON.stringify(trTemp));
+		 
+								 // console.log(item[0].answer)
+								 // console.log(trAns[0].tAnswer)
+								 for(var z = 0; z < trAns.length; z++){
+									 if(item[z].answer == trAns[z].tAnswer)
+										 quizScore++;
+								 }
+		 
+								 i++;
+							 }
+						 // } catch(e) {
+						 // console.log(e);}
+		 
+						 // console.log(quizScore);
+							 quizList[x].quizScore = quizScore;
+							 quizList[x].quizDate = formatDate(quizList[x].quizDate);
+							 qScores[x] = quizScore;
+					 }
+					 }
+	 					// 	// get quizzes
+	 					// var qScores = ['100', '100'];
+					 console.log(qScores);
 	 					var fg = computeFinal(tScores, qScores);
 
 	 					trainees[i].finalGrade = fg;
@@ -1686,16 +1869,93 @@ const rendFunctions = {
 					 }},
 					 {$unwind: "$course"}
 			 ]);
-			 console.log(classVar);
+			//  console.log(classVar);
 
-			 // woPS
+			 // trainer
 			 var trainer = '';
-			 for(var x = 0; x < classVar.length; x++)
-			 	classVar[x].trainer = await classesModel.find({trainerID: classVar[x].classList.trainerID});
-
-				 console.log(classVar);
+			 for(var x = 0; x < classVar.length; x++){
+			 	 var trVar = await classesModel.findOne({trainerID: classVar[x].classList.trainerID});
+				 trainer = JSON.parse(JSON.stringify(trVar));
+				 tryVar = await usersModel.find({userID: trainer.trainerID});
+				//  console.log(trVar);
+				classVar[x].trainer = tryVar[0].firstName + ' ' + tryVar[0].lastName;
+				 console.log(classVar[x].trainer);
+				}
 
 				//quizzes
+				var quizList = [];
+			
+				// current trainee answers
+				var TAdata = await traineeanswersModel.find({traineeID: userID});
+				var tAnswers = JSON.parse(JSON.stringify(TAdata));
+				
+				// console.log(tAnswers[0].quizID);
+	
+				if(tAnswers.length == 0){
+					var quizVar = quizTemp(userID, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A',);
+					quizList[0] = quizVar;
+				}
+				else{
+				// getting only the quizIDs from the traineeanswers
+				var arrQuizID = [tAnswers[0].quizID];
+				var arrInd = 0;
+				for(var i = 1; i < tAnswers.length; i++){
+					if(tAnswers[i-1].quizID == tAnswers[i].quizID)
+						arrInd++;
+					else
+						arrQuizID[arrInd] = tAnswers[i].quizID;
+				}
+				// console.log(arrQuizID);
+	
+				// removing empty items from array
+				var quizIDs = arrQuizID.filter(function (el) {
+					return el != null;
+				});
+				// console.log(quizIDs);
+	
+				// get quizzes that trainees answered
+				for(var q = 0; q < quizIDs.length; q++){
+					var qDump = await quizzesModel.find({quizID: quizIDs[q]});
+					var quizDet = JSON.parse(JSON.stringify(qDump));
+					
+					var quizVar = quizTemp(userID, quizDet[0].quizID, quizDet[0].classID, quizDet[0].quizDate, quizDet[0].startTime, quizDet[0].endTime, quizDet[0].numTakes, quizDet[0].numItems)
+					quizList[q] = quizVar;
+					
+				}
+				// console.log(quizList);
+	
+				// comparing items to traineeAnswers
+				for(var x = 0; x < quizList.length; x++){
+					var quizScore = 0;
+					var i = 0;
+	
+					var iTemp = await itemsModel.find({quizID: quizList[x].quizID});
+					var numItems = JSON.parse(JSON.stringify(iTemp));
+		
+						for(var y = 0; y < numItems.length; y++){
+							var itemNo = "ITEM" + (i+1);
+	
+							var itTemp = await itemsModel.find({quizID: quizList[x].quizID, itemNo: itemNo});
+							var item = JSON.parse(JSON.stringify(itTemp));
+	
+							var trTemp = await traineeanswersModel.find({traineeID: userID, quizID: quizList[x].quizID, itemNo: itemNo});
+							var trAns = JSON.parse(JSON.stringify(trTemp));
+	
+							// console.log(item[0].answer)
+							// console.log(trAns[0].tAnswer)
+							for(var z = 0; z < trAns.length; z++){
+								if(item[z].answer == trAns[z].tAnswer)
+									quizScore++;
+							}
+	
+							i++;
+						}
+						quizList[x].quizScore = quizScore;
+						quizList[x].quizDate = formatDate(quizList[x].quizDate);
+						console.log(quizList);
+					}
+				}
+			
 
 				//skills
 				var skills = await skilltypesModel.find({});
@@ -1734,7 +1994,7 @@ const rendFunctions = {
 					userID: userID,
 					fullName: user[0].lastName + ", " + user[0].firstName,
 					classes: classVar,
-					//quiz
+					quizzes: quizList,
 					skills: skillTypes,
 					clients: clientsVar,
 					dateToday: today,
@@ -1829,8 +2089,9 @@ const rendFunctions = {
 	 postUpdateClients: async function(req, res, next) {
 		let { clientID, clientName, companyName, email, contactNo, isActive } = req.body;
 
+		
 			for(var i = 0; i < clientID.length; i++){
-
+				console.log(isActive[i]);
 				clientsModel.findOneAndUpdate(
 					{ clientID: clientID[i] },
 					{ $set: {
@@ -1920,8 +2181,11 @@ const rendFunctions = {
 											console.log(err);
 										}
 										else {
+											if(!match){
+												console.log("No class to remove.")
+											}else{
 											match.remove();		
-											console.log("Removed from class.")
+											console.log("Removed from class.")}
 										}
 									});
 
@@ -1930,13 +2194,17 @@ const rendFunctions = {
 											console.log(err);
 										}
 										else {
+											if(!match){
+												console.log("No client to remove.")
+											}else{
 											match.remove();		
-											console.log("Removed from client.")
+											console.log("Removed from client.")}
 										}
 									});
 
 							// match.remove();
 							res.send({status: 200, mssg:'Account deactivated succesfully.'});
+							req.session.destroy();
 					}
 				});	
 			}
