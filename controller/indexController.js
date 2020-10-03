@@ -457,7 +457,7 @@ const rendFunctions = {
 			});
 	},
 
-	postVerifyAccount: async function(req, res, next) { // nde pumamasok d2 wat
+	postVerifyAccount: async function(req, res, next) {
 		let { email, verifyCode } = req.body;
 		var vCode = await db.findOne(verificationModel, {verifyCode: verifyCode});
 		console.log(vCode);
@@ -1270,8 +1270,8 @@ const rendFunctions = {
 						classVar[i].ttlFail = failed;
 					}
 					else {
-						classVar[i].ttlPass = "N/A";
-						classVar[i].ttlFail = "N/A";
+						classVar[i].ttlPass = "";
+						classVar[i].ttlFail = "";
 					}
 					
 
@@ -1351,11 +1351,9 @@ const rendFunctions = {
 					// current trainee answers
 					var TAdata = await traineeanswersModel.find({traineeID: traineesVar[z].traineeID});
 					var tAnswers = JSON.parse(JSON.stringify(TAdata));
-					
-					// console.log(tAnswers[0].quizID);
 		
 					if(tAnswers.length == 0){
-						var quizVar = quizTemp(traineesVar[z].traineeID, '', '', '', '', '', '', '',);
+						var quizVar = quizTemp(traineesVar[z].traineeID, '', '', '', '', '', '', '');
 						quizList[0] = quizVar;
 					}
 					else{
@@ -1368,14 +1366,12 @@ const rendFunctions = {
 						else
 							arrQuizID[arrInd] = tAnswers[i].quizID;
 					}
-					// console.log(arrQuizID);
 		
 					// removing empty items from array
 					var quizIDs = arrQuizID.filter(function (el) {
 						return el != null;
 					});
-					// console.log(quizIDs);
-		
+
 					// get quizzes that trainees answered
 					for(var q = 0; q < quizIDs.length; q++){
 						var qDump = await quizzesModel.find({quizID: quizIDs[q]});
@@ -1417,8 +1413,9 @@ const rendFunctions = {
 							
 							console.log(quizList[x].quizScore)
 
-							var quizAve = computeQuiz(qScores);
- 					
+							var quizAve = computeQuiz(qScores, trAns.length);
+							console.log("ave:" + quizAve);
+							
  							traineesVar[z].quizAve = quizAve;
 					}
 						// console.log(qScores)
@@ -1703,24 +1700,32 @@ const rendFunctions = {
 						// get classes
 					var tClasses = await traineelistsModel.find({traineeID: trainees[i].userID});
 
-					if(tClasses.length == 0)
+					if(tClasses.length === 0)
 						trainees[i].status = "Not started";
-					else if(tClasses.length == 1) {
+					else if(tClasses.length === 1) {
 						trainees[i].status = "Ongoing";
 						graduated = false;
 					}
-					else if(tClasses.length == 2) {
+					else if(tClasses.length === 2) {
+						// console.log("hello");
 						for(var j = 0; j < tClasses.length; j++) {
+						var classArr = [];
 						var classDet = await classesModel.find({classID: tClasses[j].classID});
-
-							for(var k = 0; k < classDet; k++) {
-								if(classDet[k].endDate.valueOf() > dateToday.valueOf()) {
+						classArr.push(classDet);
+						console.log(classArr);
+						
+						for(var k = 0; k < classArr.length; k++) {
+								if(classArr[k].endDate.valueOf() < dateToday.valueOf()) {
 									trainees[i].status = "Graduated";
-									graudated = true;
+									graduated = true;
 								}
-								else {
+								else if (classArr[k].endDate.valueOf() > dateToday.valueOf()) {
 									trainees[i].status = "Ongoing";
 									graduated = false;
+								}
+								else {
+									trainees[i].status = "Graduated";
+									graduated = true;
 								}
 							}
 						}					
@@ -1744,15 +1749,15 @@ const rendFunctions = {
 					 var quizList = [];
 					 var qScores = [];
 
-			
+						
 					 // current trainee answers
-					 var TAdata = await traineeanswersModel.find({traineeID: userID});
+					 var TAdata = await traineeanswersModel.find({traineeID: trainees[i].userID});
 					 var tAnswers = JSON.parse(JSON.stringify(TAdata));
 					 
 					 // console.log(tAnswers[0].quizID);
 		 
 					 if(tAnswers.length == 0){
-						 var quizVar = quizTemp(userID, '', '', '', '', '', '', '',);
+						 var quizVar = quizTemp(trainees[i].userID, '', '', '', '', '', '', '',);
 						 quizList[0] = quizVar;
 					 }
 					 else{
@@ -1778,7 +1783,7 @@ const rendFunctions = {
 						 var qDump = await quizzesModel.find({quizID: quizIDs[q]});
 						 var quizDet = JSON.parse(JSON.stringify(qDump));
 						 
-						 var quizVar = quizTemp(userID, quizDet[0].quizID, quizDet[0].classID, quizDet[0].quizDate, quizDet[0].startTime, quizDet[0].endTime, quizDet[0].numTakes, quizDet[0].numItems)
+						 var quizVar = quizTemp(trainees[i].userID, quizDet[0].quizID, quizDet[0].classID, quizDet[0].quizDate, quizDet[0].startTime, quizDet[0].endTime, quizDet[0].numTakes, quizDet[0].numItems)
 						 quizList[q] = quizVar;
 						 
 					 }
@@ -1798,7 +1803,7 @@ const rendFunctions = {
 								 var itTemp = await itemsModel.find({quizID: quizList[x].quizID, itemNo: itemNo});
 								 var item = JSON.parse(JSON.stringify(itTemp));
 		 
-								 var trTemp = await traineeanswersModel.find({traineeID: userID, quizID: quizList[x].quizID, itemNo: itemNo});
+								 var trTemp = await traineeanswersModel.find({traineeID: trainees[i].userID, quizID: quizList[x].quizID, itemNo: itemNo});
 								 var trAns = JSON.parse(JSON.stringify(trTemp));
 		 
 								 // console.log(item[0].answer)
@@ -1827,7 +1832,7 @@ const rendFunctions = {
 	 					trainees[i].finalGrade = fg;
 	 				 } 
 	 				 else {
-	 						trainees[i].finalGrade = "N/A";
+	 						trainees[i].finalGrade = "";
 	 				 }
 				}
 				
@@ -1892,7 +1897,7 @@ const rendFunctions = {
 				// console.log(tAnswers[0].quizID);
 	
 				if(tAnswers.length == 0){
-					var quizVar = quizTemp(userID, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A',);
+					var quizVar = quizTemp(userID, '', '', '', '', '', '', '');
 					quizList[0] = quizVar;
 				}
 				else{

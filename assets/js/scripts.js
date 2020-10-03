@@ -217,10 +217,6 @@ $(document).ready(function() {
 						$('p#emailError').text('Account already verified.');
 						break;								
 					}
-					case 410: {
-						$('p#emailError').text('Account code already sent.');
-						break;								
-					}
 					case 500: {
 						$('p#emailError').text('Server Error.');
 						break;
@@ -495,7 +491,7 @@ $(document).ready(function() {
 
 	// UPDATE CLIENT DETAILS
 	$('button#saveCLBTN').click(function() {
-		var isActive = $('.isActive').val()
+		var isActive = document.getElementsByClassName('isActive');
 		var clientName = document.getElementsByClassName('clientName');
 		var companyName = document.getElementsByClassName('companyName');
 		var email = document.getElementsByClassName('email');
@@ -513,17 +509,19 @@ $(document).ready(function() {
 			idArray.push(this.id);
 		});	
 
-		console.log(isActive);
+		// console.log(isActive);
 		for(var i = 0; i < idArray.length; i++){
 			nameArray.push(clientName[i].value);
 			companyArray.push(companyName[i].value);
 			emailArray.push(email[i].value);
 			numberArray.push(contactNo[i].value);
 
-			if(isActive == 'true')
+			if(isActive[i].value == 'true')
 				activeArray.push(true);
 			else activeArray.push(false);
 		}
+
+		// console.log(activeArray);
 
 		$.post('/update-clientlist', {clientID: idArray, clientName: nameArray, companyName: companyArray, email: emailArray, contactNo: numberArray, isActive: activeArray }, function(result){
 			switch(result.status) {
