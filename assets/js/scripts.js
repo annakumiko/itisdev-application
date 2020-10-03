@@ -83,7 +83,6 @@ function reverseDate(date) {
 function classOver() {
 	var today = new Date();
 	// manage trainees & delete btns
-
 	$('.manageTrainees').each(function() {
 		var e = $(this).closest('tr').children('td.eDate').text();
 
@@ -160,7 +159,6 @@ $(document).ready(function() {
 		
 		// successful client-side validation: no empty fields and valid email
 		if (!emailEmpty && emailFormat && !passEmpty){
-			// passes data to the server
 			$.post('/login', {email: email, password: password}, function(res) {
 				switch (res.status){
 					case 200: {
@@ -279,8 +277,6 @@ $(document).ready(function() {
 		var startTime = $('#startTime').val();
 		var endTime = $('#endTime').val();
 		var numDays = Math.round(endDate- startDate) / (1000 * 60 * 60 * 24) + 1;
-		//var numHours = endTime- startTime;
-		console.log('startdate + ' + startDate);
 		var numHours = calculateHours(startTime, endTime);
 
 		var dateErrors = true,
@@ -292,7 +288,6 @@ $(document).ready(function() {
 		$('p#eTime').text('');
 		$('p#courseError').text('');
 
-				
 		// date
 		if ((startDate == "Invalid Date") || (endDate == "Invalid Date") || (!startDate || !endDate)) {
 			if (startDate == "Invalid Date" || !startDate) $('p#sDate').text('Set date.');
@@ -323,7 +318,6 @@ $(document).ready(function() {
 				if (startTime > endTime) $('p#eTime').text('Start Time should be earlier than End Time.');
 			}
 			else timeErrors = false;
-			
 		}
 		else timeErrors = false;
 
@@ -388,8 +382,6 @@ $(document).ready(function() {
 
 		if(validator.isEmpty(courseDesc))
 			$('p#courseDescError').text('Please write course description.');
-
-		//insert file error
 
 		if (!(validator.isEmpty(courseDesc))) { 
 			$.post('/define-course', {courseName: courseName, courseDesc: courseDesc}, function(res) {
@@ -509,7 +501,6 @@ $(document).ready(function() {
 			idArray.push(this.id);
 		});	
 
-		// console.log(isActive);
 		for(var i = 0; i < idArray.length; i++){
 			nameArray.push(clientName[i].value);
 			companyArray.push(companyName[i].value);
@@ -520,8 +511,6 @@ $(document).ready(function() {
 				activeArray.push(true);
 			else activeArray.push(false);
 		}
-
-		// console.log(activeArray);
 
 		$.post('/update-clientlist', {clientID: idArray, clientName: nameArray, companyName: companyArray, email: emailArray, contactNo: numberArray, isActive: activeArray }, function(result){
 			switch(result.status) {
@@ -614,7 +603,6 @@ $(document).ready(function() {
 	});
 
 	// SCORESHEET
-
 	$('#class-day').change(function() {
 		var daySelected = $(this).val();
 		var sectionSelected = $('#scoresheet-section').val();
@@ -635,8 +623,6 @@ $(document).ready(function() {
 		var scoresheetEditor = document.getElementsByClassName('scoresheetEditor');
 		var updatebtn = document.getElementById('updateScoresheet');
 		var today = new Date();
-		// var date = $('#idhide').text();
-		// var compareDate = new Date(date);
 		var endDate = $('endhide').text()
 		var compareDate = new Date(endDate);
 
@@ -849,7 +835,6 @@ $(document).ready(function() {
 
 	// DEACTIVATE ACCOUNT
 	$('button#finalDA').click(function() {
-		// var userID = $("#userID").text()
 		var password = $("#password").val()
 		
 		$('p#ePass').text('');

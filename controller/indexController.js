@@ -131,8 +131,6 @@ function getDateSelected(startDate, endDate, day) {
         sDate = sDate.addDays(1);
     }
 
- //   console.log(dateArray);
-
     return dateArray[ind-1];
 }
 
@@ -206,8 +204,6 @@ function formatNiceDate(date) {
 //format time
 function formatTime(time) {
 	var time = new Date(time);
-
-	// console.log("time: " + time)
 
 	var hh = n(time.getHours());
 	var min = n(time.getMinutes());
@@ -314,11 +310,7 @@ function computeFinal(s, q) {
 
 	var quizFinal = (qSum/q.length) * 0.4;
 
-	//console.log(skillFinal);
-	//console.log(quizFinal);
-
 	var finalGrade = skillFinal + quizFinal;
-	//console.log(finalGrade)
 
 	return finalGrade;
 }
@@ -339,7 +331,7 @@ const rendFunctions = {
 		let { email, password } = req.body;
 
 		var user = await db.findOne(usersModel, {email: email});
-		// console.log(user.userID);
+
 		// SEARCH USER IN DB
 		try {
 			if (!user) // USER NOT IN DB
@@ -353,7 +345,7 @@ const rendFunctions = {
 									res.send({status: 200});
 								} else
 									res.send({status: 401});
-						}); //hanggang d2
+						});
 					}
 					else res.send({status: 410});
 				}
@@ -409,9 +401,6 @@ const rendFunctions = {
 					}
 				})
 			}				
-			
-			// var dump = await db.findOne(verificationModel, {email: email });
-			// console.log(dump);
 
 			// send email
 			var smtpTransport = nodemailer.createTransport({
@@ -451,8 +440,6 @@ const rendFunctions = {
 	},
 
 	getVerifyAccount: function(req, res, next) {
-		// if user not verified..
-		
 		res.render('verify-account', {
 			});
 	},
@@ -470,7 +457,6 @@ const rendFunctions = {
 				// bcrypt.compare(email, vCode.email, function(err, match) {
 				verificationModel.findOne({email: vCode.email, verifyCode: vCode.verifyCode}, function(err, match){
 					if (match) {
-						// console.log("hello");
 						match.remove(); // remove from verificationModel
 
 						usersModel.findOneAndUpdate( // update verified status
@@ -528,7 +514,6 @@ const rendFunctions = {
  	getProfile: async function(req, res, next) {
  		if (req.session.user) {
 			 // SEARCH LOGGED IN USER
-			 // var idArray = [];
  			if (req.session.user.userType === "Trainer") {
  				
 				var userID = req.session.user.userID;
@@ -560,8 +545,6 @@ const rendFunctions = {
 					classVar[i].classList.endDate = eDate;
 				}
 
-				// console.log(sArray);
-				// console.log(classVar)
 				 res.render('trainer-profile', {
 					fullName: req.session.user.lastName + ", " + req.session.user.firstName,
 					uType: req.session.user.userType,
@@ -606,8 +589,7 @@ const rendFunctions = {
  				res.render('trainee-profile', {
 	 				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
 					uType: req.session.user.userType,
-
-					// classes: classVar,          
+       
 					section: classVar[0].classList.section,
 					course: classVar[0].course.courseName,
 					clients: clientsVar
@@ -641,8 +623,6 @@ const rendFunctions = {
 						}},
 						{$unwind: "$course"}
 				]);
-
- 			// console.log("numclasses: " + classVar.length);
  			
 			for(let i = 0; i < classVar.length; i++) {
 				sDate = formatDate(classVar[i].classList.startDate);
@@ -655,7 +635,6 @@ const rendFunctions = {
 				classVar[i].classList.startTime = sTime;
 				classVar[i].classList.endTime = eTime;
 			}
-
 
  			res.render('dashboard', {
  				fullName: req.session.user.lastName + ", " + req.session.user.firstName,
@@ -685,7 +664,6 @@ const rendFunctions = {
  		else res.redirect('login');
  	},
 
-
  	postCreateClass: function(req, res, next) {
 		let { course, startDate, endDate, startTime, endTime } = req.body;
 		
@@ -693,7 +671,6 @@ const rendFunctions = {
  		coursesModel.findOne({courseName: course}, function(err, course) {
 
  			var courseID = course.courseID;
- 			// console.log(courseID); -- dis works
 
 			classesModel.find({courseID: courseID}, function(err, classes) {//
  				var classVar = classes;
@@ -751,8 +728,6 @@ const rendFunctions = {
 		 			}
 		 			else next();
 		 		});
-
-
  			});
 		});
  	},
@@ -761,7 +736,6 @@ const rendFunctions = {
  		let { classNum } = req.body;
 
  		console.log("Deteted " + classNum);
- 		//try {
  			classesModel.findOne({classID: classNum}, function(err, cmatch) {
 				if (err) {
 					res.send({status: 500, mssg:'Server Error: Query not found.'});
@@ -790,15 +764,9 @@ const rendFunctions = {
 					res.send({status: 200, mssg: 'Deleted Class Successfully!'});
 				}
 			});
- 		// }
- 		// catch(e) {
- 		// 	console.log(e);
- 		// }
- 		
  	},
 
  	getAddTrainees: async function(req, res, next) {
- 		// console.log(req.params.course);
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {	
  				var classSelected = await classesModel.findOne({section: req.params.section});
@@ -840,7 +808,6 @@ const rendFunctions = {
 				var endorsed = JSON.parse(JSON.stringify(endorsedTrainees));
 				var added = JSON.parse(JSON.stringify(addedTrainees));
 				
-				// render
  		 		res.render('add-trainees', {
  		 			endorsed: endorsed,
  		 			added: added,
@@ -880,7 +847,6 @@ const rendFunctions = {
  		var classID = classSelected.classID;
 
  		var trainee = await usersModel.findOne({userID: traineeID});
- 		// where do i remove -> traineelistsModel only
  		traineelistsModel.findOne({traineeID: traineeID, classID: classID}, function(err, match) {
 			if (err) {
 				res.send({status: 500, mssg:'Server Error: Query not found.'});
@@ -911,8 +877,6 @@ const rendFunctions = {
  					quizzes[i].startTime = formatTime(quizzes[i].startTime);
  					quizzes[i].endTime = formatTime(quizzes[i].endTime);
  				}
-				
-				// get the items
 
  				res.render('quizlist', {
  					quizzes: quizzes
@@ -943,7 +907,6 @@ const rendFunctions = {
  				}];
 
  				var qItems = JSON.parse(JSON.stringify(items));
- 			//	console.log(qItems);
 
  				res.render('create-quiz', {
  					//date: dateToday,
@@ -1034,8 +997,6 @@ const rendFunctions = {
  		var sTime = new Date("Jan 01 2020 " + startTime + ":00"),
  			eTime = new Date("Jan 01 2020 " + endTime + ":00");
 
- 		//var quiz = createQuiz(quizID, classID, quizDate, sTime, eTime, numTakes, numItems);
-
  		//update
  		let qmodel = await quizzesModel.findOneAndUpdate(
 			{ quizID: qID },
@@ -1071,14 +1032,12 @@ const rendFunctions = {
 						if(err) console.log(err);
 				});
 		}
-		
 		res.send({status: 200, mssg: "Quiz updated!"});
  	},
 
  	getScoresheets: async function(req, res, next) {
  		if(req.session.user) {
  			if(req.session.user.userType === "Trainer") {
- 				// req.params
  				var sectionSelected = req.params.section;
  				var daySelected = req.params.day;
 
@@ -1133,9 +1092,7 @@ const rendFunctions = {
 							xscores[x] = traineescores[x].skillScore;
 						}
 					}
-
 					trainees[i].tscore = xscores;
-					
 				}
 
  				res.render('scoresheets', {
@@ -1198,7 +1155,6 @@ const rendFunctions = {
 					console.log("update");
 					console.log(tsUpdate);
 				}
-						
 				a++;
  			}
  			traineeInd++;
@@ -1255,7 +1211,6 @@ const rendFunctions = {
 								tScores[k] = (strScores[k].skillScore);
 							}
 
-							// console.log(tScores);
 							// get quiz scores
 							var qScores = ['100', '100', '100'];
 
@@ -1320,7 +1275,6 @@ const rendFunctions = {
 					 }},
 					 {$unwind: "$trainees"},
 				]);
- 				
 
  				for(var i = 0; i < traineesVar.length; i++) {
  					var tScores = [];
@@ -1347,7 +1301,6 @@ const rendFunctions = {
 					var quizList = [];
 					var qScores = [];
 
-		 
 					// current trainee answers
 					var TAdata = await traineeanswersModel.find({traineeID: traineesVar[z].traineeID});
 					var tAnswers = JSON.parse(JSON.stringify(TAdata));
@@ -1381,7 +1334,6 @@ const rendFunctions = {
 						quizList[q] = quizVar;
 						
 					}
-					// console.log(quizList);
 		
 					// comparing items to traineeAnswers
 					for(var x = 0; x < quizList.length; x++){
@@ -1403,7 +1355,6 @@ const rendFunctions = {
 									if(item[o].answer == trAns[o].tAnswer)
 										quizScore++;
 								}
-		
 								i++;
 							}
 							
@@ -1418,7 +1369,6 @@ const rendFunctions = {
 							
  							traineesVar[z].quizAve = quizAve;
 					}
-						// console.log(qScores)
 					}
 				}
 
@@ -1457,7 +1407,6 @@ const rendFunctions = {
 				clientsModel.find({isActive: true}, function(err, data) {
 					var details = JSON.parse(JSON.stringify(data));
 					var clients = details;	
-					// console.log(clients);
 					
 					res.render('clientlist', {
 					 clients: clients,
@@ -1476,7 +1425,6 @@ const rendFunctions = {
 				clientsModel.find({}, function(err, data) {
 					var details = JSON.parse(JSON.stringify(data));
 					var clients = details;	
-					// console.log(clients);
 					
 					res.render('contact-client', {
 					 email: req.params.email,
@@ -1493,7 +1441,6 @@ const rendFunctions = {
 	postContactClient: function(req, res, next) {
 		let { email, emailText } = req.body; // pass client email, email subject, and message
 		
-		//var userID = req.session.user.userID;
 		var fullName = req.session.user.lastName + ", " + req.session.user.firstName;
 
 			console.log("for : " + email,);
@@ -1513,17 +1460,12 @@ const rendFunctions = {
 				from: 'training.tvh@gmail.com',
 				to: email,
 				subject: '[REQUEST FOR INTERVIEW] ' + fullName,
-				// text: emailText,
 				html: `<p>${emailText}</p> <br> <br> <img src="cid:signature"/>`,
 				attachments: [{
 						filename: 'TVH.png',
 						path: __dirname+'/TVH.png',
 						cid: 'signature' //same cid value as in the html img src
 				}]
-				// attachments: [
-				// 	{   // filename of CV
-				// 			filename: '\assets\img\TVH.png'
-				// 	},]
 			};
 
 			smtpTransport.sendMail(mailOptions, function(error) {
@@ -1544,7 +1486,6 @@ const rendFunctions = {
 		if (req.session.user){
 			if(req.session.user.userType === "Trainee") {
 				var userID = req.session.user.userID;
-				// console.log(userID);
 
 				var classVar = await traineelistsModel.aggregate([
 					{$match: {traineeID: userID}},
@@ -1563,11 +1504,9 @@ const rendFunctions = {
 					 }},
 					 {$unwind: "$course"},
 			 ]);
-			//  console.log(classVar);
 
 			var skills = await skilltypesModel.find({});
 			var skillTypes = JSON.parse(JSON.stringify(skills));
-			// console.log(skillTypes);
 			
 			var scores = [];
 			var skillScores = [];
@@ -1585,8 +1524,6 @@ const rendFunctions = {
 					
 				skillTypes[i].skillScores = scores;
 			}
-			// console.log(skillTypes);
-
 			// compute quizzes
 			var quizList = [];
 			
@@ -1594,8 +1531,6 @@ const rendFunctions = {
 			var TAdata = await traineeanswersModel.find({traineeID: userID});
 			var tAnswers = JSON.parse(JSON.stringify(TAdata));
 			
-			// console.log(tAnswers[0].quizID);
-
 			if(tAnswers.length == 0){
 				var quizVar = quizTemp(userID, '', '', '', '', '', '', '',);
 				quizList[0] = quizVar;
@@ -1610,13 +1545,11 @@ const rendFunctions = {
 				else
 					arrQuizID[arrInd] = tAnswers[i].quizID;
 			}
-			// console.log(arrQuizID);
 
 			// removing empty items from array
 			var quizIDs = arrQuizID.filter(function (el) {
 				return el != null;
 			});
-			// console.log(quizIDs);
 
 			// get quizzes that trainees answered
 			for(var q = 0; q < quizIDs.length; q++){
@@ -1625,9 +1558,7 @@ const rendFunctions = {
 				
 				var quizVar = quizTemp(userID, quizDet[0].quizID, quizDet[0].classID, quizDet[0].quizDate, quizDet[0].startTime, quizDet[0].endTime, quizDet[0].numTakes, quizDet[0].numItems)
 				quizList[q] = quizVar;
-				
 			}
-			// console.log(quizList);
 
 			// comparing items to traineeAnswers
 			for(var x = 0; x < quizList.length; x++){
@@ -1636,7 +1567,6 @@ const rendFunctions = {
 
 				var iTemp = await itemsModel.find({quizID: quizList[x].quizID});
 				var numItems = JSON.parse(JSON.stringify(iTemp));
-				// try{
 					for(var y = 0; y < numItems.length; y++){
 						var itemNo = "ITEM" + (i+1);
 
@@ -1646,19 +1576,12 @@ const rendFunctions = {
 						var trTemp = await traineeanswersModel.find({traineeID: userID, quizID: quizList[x].quizID, itemNo: itemNo});
 						var trAns = JSON.parse(JSON.stringify(trTemp));
 
-						// console.log(item[0].answer)
-						// console.log(trAns[0].tAnswer)
 						for(var z = 0; z < trAns.length; z++){
 							if(item[z].answer == trAns[z].tAnswer)
 								quizScore++;
 						}
-
 						i++;
 					}
-				// } catch(e) {
-				// console.log(e);}
-
-				// console.log(quizScore);
 					quizList[x].quizScore = quizScore;
 					quizList[x].quizDate = formatDate(quizList[x].quizDate);
 			}
@@ -1707,7 +1630,6 @@ const rendFunctions = {
 						graduated = false;
 					}
 					else if(tClasses.length === 2) {
-						// console.log("hello");
 						for(var j = 0; j < tClasses.length; j++) {
 						var classArr = [];
 						var classDet = await classesModel.find({classID: tClasses[j].classID});
@@ -1731,7 +1653,6 @@ const rendFunctions = {
 						}					
 					}
 					else trainees[i].status = "Error";
-
 					// getting final grade
 						// get skills
 					 if( graduated) {
@@ -1744,18 +1665,12 @@ const rendFunctions = {
 	 						tScores[k] = scores[k].skillScore;
 	 					}
 
-					 //	console.log(tScores);
-					 
 					 var quizList = [];
 					 var qScores = [];
-
-						
 					 // current trainee answers
 					 var TAdata = await traineeanswersModel.find({traineeID: trainees[i].userID});
 					 var tAnswers = JSON.parse(JSON.stringify(TAdata));
 					 
-					 // console.log(tAnswers[0].quizID);
-		 
 					 if(tAnswers.length == 0){
 						 var quizVar = quizTemp(trainees[i].userID, '', '', '', '', '', '', '',);
 						 quizList[0] = quizVar;
@@ -1770,13 +1685,11 @@ const rendFunctions = {
 						 else
 							 arrQuizID[arrInd] = tAnswers[i].quizID;
 					 }
-					 // console.log(arrQuizID);
-		 
+
 					 // removing empty items from array
 					 var quizIDs = arrQuizID.filter(function (el) {
 						 return el != null;
 					 });
-					 // console.log(quizIDs);
 		 
 					 // get quizzes that trainees answered
 					 for(var q = 0; q < quizIDs.length; q++){
@@ -1785,9 +1698,7 @@ const rendFunctions = {
 						 
 						 var quizVar = quizTemp(trainees[i].userID, quizDet[0].quizID, quizDet[0].classID, quizDet[0].quizDate, quizDet[0].startTime, quizDet[0].endTime, quizDet[0].numTakes, quizDet[0].numItems)
 						 quizList[q] = quizVar;
-						 
 					 }
-					 // console.log(quizList);
 		 
 					 // comparing items to traineeAnswers
 					 for(var x = 0; x < quizList.length; x++){
@@ -1796,7 +1707,6 @@ const rendFunctions = {
 		 
 						 var iTemp = await itemsModel.find({quizID: quizList[x].quizID});
 						 var numItems = JSON.parse(JSON.stringify(iTemp));
-						 // try{
 							 for(var y = 0; y < numItems.length; y++){
 								 var itemNo = "ITEM" + (i+1);
 		 
@@ -1806,26 +1716,17 @@ const rendFunctions = {
 								 var trTemp = await traineeanswersModel.find({traineeID: trainees[i].userID, quizID: quizList[x].quizID, itemNo: itemNo});
 								 var trAns = JSON.parse(JSON.stringify(trTemp));
 		 
-								 // console.log(item[0].answer)
-								 // console.log(trAns[0].tAnswer)
 								 for(var z = 0; z < trAns.length; z++){
 									 if(item[z].answer == trAns[z].tAnswer)
 										 quizScore++;
 								 }
-		 
 								 i++;
 							 }
-						 // } catch(e) {
-						 // console.log(e);}
-		 
-						 // console.log(quizScore);
 							 quizList[x].quizScore = quizScore;
 							 quizList[x].quizDate = formatDate(quizList[x].quizDate);
 							 qScores[x] = quizScore;
 					 }
 					 }
-	 					// 	// get quizzes
-	 					// var qScores = ['100', '100'];
 					 console.log(qScores);
 	 					var fg = computeFinal(tScores, qScores);
 
@@ -1835,7 +1736,6 @@ const rendFunctions = {
 	 						trainees[i].finalGrade = "";
 	 				 }
 				}
-				
 				var today = formatDate(new Date());
  				var time = formatTime(new Date());
 				res.render('trainee-summary', {
@@ -1874,7 +1774,6 @@ const rendFunctions = {
 					 }},
 					 {$unwind: "$course"}
 			 ]);
-			//  console.log(classVar);
 
 			 // trainer
 			 var trainer = '';
@@ -1882,8 +1781,7 @@ const rendFunctions = {
 			 	 var trVar = await classesModel.findOne({trainerID: classVar[x].classList.trainerID});
 				 trainer = JSON.parse(JSON.stringify(trVar));
 				 tryVar = await usersModel.find({userID: trainer.trainerID});
-				//  console.log(trVar);
-				classVar[x].trainer = tryVar[0].firstName + ' ' + tryVar[0].lastName;
+				 classVar[x].trainer = tryVar[0].firstName + ' ' + tryVar[0].lastName;
 				 console.log(classVar[x].trainer);
 				}
 
@@ -1894,8 +1792,6 @@ const rendFunctions = {
 				var TAdata = await traineeanswersModel.find({traineeID: userID});
 				var tAnswers = JSON.parse(JSON.stringify(TAdata));
 				
-				// console.log(tAnswers[0].quizID);
-	
 				if(tAnswers.length == 0){
 					var quizVar = quizTemp(userID, '', '', '', '', '', '', '');
 					quizList[0] = quizVar;
@@ -1910,13 +1806,11 @@ const rendFunctions = {
 					else
 						arrQuizID[arrInd] = tAnswers[i].quizID;
 				}
-				// console.log(arrQuizID);
-	
+
 				// removing empty items from array
 				var quizIDs = arrQuizID.filter(function (el) {
 					return el != null;
 				});
-				// console.log(quizIDs);
 	
 				// get quizzes that trainees answered
 				for(var q = 0; q < quizIDs.length; q++){
@@ -1925,9 +1819,7 @@ const rendFunctions = {
 					
 					var quizVar = quizTemp(userID, quizDet[0].quizID, quizDet[0].classID, quizDet[0].quizDate, quizDet[0].startTime, quizDet[0].endTime, quizDet[0].numTakes, quizDet[0].numItems)
 					quizList[q] = quizVar;
-					
 				}
-				// console.log(quizList);
 	
 				// comparing items to traineeAnswers
 				for(var x = 0; x < quizList.length; x++){
@@ -1946,13 +1838,10 @@ const rendFunctions = {
 							var trTemp = await traineeanswersModel.find({traineeID: userID, quizID: quizList[x].quizID, itemNo: itemNo});
 							var trAns = JSON.parse(JSON.stringify(trTemp));
 	
-							// console.log(item[0].answer)
-							// console.log(trAns[0].tAnswer)
 							for(var z = 0; z < trAns.length; z++){
 								if(item[z].answer == trAns[z].tAnswer)
 									quizScore++;
 							}
-	
 							i++;
 						}
 						quizList[x].quizScore = quizScore;
@@ -1960,12 +1849,10 @@ const rendFunctions = {
 						console.log(quizList);
 					}
 				}
-			
 
 				//skills
 				var skills = await skilltypesModel.find({});
 				var skillTypes = JSON.parse(JSON.stringify(skills));
-				// console.log(skillTypes);
 	
 				var skillScores = [];
 				for (var i = 0; i < skillTypes.length; i++) {
@@ -1975,8 +1862,7 @@ const rendFunctions = {
 	
 					for(var x = 0; x < 8; x++)
 						scores[x] = dumpScores[x].skillScore;
-						
-					skillTypes[i].skillScores = scores;
+						skillTypes[i].skillScores = scores;
 				}
 
 				//clients
@@ -1990,7 +1876,6 @@ const rendFunctions = {
 					}},
 					{$unwind: "$clientList"}
 				]);
-				// console.log(clientsVar);
 
 				var today = formatDate(new Date());
  				var time = formatTime(new Date());
@@ -2038,7 +1923,6 @@ const rendFunctions = {
 			{ courseName: courseName },
 			{ $set: {
 				courseDesc: courseDesc,
-				//files
 			}},
 			{ useFindAndModify: false },
 			function(err, match) {
@@ -2060,7 +1944,6 @@ const rendFunctions = {
 				clientsModel.find({}, function(err, data) {
 					var details = JSON.parse(JSON.stringify(data));
 					var clients = details;	
-					// console.log(clients);
 
 					res.render('manage-clientlist', {
 					 clients: clients,
@@ -2079,7 +1962,6 @@ const rendFunctions = {
 				clientsModel.find({}, function(err, data) {
 					var details = JSON.parse(JSON.stringify(data));
 					var clients = details;	
-					// console.log(clients);
 
 					res.render('update-clientlist', {
 					 clients: clients,
@@ -2119,10 +2001,7 @@ const rendFunctions = {
 	 postAddClient: function(req, res, next) {
 		let { clientName, companyName, email, contactNo } = req.body;
 
-		// console.log(clientName, companyName, email, contactNo);
-
 		var clientID = generateClientID();		
-		// console.log("clientID: " + clientID);
 		var isActive = true;
 		var client = addClient(clientID, clientName, companyName, email, contactNo, isActive)
 
@@ -2207,7 +2086,6 @@ const rendFunctions = {
 										}
 									});
 
-							// match.remove();
 							res.send({status: 200, mssg:'Account deactivated succesfully.'});
 							req.session.destroy();
 					}
@@ -2215,7 +2093,6 @@ const rendFunctions = {
 			}
 		});
 	},
-
 }
 
 module.exports = rendFunctions;
