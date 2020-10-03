@@ -1508,22 +1508,23 @@ const rendFunctions = {
 			var skills = await skilltypesModel.find({});
 			var skillTypes = JSON.parse(JSON.stringify(skills));
 			
-			var scores = [];
 			var skillScores = [];
 			for (var i = 0; i < skillTypes.length; i++) {
 				var data = await skillassessmentsModel.find({skillID: skillTypes[i].skillID, traineeID: userID});
 				var dumpScores = JSON.parse(JSON.stringify(data));
+				var scores = [];
 
 				if(dumpScores.length == 0){
 					for(var x = 0; x < 8; x++)
 					scores[x] = '0';
 				}
 				else{
-				for(var x = 0; x < 8; x++)
-					scores[x] = dumpScores[x].skillScore;}
+					for(var x = 0; x < 8; x++)
+						scores[x] = dumpScores[x].skillScore;}
 					
 				skillTypes[i].skillScores = scores;
 			}
+			console.log(skillTypes);
 			// compute quizzes
 			var quizList = [];
 			
@@ -1636,7 +1637,7 @@ const rendFunctions = {
 						classArr.push(classDet);
 						console.log(classArr);
 						
-						for(var k = 0; k < classArr.length; k++) {
+						for(var k = 0; k < classArr; k++) {
 								if(classArr[k].endDate.valueOf() < dateToday.valueOf()) {
 									trainees[i].status = "Graduated";
 									graduated = true;

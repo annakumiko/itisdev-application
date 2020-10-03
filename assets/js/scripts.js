@@ -623,7 +623,7 @@ $(document).ready(function() {
 		var scoresheetEditor = document.getElementsByClassName('scoresheetEditor');
 		var updatebtn = document.getElementById('updateScoresheet');
 		var today = new Date();
-		var endDate = $('endhide').text()
+		var endDate = $('#endhide').text()
 		var compareDate = new Date(endDate);
 
 		if(compareDate < today) {
